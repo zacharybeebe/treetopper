@@ -4,7 +4,8 @@ from log import Log
 
 ##### TIMBER CLASS
 class TimberQuick(object):
-    def __init__(self, species: str, dbh: float, total_height: int, plot_factor: float, preferred_log_length=40, minimum_log_length=16):
+    def __init__(self, species: str, dbh: float, total_height: int, plot_factor: float,
+                 preferred_log_length: int = 40, minimum_log_length: int = 16):
         self.species = str(species).upper()
         self.dbh = float(dbh)
         self.height = int(total_height)
@@ -168,6 +169,7 @@ class TimberFull(object):
         else:
             num = max(self.logs) + 1
             self.logs[num] = Log(self, stem_height, length, defect_pct=defect, grade=grade.upper())
+        self.calc_volume_and_logs()
 
     def calc_volume_and_logs(self):
         if not self.logs:

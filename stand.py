@@ -130,7 +130,6 @@ class Stand(object):
                 tree = TimberFull(mets['species'], mets['dbh'], height, mets['plot_factor'])
                 for lnum in mets['logs']:
                     tree.add_log(*mets['logs'][lnum])
-                tree.calc_volume_and_logs()
                 plot.add_tree(tree)
             self.add_plot(plot)
 
@@ -161,7 +160,6 @@ class Stand(object):
                 tree = TimberFull(mets['species'], mets['dbh'], height, mets['plot_factor'])
                 for lnum in mets['logs']:
                     tree.add_log(*mets['logs'][lnum])
-                tree.calc_volume_and_logs()
                 plot.add_tree(tree)
             self.add_plot(plot)
 

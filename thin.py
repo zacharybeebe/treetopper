@@ -82,16 +82,16 @@ class Thin(object):
                         self.trees[spp][d][res]['tpa'] = ratio * self.trees[spp][d][cur]['tpa']
                         self.trees[spp][d][rem]['tpa'] = (1 - ratio) * self.trees[spp][d][cur]['tpa']
                         for condition in self.conditions[1:]:
-                            for key in self.adds:
-                                self.trees[spp][d][condition][key[0]] = self.trees[spp][d][cur][key[1]] * self.trees[spp][d][condition]['tpa']
+                            for add in self.adds:
+                                self.trees[spp][d][condition][add[0]] = self.trees[spp][d][cur][add[1]] * self.trees[spp][d][condition]['tpa']
                     else:
-                        for key in self.adds:
-                            self.trees[spp][d][res][key[0]] = self.trees[spp][d][cur][key[0]]
+                        for add in self.adds:
+                            self.trees[spp][d][res][add[0]] = self.trees[spp][d][cur][add[0]]
                         self.trees[spp][d][res]['tpa'] = self.trees[spp][d][cur]['tpa']
             else:
                 for d in self.trees[spp]:
-                    for key in self.adds:
-                        self.trees[spp][d][res][key[0]] = self.trees[spp][d][cur][key[0]]
+                    for add in self.adds:
+                        self.trees[spp][d][res][add[0]] = self.trees[spp][d][cur][add[0]]
                     self.trees[spp][d][res]['tpa'] = self.trees[spp][d][cur]['tpa']
 
     def _get_species_conditions(self):
@@ -200,6 +200,7 @@ class ThinBA(Thin):
         self.check_density()
         self.thin_to_target(self.target_metric)
         self.species_data = self._get_species_conditions()
+
 
 class ThinRD(Thin):
     def __init__(self, stand, target_density: int, species_to_cut: list = 'all', min_dbh_to_cut: int = 0, max_dbh_to_cut: int = 999):

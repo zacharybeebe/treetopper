@@ -1,4 +1,5 @@
 from ._constants import *
-from .timber import Timber
-from.plot import Plot
-from.stand import Stand
+from .log import Log
+from .timber import TimberQuick, TimberFull
+from .plot import Plot
+from .stand import Stand

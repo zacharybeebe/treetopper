@@ -11,6 +11,9 @@ from statistics import (mean,
 from plot import Plot
 from timber import (TimberQuick,
                     TimberFull)
+from thin import (ThinTPA,
+                  ThinBA,
+                  ThinRD)
 from _import_from_sheets import (import_csv_quick,
                                  import_csv_full,
                                  import_excel_quick,
@@ -205,9 +208,6 @@ class Stand(object):
                     self.species[species]['avg_hgt'] = mean([t.height for t in trees if t.species == species])
                     self.species[species]['hdr'] = mean([t.hdr for t in trees if t.species == species])
 
-
-
-
     def _update_logs(self, plot):
         if self.plot_count == 0:
             return
@@ -293,12 +293,24 @@ class Stand(object):
 
 
 if __name__ == '__main__':
-    stand = Stand('OK2')
+    stand = Stand('EX1')
 
     # f_stands[f].from_csv_full('stand_data_C_full.csv')
-    stand.from_excel_full('stand_data_E_full.xlsx')
-    stand.console_report()
-    #stand.pdf_report('test1')
+    stand.from_excel_quick('stand_data_E_quick.xlsx')
+
+    target = 140
+    print('Thin ALL')
+    thinba = ThinBA(stand, target)
+    print('\nThin DF/WH')
+    thinbaspp = ThinBA(stand, target, ['DF', 'WH'])
+    print('\nThin ALL Min 10 Max 18')
+    thinbadbh = ThinBA(stand, target, species_to_cut='all', min_dbh_to_cut=10, max_dbh_to_cut=18)
+    print('\nThin DF/WH min 10 Max 18')
+    thinbasppdbh = ThinBA(stand, target, ['DF', 'WH'], min_dbh_to_cut=10, max_dbh_to_cut=18)
+
+
+    # stand.console_report()
+    # stand.pdf_report('test1')
 
 
 

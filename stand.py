@@ -293,42 +293,17 @@ class Stand(object):
 
 
 if __name__ == '__main__':
-    stand = Stand('EX1')
+    stand = Stand('OK2')
 
     # f_stands[f].from_csv_full('stand_data_C_full.csv')
-    stand.from_excel_quick('stand_data_E_quick.xlsx')
+    stand.from_excel_full('stand_data_E_full.xlsx')
 
-    target = 140
-    print('Thin ALL')
-    thinba = ThinBA(stand, target)
-    thinbaspp = ThinBA(stand, target, ['DF', 'WH', 'RC'])
-    thinbadbh = ThinBA(stand, target, min_dbh_to_cut=10, max_dbh_to_cut=18)
-    thinbasppdbh = ThinBA(stand, target, ['DF', 'WH'], min_dbh_to_cut=10, max_dbh_to_cut=18)
-    thinbaspp2 = ThinBA(stand, target, ['RC', 'RA'])
-
-    # target = 100
-    # print('Thin ALL')
-    # thinba = ThinTPA(stand, target)
-    # print('\nThin DF/WH')
-    # thinbaspp = ThinTPA(stand, target, ['DF', 'WH'])
-    # print('\nThin ALL Min 10 Max 18')
-    # thinbadbh = ThinTPA(stand, target, species_to_cut='all', min_dbh_to_cut=10, max_dbh_to_cut=18)
-    # print('\nThin DF/WH min 10 Max 18')
-    # thinbasppdbh = ThinTPA(stand, target, ['DF', 'WH'], min_dbh_to_cut=10, max_dbh_to_cut=18)
-
-    # target = 35
-    # print('Thin ALL')
-    # thinba = ThinRD(stand, target)
-    # print('\nThin DF/WH')
-    # thinbaspp = ThinRD(stand, target, ['DF', 'WH'])
-    # print('\nThin ALL Min 10 Max 18')
-    # thinbadbh = ThinRD(stand, target, species_to_cut='all', min_dbh_to_cut=10, max_dbh_to_cut=18)
-    # print('\nThin DF/WH min 10 Max 18')
-    # thinbasppdbh = ThinRD(stand, target, ['DF', 'WH'], min_dbh_to_cut=10, max_dbh_to_cut=18)
-
-
-    # stand.console_report()
+    stand.console_report()
     # stand.pdf_report('test1')
+
+    #thinBA = ThinBA(stand, 180, species_to_cut=['DF', 'WH'], max_dbh_to_cut=24)
+    thinBA = ThinRD(stand, 30)
+    thinBA.console_report()
 
 
 

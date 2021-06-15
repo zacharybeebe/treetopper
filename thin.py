@@ -4,7 +4,6 @@ import math
 from _console_print import print_thin_species
 
 
-
 class Thin(object):
     def __init__(self, stand, target_density: int, species_to_cut: list, min_dbh_to_cut: int, max_dbh_to_cut: int):
         self.stand = deepcopy(stand)
@@ -14,6 +13,7 @@ class Thin(object):
         self.species = species_to_cut
 
         self.species_data = None
+        self.target_metric = None
 
         self.full_thin = [True, None, None]
 
@@ -25,7 +25,6 @@ class Thin(object):
             setattr(self, f'{self.conditions[0]}{key}', 0)
 
         self.trees = self.aggregate_trees()
-
 
     def __getitem__(self, attribute: str):
         return self.__dict__[attribute]
@@ -105,8 +104,24 @@ class Thin(object):
                 master[condition][spp] = {key: 0 for key in self.keys}
                 for d in self.trees[spp]:
                     for tree in self.trees[spp][d]['trees']:
-                        trees.append(tree)
-                        total_trees.append(tree)
+                        if condition == 'current_':
+                            trees.append(tree)
+                            total_trees.append(tree)
+                        elif condition == 'residual_':
+                            d_rng = [d for d in self.trees[spp]]
+                            min_ = min(d_rng)
+                            max_ = max(d_rng)
+                            if self.min_dbh <= min_ and self.max_dbh >= max_:
+                                trees.append(tree)
+                                total_trees.append(tree)
+                            else:
+                                if d < self.min_dbh or d > self.max_dbh:
+                                    trees.append(tree)
+                                    total_trees.append(tree)
+                        else:
+                            if self.min_dbh <= d <= self.max_dbh:
+                                trees.append(tree)
+                                total_trees.append(tree)
                     for key in self.keys:
                         master[condition][spp][key] += self.trees[spp][d][condition][key]
                         master[condition]['totals_all'][key] += self.trees[spp][d][condition][key]
@@ -124,11 +139,12 @@ class Thin(object):
         master_condition_species.update({'avg_hgt': mean([tree.height for tree in trees])})
         master_condition_species.update({'hdr': mean([tree.hdr for tree in trees])})
 
-    def console_print(self):
+    def console_report(self):
         species, min_dbh, max_dbh = self._get_message_params_console_print()
         if not self.full_thin[0]:
+            needed = round(self[f'current_{self.full_thin[2]}'] - self.target)
             message = f"""\n** COULD NOT ACHIEVE TARGET DENSITY OF {self.target} {self.full_thin[2].replace('_', ' ').upper()} **
-** THINNING PARAMETERS ONLY ALLOWED {round(self.full_thin[1], 1)} {self.full_thin[2].replace('_', ' ').upper()} TO BE HARVESTED **
+** THINNING PARAMETERS ONLY ALLOWED {round(self.full_thin[1], 1)} {self.full_thin[2].replace('_', '/').upper()} OF THE {needed} NEEDED TO BE HARVESTED **
    THINNING PARAMETERS:
    \tSPECIES: {', '.join(species)}
    \tMIN DBH: {min_dbh}
@@ -136,7 +152,7 @@ class Thin(object):
             print(message)
             print_thin_species(self.species_data)
         else:
-            message = f"""\nTARGET DENSITY OF {self.target} {self.full_thin[2].replace('_', ' ').upper()} ACHIEVED
+            message = f"""\nTARGET DENSITY OF {self.target} {self.full_thin[2].replace('_', '/').upper()} ACHIEVED
 THINNING PARAMETERS:
    \tSPECIES: {', '.join(species)}
    \tMIN DBH: {min_dbh}
@@ -161,33 +177,47 @@ THINNING PARAMETERS:
             max_dbh = self.max_dbh
         return species, min_dbh, max_dbh
 
-
-
-
-
-
+    def check_density(self):
+        current_density = self[f'current_{self.target_metric}']
+        met = self.target_metric.replace('_', '/').upper()
+        if current_density < self.target:
+            raise TargetDenistyError(self.target, current_density, met)
 
 
 class ThinTPA(Thin):
     def __init__(self, stand, target_density: int, species_to_cut: list = 'all', min_dbh_to_cut: int = 0, max_dbh_to_cut: int = 999):
         super(ThinTPA, self).__init__(stand, target_density, species_to_cut, min_dbh_to_cut, max_dbh_to_cut)
-        self.thin_to_target('tpa')
+        self.target_metric = 'tpa'
+        self.check_density()
+        self.thin_to_target(self.target_metric)
         self.species_data = self._get_species_conditions()
-        self.console_print()
+
 
 class ThinBA(Thin):
     def __init__(self, stand, target_density: int, species_to_cut: list = 'all', min_dbh_to_cut: int = 0, max_dbh_to_cut: int = 999):
         super(ThinBA, self).__init__(stand, target_density, species_to_cut, min_dbh_to_cut, max_dbh_to_cut)
-        self.thin_to_target('ba_ac')
+        self.target_metric = 'ba_ac'
+        self.check_density()
+        self.thin_to_target(self.target_metric)
         self.species_data = self._get_species_conditions()
-        self.console_print()
 
 class ThinRD(Thin):
     def __init__(self, stand, target_density: int, species_to_cut: list = 'all', min_dbh_to_cut: int = 0, max_dbh_to_cut: int = 999):
         super(ThinRD, self).__init__(stand, target_density, species_to_cut, min_dbh_to_cut, max_dbh_to_cut)
-        self.thin_to_target('rd_ac')
+        self.target_metric = 'rd_ac'
+        self.check_density()
+        self.thin_to_target(self.target_metric)
         self.species_data = self._get_species_conditions()
-        self.console_print()
+
+
+class TargetDenistyError(Exception):
+    def __init__(self, target_density, current_density, target_metric):
+        p1 = f"""Target Density of {target_density} {target_metric} """
+        p2 = f"""is greater than Stand Total of {current_density} {target_metric}. """
+        p3 = f"""Please lower Target Density"""
+        self.message = p1 + p2 + p3
+        super(TargetDenistyError, self).__init__(self.message)
+
 
 
 

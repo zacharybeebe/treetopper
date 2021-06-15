@@ -301,12 +301,30 @@ if __name__ == '__main__':
     target = 140
     print('Thin ALL')
     thinba = ThinBA(stand, target)
-    print('\nThin DF/WH')
-    thinbaspp = ThinBA(stand, target, ['DF', 'WH'])
-    print('\nThin ALL Min 10 Max 18')
-    thinbadbh = ThinBA(stand, target, species_to_cut='all', min_dbh_to_cut=10, max_dbh_to_cut=18)
-    print('\nThin DF/WH min 10 Max 18')
+    thinbaspp = ThinBA(stand, target, ['DF', 'WH', 'RC'])
+    thinbadbh = ThinBA(stand, target, min_dbh_to_cut=10, max_dbh_to_cut=18)
     thinbasppdbh = ThinBA(stand, target, ['DF', 'WH'], min_dbh_to_cut=10, max_dbh_to_cut=18)
+    thinbaspp2 = ThinBA(stand, target, ['RC', 'RA'])
+
+    # target = 100
+    # print('Thin ALL')
+    # thinba = ThinTPA(stand, target)
+    # print('\nThin DF/WH')
+    # thinbaspp = ThinTPA(stand, target, ['DF', 'WH'])
+    # print('\nThin ALL Min 10 Max 18')
+    # thinbadbh = ThinTPA(stand, target, species_to_cut='all', min_dbh_to_cut=10, max_dbh_to_cut=18)
+    # print('\nThin DF/WH min 10 Max 18')
+    # thinbasppdbh = ThinTPA(stand, target, ['DF', 'WH'], min_dbh_to_cut=10, max_dbh_to_cut=18)
+
+    # target = 35
+    # print('Thin ALL')
+    # thinba = ThinRD(stand, target)
+    # print('\nThin DF/WH')
+    # thinbaspp = ThinRD(stand, target, ['DF', 'WH'])
+    # print('\nThin ALL Min 10 Max 18')
+    # thinbadbh = ThinRD(stand, target, species_to_cut='all', min_dbh_to_cut=10, max_dbh_to_cut=18)
+    # print('\nThin DF/WH min 10 Max 18')
+    # thinbasppdbh = ThinRD(stand, target, ['DF', 'WH'], min_dbh_to_cut=10, max_dbh_to_cut=18)
 
 
     # stand.console_report()

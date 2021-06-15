@@ -129,6 +129,35 @@ def print_species_stats(species):
         print()
 
 
+def print_thin_species(species):
+    all_data = []
+    for condition in species:
+        formatted_data = [condition.replace('_', '').upper()]
+        heads = ['SPECIES'] + [head[1] for head in SORTED_HEADS]
+        formatted_heads = ''.join([head + (' ' * (SPACE - len(head))) for head in heads])
+        formatted_data.append(formatted_heads)
+        formatted_data.append('-' * (SPACE * len(heads)))
+        for z, spp in enumerate(species[condition]):
+            if spp == 'totals_all':
+                show = 'TOTALS'
+            else:
+                show = spp
+            temp = [str(show)] + [format_comma(species[condition][spp][i[0]]) for i in SORTED_HEADS]
+            formatted_data.append(''.join([t + (' ' * (SPACE - len(t))) for t in temp]))
+            if z == len(species[condition]) - 1:
+                formatted_data.append('-' * (SPACE * len(heads)))
+
+        formatted_data.append(formatted_data.pop(3))
+        all_data.append(formatted_data)
+
+    all_data.append(all_data.pop(1))
+
+    for i in all_data:
+        for j in i:
+            print(j)
+        print('\n')
+
+
 def print_plot_logs(plot):
     logs = plot.logs
     heads = ['LOG LENGTHS'] + [rng.upper() for rng in LOG_LENGTHS] + ['TOTALS']

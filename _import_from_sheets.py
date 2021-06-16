@@ -50,7 +50,7 @@ def import_csv_full(directory, stand_name):
                 dbh = float(line[5])
                 check_height = line[6]
                 if check_height != '':
-                    height = int(check_height)
+                    height = int(float(check_height))
                     hdrs.append(height / (dbh / 12))
                 else:
                     height = check_height

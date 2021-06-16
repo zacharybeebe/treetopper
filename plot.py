@@ -10,6 +10,11 @@ from _console_print import print_plot_logs
 
 
 class Plot(object):
+    """The Plot Class is an individual plot within a Stand's Inventory. It holds Timber Classes of the trees
+       within the plot and runs calculations and statistics from those tree's metrics.
+
+       For inventories, this class is meant to be added to the Stand Class using the Stand Class method of add_plot"""
+
     def __init__(self):
         self.trees = []
         self.tree_count = 0
@@ -30,6 +35,8 @@ class Plot(object):
         return self.__dict__[attribute]
 
     def add_tree(self, timber):
+        """The timber argument should be one of the two Timber Classes (TimberQuick and/or TimberFull).
+           The Timber Class is added to the plot's trees list and plot calculations and statistics are re-run"""
         self.trees.append(timber)
         self.tree_count += 1
 
@@ -50,6 +57,7 @@ class Plot(object):
             self._update_logs(log)
 
     def _format_logs_species_dict(self):
+        """Returns a sub-dictionary for the species key of the plot's logs dictionary"""
         master = {}
         sub = {'lpa': 0,
                'bf_ac': 0,
@@ -64,6 +72,8 @@ class Plot(object):
         return master
 
     def _update_logs(self, log):
+        """Updated logs per acre, log board feet per acre, and log cubic feet per acre based on log grade and
+           log length range for both the species key and the totals_all key of the plot's logs dictionary"""
         for key in [log.species, 'totals_all']:
             for sub in ['lpa', 'bf_ac', 'cf_ac']:
                 self.logs[key][log.grade][log.length_range][sub] += log[sub]
@@ -74,6 +84,7 @@ class Plot(object):
                 self.logs[key]['totals_by_length']['display'] = True
 
     def _format_species_dict(self):
+        """Returns a sub-dictionary for the species key of the plot's species dictionary"""
         master = {'tpa': 0,
                   'ba_ac': 0,
                   'qmd': 0,
@@ -86,6 +97,7 @@ class Plot(object):
         return master
 
     def _update_species(self, tree):
+        """Updates the plot's overall calculations from the new data within the plot's species dictionary"""
         update_after = ['qmd', 'vbar', 'avg_hgt', 'hdr']
         if tree.species not in self.species:
             self.species[tree.species] = self._format_species_dict()
@@ -109,7 +121,7 @@ class Plot(object):
 
 
 
-
+"""EXAMPLE OF AN INDIVIDUAL PLOT WITH RANDOMLY GENERATED TREES (TIMBERQUICK CLASS)"""
 
 if __name__ == '__main__':
     trees, tree_count = generate_random_trees_quick(randrange(4, 9))
@@ -125,12 +137,6 @@ if __name__ == '__main__':
     print(f'Plot AVG_HGT: {plot.avg_hgt}')
     print(f'Plot HDR: {plot.hdr}')
     print()
-
-    # for species in plot.species:
-    #     print(f'{species}:')
-    #     for key in plot.species[species]:
-    #         print(f'\t{key}: {plot.species[species][key]}')
-
 
     for i, tree in enumerate(plot.trees):
         print(f'Tree #{i+1}')

@@ -4,7 +4,10 @@ from log import Log
 
 class TimberQuick(object):
     """TimberQuick is a class that will virtually cruise a tree based on it's
-       species, DBH, and total height. Preferred Log Length and Minimum Log Length are needed
+       species, DBH, total height and plot factor. For fixed-area plots use the negative inverse of the plot size (1/30th ac = -30),
+       for variable-area plots use the Basal Area Factor (BAF) (40 BAF = 40).
+
+       Preferred Log Length and Minimum Log Length are needed
        but set at the default industry standard of 40 foot preferred and 16 foot minimum.
 
        TimberQuick uses stem-taper equations from Czaplewski, Kozak, or Wensel

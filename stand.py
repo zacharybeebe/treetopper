@@ -42,20 +42,20 @@ class Stand(object):
             instantiate Stand -->
             instantiate Trees (w/ TimberQuick) -->
             create a list of lists based on number of plots, the sub-lists will contain the trees -->
-            instantiate Plots -->
-            add plots to a list -->
-            iterate over plots list and add corresponding trees from trees list using plot.add_tree(tree) -->
-            once trees have been added, add the plot to the Stand using stand.add_plot(plot)
+            iterate through the trees list and instantiate a plot at the beginning of the iteration -->
+            iterate through the sub list of and add the trees to the plot using plot.add_tree(tree) -->
+            after the trees have been added from the sub list, add the plot to the Stand using stand.add_plot(plot)
 
         If using the full cruise functionality of the TimberFull class, the flow should be:
             instantiate Stand -->
             instantiate Trees (w/ TimberFull) -->
-            add cruised logs to each tree by using tree.add_log(stem_height, length, grade, defect) -->
-            create a list of lists based on number of plots the sub-lists will contain the trees -->
-            instantiate Plots -->
-            add plots to a list -->
-            iterate over plots list and add corresponding trees from trees list using plot.add_tree(tree) -->
-            once trees have been added, add the plot to the Stand using stand.add_plot(plot)
+            create a list of lists based on number of plots, the sub-lists will contain the trees and log arguments -->
+            iterate through the trees/logs list and instantiate a plot at the beginning of the iteration -->
+            iterate through the sub list and then iterate though the logs metric sub list and add the logs to the tree
+                using tree.add_log(stem_height, length, grade, defect) -->
+            after the logs have been added, add the tree to the plot using plot.add_tree(tree) -->
+            after the trees have been added from the sub list, add the plot to the Stand using stand.add_plot(plot)
+
 
         Plots and Trees can also be read from CSV and Excel files
         ** these files need to be formatted correctly **
@@ -80,7 +80,7 @@ class Stand(object):
         stand.console_report()
 
         Stands can also be thinned using the Thinning Classes, the three thinning classes are ThinTPA, ThinBA, and ThinRD, they will thin
-        the stand based on the target Trees per Acre, Basal Area per Acre or Relative Density per Acre, respectively. The user can also
+        the stand based on a target Trees per Acre, Basal Area per Acre or Relative Density per Acre, respectively. The user can also
         choose certain species to cut, and minimum and maximum diameter limits.
 
         See __name__ == '__main__' for example workflows.
@@ -331,7 +331,7 @@ class Stand(object):
             raise Exception('Invalid date')
 
     def _get_stats(self, data):
-        """Runs the statistical calculations on a set of the stand conditions data, returns an updated sub_dict"""
+        """Runs the statistical calculations on a set of the stand conditions data, returns an updated sub dict"""
         m = mean(data)
         if len(data) >= 2:
             std = stdev(data)
@@ -366,7 +366,7 @@ if __name__ == '__main__':
     def workflow_1():
         """Workflow 1 will create a quick cruise stand from manually entered trees and plots and will then show a console report.
 
-           Using the ThinTPA class, we will thin the stand to a TPA of 80 Trees per Acre considering all species and diameter ranges
+           Using the ThinTPA class, we will thin the stand to a Trees per Acre of 80 considering all species and diameter ranges
            and then will show a console report of the thinning"""
 
         stand = Stand('WF1')
@@ -460,19 +460,19 @@ if __name__ == '__main__':
            and then will TRY to show a console report of the thinning.
 
            ** Note this thinning density is greater than the entire stand's density and the Thin Class will throw a
-           ThinningDensityError exception which will explain what went wrong"""
+           TargetDensityError exception which will explain what went wrong"""
 
         stand = Stand('OK2')
         stand.from_csv_full('Example_CSV_full.csv')
         stand.console_report()
 
-        thin25rd = ThinTPA(stand, 160)
-        thin25rd.console_report()
+        thin100tpa = ThinTPA(stand, 160)
+        thin100tpa.console_report()
 
     def workflow_5():
         """Workflow 5 will create a full cruise stand from importing a stand from a full cruise CSV file and export a PDF report.
            The stand class' name needs to match the stand name within the CSV file, we will use "EX3". The CSV file we will be using is
-           Example_CSV_quick.xlsx
+           Example_CSV_quick.csv.
 
            The PDF will exported to the current working directory as 'stand_report.pdf'
 
@@ -484,8 +484,8 @@ if __name__ == '__main__':
         stand.from_csv_quick('Example_CSV_quick.csv')
         stand.pdf_report('stand_report.pdf')
 
-        thin25rd = ThinBA(stand, 140, species_to_cut=['DF', 'WH', 'RA'], max_dbh_to_cut=24)
-        thin25rd.pdf_report('thin_report.pdf')
+        thin140ba = ThinBA(stand, 140, species_to_cut=['DF', 'WH', 'RA'], max_dbh_to_cut=24)
+        thin140ba.pdf_report('thin_report.pdf')
 
 
     # workflow_1()

@@ -60,7 +60,7 @@ class TimberQuick(object):
         return self.__dict__[item]
 
     def get_any_dib(self, stem_height):
-        """Return the diameter inside bark (DIB) at any given stem height"""
+        """Returns the diameter inside bark (DIB) at any given stem height"""
         return math.floor(self.equation(self.dbh, self.height, stem_height, **self.coef[1]))
 
     def _get_tpa_ba_ac_rd_ac(self):
@@ -85,7 +85,7 @@ class TimberQuick(object):
 
     def _get_merch_height(self):
         """Merch Height is calculated by a Divide and Conquer Algorithm with the starting check height
-           at 75% of the total height. The starting merch height is found when the check height equals the Merch DIB.
+           at 75% of the total height. The starting merch height is found when the check DIB equals the Merch DIB.
            All DIBs are rounded down to their floor values, so there may be multiple stem heights with the same DIB integer.
            The final merch height will be the top extent of this stem height range"""
         notcheck = True
@@ -115,8 +115,8 @@ class TimberQuick(object):
 
 
     def _get_volume_and_logs(self):
-        """Function for cruising the tree, this will determine the stem heights and lengths of the logs, which are sent to
-           the Log Class for volume calculations"""
+        """Method for cruising the tree, this will determine the stem heights and lengths of the logs, which are sent to
+           the Log Class for volume calculations, return a dictionary of the logs by log number"""
         stem_heights = self._calc_stem_heights()
         lengths = [self._calc_log_length(stem_heights[i-1], stem_heights[i]) for i in range(1, len(stem_heights))]
         stem_heights.pop(0)
@@ -139,7 +139,7 @@ class TimberQuick(object):
 
     def _calc_stem_heights(self):
         """Starting at stem height of 1 (stump height), master is updated with the log stem height calculated from
-           self._calc_log_stem, if self._calc_log_stem return None, all logs have been found and iteration is complete"""
+           self._calc_log_stem, if self._calc_log_stem returns None, all logs have been found and iteration is complete"""
         master = [1]
         for i in range(401):
             if not self._calc_log_stem(master[i]):
@@ -166,7 +166,7 @@ class TimberQuick(object):
                 return self.merch_height
 
     def _calc_log_length(self, previous_log_stem_height, current_log_stem_height):
-        """Return a log length in multiples of 2 (24, 26, 28... feet)"""
+        """Returns a log length in multiples of 2 (24, 26, 28... feet)"""
         return (current_log_stem_height - previous_log_stem_height - 1) // 2 * 2
 
 
@@ -182,7 +182,7 @@ class TimberFull(object):
 
        When the user adds a log using the add_log method, the log metrics are sent to the Log Class,
        to which their volumes in Board Feet (using Scribner Coefficients based on Log Length and top DIB)
-       and Cubic Feet (based on the Two-End Conic Cubic Foot Rule)
+       and Cubic Feet (based on the Two-End Conic Cubic Foot Rule) are calculated.
 
        For inventories, this class is meant to be added to the Plot Class using the Plot Class method of add_tree"""
 
@@ -214,7 +214,7 @@ class TimberFull(object):
         return self.__dict__[item]
 
     def add_log(self, stem_height, length, grade, defect):
-        """Adds Log Class to the logs dictionary of Timber Full and recalculates the tree's volumes and
+        """Adds Log Class to the logs dictionary of TimberFull and recalculates the tree's volumes and
            volume-related metrics"""
         if not self.logs:
             self.logs[1] = Log(self, stem_height, length, defect_pct=defect, grade=grade.upper())
@@ -242,7 +242,7 @@ class TimberFull(object):
             self.vbar = self.bf / self.ba
 
     def get_any_dib(self, stem_height):
-        """Return the diameter inside bark (DIB) at any given stem height"""
+        """Returns the diameter inside bark (DIB) at any given stem height"""
         return math.floor(self.equation(self.dbh, self.height, stem_height, **self.coef[1]))
 
     def _get_tpa_ba_ac_rd_ac(self):

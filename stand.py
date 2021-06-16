@@ -466,7 +466,7 @@ if __name__ == '__main__':
         stand.from_csv_full('Example_CSV_full.csv')
         stand.console_report()
 
-        thin100tpa = ThinTPA(stand, 160)
+        thin100tpa = ThinTPA(stand, 100)
         thin100tpa.console_report()
 
     def workflow_5():

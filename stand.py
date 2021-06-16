@@ -43,7 +43,7 @@ class Stand(object):
             instantiate Trees (w/ TimberQuick) -->
             create a list of lists based on number of plots, the sub-lists will contain the trees -->
             iterate through the trees list and instantiate a plot at the beginning of the iteration -->
-            iterate through the sub list of and add the trees to the plot using plot.add_tree(tree) -->
+            iterate through the sub list and add the trees to the plot using plot.add_tree(tree) -->
             after the trees have been added from the sub list, add the plot to the Stand using stand.add_plot(plot)
 
         If using the full cruise functionality of the TimberFull class, the flow should be:

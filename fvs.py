@@ -26,12 +26,12 @@ class FVS(object):
 
            If you would like a blank database to manually input your data, you can simply instantiate the FVS class and call either
 
-           fvs.access_db(filename, directory=directory (optional), blank_db=True)
-           fvs.excel_db(filename, directory=directory (optional), blank_db=True) OR
-           fvs.sqlite_db(filename, directory=directory (optional), blank_db=True)
+           fvs.access_db(filename, directory=yourdirectory (optional), blank_db=True)
+           fvs.excel_db(filename, directory=yourdirectory (optional), blank_db=True) OR
+           fvs.sqlite_db(filename, directory=yourdirectory (optional), blank_db=True)
 
-           The default directory is the current working directory
-           the 'blank_db' argument has to be set to True for blank databases (it's default is False)
+           If the directory argument is omitted, the default directory is the current working directory.
+           The 'blank_db' argument has to be set to True for blank databases (its default is False)
 
            If you would like to create the databases from a Stand Class, you can instantiate the FVS class and call the
            fvs.set_stand method

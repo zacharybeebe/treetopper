@@ -20,11 +20,54 @@ from _constants import (ACCESS_GROUPS_COLS,
 
 class FVS(object):
     def __init__(self):
+        """The FVS class will create FVS-formatted databases for use in FVS. FVS is a software made by the US Forest Service to
+           run models, inventories and simulations on different forest stands. The three types of databases the FVS class creates
+           are Microsoft Access, Microsoft Excel and SQLite
+
+           If you would like a blank database to manually input your data, you can simply instantiate the FVS class and call either
+
+           fvs.access_db(filename, directory=directory (optional), blank_db=True)
+           fvs.excel_db(filename, directory=directory (optional), blank_db=True) OR
+           fvs.sqlite_db(filename, directory=directory (optional), blank_db=True)
+
+           The default directory is the current working directory
+           the 'blank_db' argument has to be set to True for blank databases (it's default is False)
+
+           If you would like to create the databases from a Stand Class, you can instantiate the FVS class and call the
+           fvs.set_stand method
+
+           There are seven required arguments, these are data that the FVS software needs for it's models, they include
+
+           stand (the Stand Class)
+           variant (str) [These are two-letter acronyms for different eco-regions throughout the US]
+           forest_code (int) [This is the forest code for the closest national forest to your stand]
+           region (int) [This is the region code for the forest service region your stand is in]
+           stand_age (int) [The approximate age of the stand]
+           site_species (str) [The species acronym for the species being used to measure site index]
+           site_index (int) [The site index of the stand]
+
+           kwargs can be used to add additional data to your stand. To see the list of the other stand data call the
+           fvs.show_stand_args method, use this console printout to find the index of your desired argument(s),
+           then use the list index to set your argument to fill in the kwargs,
+           for example fvs.set_stand(... fvs.stand_args[4]=22)
+
+           After setting the stand in the FVS class, you can then create or append your databases by calling the database-specific methods
+           listed above"""
+
+        self.stand_args = [i[0] for i in ACCESS_STAND_COLS[1]]
         self.stand = None
         self.stand_fvs = None
         self.tree_fvs = None
 
+    def show_stand_args(self):
+        """Shows the optional stand data and their indices within self.stand_args"""
+        format_space = 20
+        for i, arg in enumerate(self.stand_args):
+            print(f'{arg + (" " * (format_space - len(arg)))}\t Index: {i}')
+
     def set_stand(self, stand, variant: str, forest_code: int, region: int, stand_age: int, site_species: str, site_index: int, **kwargs):
+        """Extracts the stand and tree data from the Stand class and updates the stand_fvs and tree_fvs dictionaries which will be used
+           to create or update the databases"""
         self.stand = deepcopy(stand)
         self.stand_fvs = {i[0]: None for i in ACCESS_STAND_COLS[1]}
         self.tree_fvs = {}
@@ -68,6 +111,7 @@ class FVS(object):
                 self.stand_fvs[key] = kwargs[key]
 
     def access_db(self, filename: str, directory: str = None, blank_db: bool = False):
+        """Creates or updates an FVS-formatted Microsoft Access Database (.accdb)"""
         db_save = extension_check(filename, '.accdb')
 
         if directory:
@@ -100,6 +144,7 @@ class FVS(object):
         self._create_loc_file(db_save, dir_)
 
     def sqlite_db(self, filename: str, directory: str = None, blank_db: bool = False):
+        """Creates or updates an FVS-formatted SQLite Database (.db)"""
         db_save = extension_check(filename, '.db')
 
         if directory:
@@ -119,6 +164,7 @@ class FVS(object):
         con.close()
 
     def excel_db(self, filename: str, directory: str = None, blank_db: bool = False):
+        """Creates or updates an FVS-formatted Microsoft Excel Database (.xlsx)"""
         db_save = extension_check(filename, '.xlsx')
 
         if directory:
@@ -137,6 +183,7 @@ class FVS(object):
         wb.save(db_path)
 
     def _create_access_db(self, db_path:  str):
+        """If the file does not exist, this method is called to construct the Access database, used internally"""
         access = Dispatch("Access.Application")
         access_engine = access.DBEngine
         access_workspace = access_engine.Workspaces(0)
@@ -144,10 +191,11 @@ class FVS(object):
         access_db = access_workspace.CreateDatabase(db_path, access_language, 64)
 
         for table in [ACCESS_GROUPS_COLS, ACCESS_STAND_COLS, ACCESS_TREE_COLS]:
-            sql = f'CREATE TABLE {table[0]} (' + ', '.join([f'{i[0]} {i[1]}' for i in table[1]]) + ');'
+            sql = f"""CREATE TABLE {table[0]} ({', '.join([f'{i[0]} {i[1]}' for i in table[1]])});"""
             access_db.Execute(sql)
 
     def _create_sqlite_db(self, db_path: str, db_save: str):
+        """If the file does not exist, this method is called to construct the SQLite database, used internally"""
         con = sqcon(db_path)
         cur = con.cursor()
         for i, table in enumerate([SQL_GROUPS_COLS, SQL_STAND_COLS, SQL_TREE_COLS]):
@@ -160,6 +208,7 @@ class FVS(object):
         return con, cur
 
     def _create_excel_db(self, db_save: str):
+        """If the file does not exist, this method is called to construct the Excel database, used internally"""
         wb = Workbook()
         for i, table in enumerate([ACCESS_GROUPS_COLS, ACCESS_STAND_COLS, ACCESS_TREE_COLS]):
             ws = wb.create_sheet(table[0])
@@ -176,6 +225,7 @@ class FVS(object):
         return wb
 
     def _insert_sql(self, connection, cursor):
+        """Inserts the stand and tree FVS data into the Access or SQLite database"""
         stand_cols = [col for col in self.stand_fvs if self.stand_fvs[col]]
         stand_vals = [self.stand_fvs[col] for col in self.stand_fvs if self.stand_fvs[col]]
         stand_sql = f"""INSERT INTO FVS_StandInit ({', '.join(stand_cols)}) VALUES ({', '.join(['?' for _ in stand_cols])})"""
@@ -190,6 +240,7 @@ class FVS(object):
         connection.commit()
 
     def _insert_excel(self, workbook):
+        """Inserts the stand and tree FVS data into the Excel database"""
         stand_keys = list(self.stand_fvs)
         stand_cols = [col for col in self.stand_fvs if self.stand_fvs[col]]
         stand_idxs = [stand_keys.index(col) + 1 for col in stand_cols]
@@ -212,6 +263,8 @@ class FVS(object):
             next_row += 1
 
     def _create_loc_file(self, db_save, directory):
+        """In the FVS software (legacy versions), a Suppose.loc file needs to be made or modified with the Access database,
+           this file is created in the same directory as the database"""
         loc_path = join(directory, 'Suppose.loc')
         fill_text = f'{loc_path[0]} "{db_save[0:-6]}" {db_save}'
 
@@ -241,6 +294,7 @@ if __name__ == '__main__':
     stand = Stand('OK2', 46.94)
     stand.from_csv_full('Example_CSV_full.csv')
     fvs = FVS()
+    fvs.show_stand_args()
     fvs.set_stand(stand, 'PN', 612, 6, 50, 'DF', 120)
     fvs.access_db('spam')
 

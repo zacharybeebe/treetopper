@@ -2,6 +2,7 @@ from csv import reader
 from openpyxl import load_workbook
 from statistics import mean
 
+
 def import_csv_quick(directory, stand_name):
     hdrs = []
     plots = {}
@@ -130,8 +131,8 @@ def import_excel_full(directory, stand_name):
             height = line[5]
             if height:
                 hdrs.append(height / (dbh / 12))
-
-            plots[pnum][line[2]] = {'species': line[3],
+            tree_num = line[2]
+            plots[pnum][tree_num] = {'species': line[3],
                                     'dbh': dbh,
                                     'height': height}
             logs = {}
@@ -151,7 +152,7 @@ def import_excel_full(directory, stand_name):
                     if i != 40:
                         if line[i+3]:
                             stem_height += line[i+3]
-            plots[pnum][line[3]]['logs'] = logs
+            plots[pnum][tree_num]['logs'] = logs
 
         else:
             if plots:

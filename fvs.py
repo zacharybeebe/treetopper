@@ -15,9 +15,8 @@ from _constants import (ACCESS_GROUPS_COLS,
                         SQL_STAND_COLS,
                         SQL_TREE_COLS,
                         GROUPS_DEFAULTS,
-                        get_filename_only,
                         extension_check)
-from stand import Stand
+
 
 class FVS(object):
     def __init__(self):
@@ -70,12 +69,13 @@ class FVS(object):
 
     def access_db(self, filename: str, directory: str = None, blank_db: bool = False):
         db_save = extension_check(filename, '.accdb')
-        db_short = get_filename_only(db_save)
 
         if directory:
-            db_path = join(directory, db_save)
+            dir_ = directory
+            db_path = join(dir_, db_save)
         else:
-            db_path = join(getcwd(), db_save)
+            dir_ = getcwd()
+            db_path = join(dir_, db_save)
 
         db_exists = True
 
@@ -90,17 +90,17 @@ class FVS(object):
 
         if not db_exists:
             sql = f"""INSERT INTO FVS_GroupAddFilesAndKeywords (Groups, FVSKeywords) VALUES (?, ?)"""
-            cur.execute(sql, [GROUPS_DEFAULTS[0], GROUPS_DEFAULTS[1].format(DB_NAME=db_short)])
+            cur.execute(sql, [GROUPS_DEFAULTS[0], GROUPS_DEFAULTS[1].format(DB_NAME=db_save)])
             con.commit()
 
         if not blank_db:
             self._insert_sql(con, cur)
-
         con.close()
+
+        self._create_loc_file(db_save, dir_)
 
     def sqlite_db(self, filename: str, directory: str = None, blank_db: bool = False):
         db_save = extension_check(filename, '.db')
-        db_short = get_filename_only(db_save)
 
         if directory:
             db_path = join(directory, db_save)
@@ -108,7 +108,7 @@ class FVS(object):
             db_path = join(getcwd(), db_save)
 
         if not isfile(db_path):
-            con, cur = self._create_sqlite_db(db_path, db_short)
+            con, cur = self._create_sqlite_db(db_path, db_save)
         else:
             con = sqcon(db_path)
             cur = con.cursor()
@@ -120,7 +120,6 @@ class FVS(object):
 
     def excel_db(self, filename: str, directory: str = None, blank_db: bool = False):
         db_save = extension_check(filename, '.xlsx')
-        db_short = get_filename_only(db_save)
 
         if directory:
             db_path = join(directory, db_save)
@@ -128,7 +127,7 @@ class FVS(object):
             db_path = join(getcwd(), db_save)
 
         if not isfile(db_path):
-            wb = self._create_excel_db(db_short)
+            wb = self._create_excel_db(db_save)
         else:
             wb = load_workbook(db_path)
 
@@ -148,7 +147,7 @@ class FVS(object):
             sql = f'CREATE TABLE {table[0]} (' + ', '.join([f'{i[0]} {i[1]}' for i in table[1]]) + ');'
             access_db.Execute(sql)
 
-    def _create_sqlite_db(self, db_path: str, db_short: str):
+    def _create_sqlite_db(self, db_path: str, db_save: str):
         con = sqcon(db_path)
         cur = con.cursor()
         for i, table in enumerate([SQL_GROUPS_COLS, SQL_STAND_COLS, SQL_TREE_COLS]):
@@ -156,11 +155,11 @@ class FVS(object):
             cur.execute(sql)
 
         sql = f"""INSERT INTO FVS_GroupAddFilesAndKeywords (Groups, FVSKeywords) VALUES (?, ?)"""
-        cur.execute(sql, [GROUPS_DEFAULTS[0], GROUPS_DEFAULTS[1].format(DB_NAME=db_short)])
+        cur.execute(sql, [GROUPS_DEFAULTS[0], GROUPS_DEFAULTS[1].format(DB_NAME=db_save)])
         con.commit()
         return con, cur
 
-    def _create_excel_db(self, db_short: str):
+    def _create_excel_db(self, db_save: str):
         wb = Workbook()
         for i, table in enumerate([ACCESS_GROUPS_COLS, ACCESS_STAND_COLS, ACCESS_TREE_COLS]):
             ws = wb.create_sheet(table[0])
@@ -168,7 +167,7 @@ class FVS(object):
                 ws.cell(1, j + 1).value = col[0]
             if i == 0:
                 ws.cell(2, 1).value = GROUPS_DEFAULTS[0]
-                ws.cell(2, 3).value = GROUPS_DEFAULTS[1].format(DB_NAME=db_short)
+                ws.cell(2, 3).value = GROUPS_DEFAULTS[1].format(DB_NAME=db_save)
                 ws.cell(2, 3).alignment = Alignment(wrapText=True)
 
         for sheet in wb.sheetnames:
@@ -212,6 +211,24 @@ class FVS(object):
                 ws.cell(next_row, idx).value = val
             next_row += 1
 
+    def _create_loc_file(self, db_save, directory):
+        loc_path = join(directory, 'Suppose.loc')
+        fill_text = f'{loc_path[0]} "{db_save[0:-6]}" {db_save}'
+
+        if isfile(loc_path):
+            in_loc = True
+            with open(loc_path, 'r') as f:
+                lines = [i.strip('\n') for i in f.readlines()]
+                if fill_text not in lines:
+                    in_loc = False
+
+            if not in_loc:
+                with open(loc_path, 'a') as f:
+                    f.write('\n' + fill_text)
+        else:
+            with open(loc_path, 'w') as f:
+                f.write(fill_text)
+
 
 
 
@@ -219,9 +236,11 @@ class FVS(object):
 
 
 if __name__ == '__main__':
+    from stand import Stand
+
     stand = Stand('OK2', 46.94)
     stand.from_csv_full('Example_CSV_full.csv')
     fvs = FVS()
     fvs.set_stand(stand, 'PN', 612, 6, 50, 'DF', 120)
-    fvs.excel_db('spam')
+    fvs.access_db('spam')
 

@@ -1,8 +1,5 @@
 from os import startfile, getcwd
 from os.path import join
-from _constants import (math,
-                        extension_check,
-                        LOG_LENGTHS)
 from datetime import (datetime,
                       date)
 from statistics import (mean,
@@ -11,20 +8,17 @@ from statistics import (mean,
 from plot import Plot
 from timber import (TimberQuick,
                     TimberFull)
-from thin import (ThinTPA,
-                  ThinBA,
-                  ThinRD)
+from _constants import (math,
+                        extension_check,
+                        LOG_LENGTHS)
 from _import_from_sheets import (import_csv_quick,
                                  import_csv_full,
                                  import_excel_quick,
                                  import_excel_full)
-from _testing import (generate_random_plots,
-                      timer)
 from _console_print import (print_species,
                             print_logs,
                             print_species_stats)
 from _pdf_print import PDF
-import plotly.express as px
 
 
 
@@ -363,6 +357,10 @@ class Stand(object):
 """EXAMPLE WORK FLOWS"""
 
 if __name__ == '__main__':
+    from thin import (ThinTPA,
+                      ThinBA,
+                      ThinRD)
+    from fvs import FVS
 
     def workflow_1():
         """Workflow 1 will create a quick cruise stand from manually entered trees and plots and will then show a console report.
@@ -391,8 +389,6 @@ if __name__ == '__main__':
 
         thin80tpa = ThinTPA(stand, 80)
         thin80tpa.console_report()
-
-
 
 
     def workflow_2():
@@ -488,12 +484,34 @@ if __name__ == '__main__':
         thin140ba = ThinBA(stand, 140, species_to_cut=['DF', 'WH', 'RA'], max_dbh_to_cut=24)
         thin140ba.pdf_report('thin_report.pdf')
 
+    def workflow_6():
+        """Workflow 6 will create a full cruise stand from importing a stand from a full cruise Excel file.
+           The stand class' name needs to match the stand name within the Excel file, we will use "OK1". The Excel file we will be using is
+           Example_Excel_full.csv
+
+           We will then use the FVS class to export the stand's data to three databases in the current working directory.
+           These are for use in FVS which is the Forest Service's Forest Vegetation Simulator software
+
+           ** Note the Access Database also needs to have a Suppose.loc file associated with it, this is created as well in
+           the same directory as the Access Database"""
+
+        stand = Stand('OK1', -30)
+        stand.from_excel_full('Example_Excel_full.xlsx')
+
+        fvs = FVS()
+        fvs.set_stand(stand, 'PN', 612, 6, 45, 'DF', 110)
+
+        fvs.access_db('access_db')
+        fvs.sqlite_db('sqlite_db')
+        fvs.excel_db('excel_db')
+
 
     # workflow_1()
     # workflow_2()
     # workflow_3()
     # workflow_4()
     # workflow_5()
+    # workflow_6()
 
 
 

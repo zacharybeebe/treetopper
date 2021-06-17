@@ -263,9 +263,7 @@ SQL_TREE_COLS = ['FVS_TreeInit', [['Stand_ID', 'TEXT'], ['StandPlot_ID', 'TEXT']
                  ['SitePrep', 'REAL']]]
 
 
-
-
-
+# USEFUL FUNCTIONS
 
 
 def format_comma(val: float):

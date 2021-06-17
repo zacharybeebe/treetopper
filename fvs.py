@@ -34,7 +34,7 @@ class FVS(object):
            The 'blank_db' argument has to be set to True for blank databases (its default is False)
 
            If you would like to create the databases from a Stand Class, you can instantiate the FVS class and call the
-           fvs.set_stand method. There are seven required arguments, these are data that the FVS software needs for it's models, they include
+           fvs.set_stand method. There are seven required arguments, these are data that the FVS software needs for its models, they include
 
            stand (the Stand Class)
            variant (str) [These are two-letter acronyms for different eco-regions throughout the US]

@@ -1,11 +1,7 @@
-from random import randrange
 from statistics import mean
-from timber import (math,
-                    TimberQuick,
-                    TimberFull,
-                    GRADE_NAMES,
-                    LOG_LENGTHS)
-from _testing import generate_random_trees_quick
+from _constants import (math,
+                        GRADE_NAMES,
+                        LOG_LENGTHS)
 from _console_print import print_plot_logs
 
 
@@ -124,6 +120,9 @@ class Plot(object):
 """EXAMPLE OF AN INDIVIDUAL PLOT WITH RANDOMLY GENERATED TREES (TIMBERQUICK CLASS)"""
 
 if __name__ == '__main__':
+    from random import randrange
+    from _testing import generate_random_trees_quick
+
     trees, tree_count = generate_random_trees_quick(randrange(4, 9))
 
     plot = Plot()

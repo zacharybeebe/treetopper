@@ -1,5 +1,8 @@
-from _constants import *
 from log import Log
+from _constants import (math,
+                        ALL_TAPERS_DICT,
+                        EQUATION_DICT)
+
 
 
 class TimberQuick(object):

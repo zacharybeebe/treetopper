@@ -196,21 +196,76 @@ LOG_LENGTHS = {'<= 10 feet': (1, 10),
 SORTED_HEADS = [['tpa', 'TPA'], ['ba_ac', 'BASAL AREA'], ['rd_ac', 'RD'], ['qmd', 'QMD'], ['vbar', 'VBAR'],
                 ['avg_hgt', 'AVG HEIGHT'], ['hdr', 'HDR'], ['bf_ac', 'BOARD FEET'], ['cf_ac', 'CUBIC FEET']]
 
+#FVS
 
-FVS_STAND_COLS = ['STAND_CN', 'STAND_ID', 'VARIANT', 'INV_YEAR', 'GROUPS', 'ADDFILES', 'FVSKEYWORDS', 'GIS_LINK', 'PROJECT_NAME',
-                  'LATITUDE', 'LONGITUDE', 'DATUM', 'REGION', 'FOREST', 'DISTRICT', 'COMPARTMENT', 'LOCATION', 'ECOREGION', 'PV_CODE',
-                  'PV_REF_CODE', 'AGE', 'ASPECT', 'SLOPE', 'ELEVATION', 'ELEVFT', 'BASAL_AREA_FACTOR', 'INV_PLOT_SIZE', 'BRK_DBH',
-                  'NUM_PLOTS', 'NONSTK_PLOTS', 'SAM_WT', 'STK_PCNT', 'DG_TRANS', 'DG_MEASURE', 'HTG_TRANS', 'HTG_MEASURE', 'MORT_MEASURE',
-                  'MAX_BA', 'MAX_SDI', 'SITE_SPECIES', 'SITE_INDEX', 'SITE_INDEX_REFERENCE_CODE', 'SITE_INDEX_BASE_AGE', 'MODEL_TYPE',
-                  'PHYSIO_REGION', 'FOREST_TYPE', 'STATE', 'COUNTY', 'FUEL_MODEL', 'FUEL_0_25', 'FUEL_25_1', 'FUEL_1_3', 'FUEL_3_6_H',
-                  'FUEL_6_12_H', 'FUEL_12_20_H', 'FUEL_20_35_H', 'FUEL_35_50_H', 'FUEL_GT_50_H', 'FUEL_3_6_S', 'FUEL_6_12_S',
-                  'FUEL_12_20_S', 'FUEL_20_35_S', 'FUEL_35_50_S', 'FUEL_GT_50_S', 'FUEL_LITTER', 'FUEL_DUFF', 'PHOTO_REF', 'PHOTO_CODE']
+FVS_KEYWORDS = """Database\r
+DSNin\r
+{DB_NAME}\r
+StandSQL\r
+SELECT * FROM FVS_StandInit WHERE Stand_ID = '%Stand_ID%'\r
+EndSQL\r
+TreeSQL\r
+SELECT * FROM FVS_TreeInit WHERE Stand_ID = '%Stand_ID%'\r
+EndSQL\r
+END"""
 
-FVS_TREE_COLS = ['STAND_CN', 'STAND_ID', 'PLOT_CN', 'PLOT_ID', 'STANDPLOT_CN', 'STANDPLOT_ID', 'TREE_CN', 'TREE_ID', 'TAG_ID',
-                 'SITE_TREE_FLAG', 'TREE_COUNT', 'HISTORY', 'SPECIES', 'DIAMETER', 'DIAMETER_HT', 'DG', 'HT', 'HTG', 'HTTOPK',
-                 'HT_TO_LIVE_CROWN', 'CRCLASS', 'CRRATIO', 'DAMAGE1', 'SEVERITY1', 'DAMAGE2', 'SEVERITY2', 'DAMAGE3', 'SEVERITY3',
-                 'DEFECT_CUBIC', 'DEFECT_BOARD', 'TREEVALUE', 'PRESCRIPTION', 'AGE', 'SLOPE', 'ASPECT', 'PV_CODE', 'PV_REF_CODE',
-                 'TOPOCODE', 'SITEPREP']
+GROUPS_DEFAULTS = ['All_Stands', FVS_KEYWORDS]
+
+ACCESS_GROUPS_COLS = ['FVS_GroupAddFilesAndKeywords', [['Groups', 'VARCHAR'], ['Addfiles', 'LONGCHAR'], ['FVSKeywords', 'LONGCHAR']]]
+
+ACCESS_STAND_COLS = ['FVS_StandInit', [['Stand_ID', 'VARCHAR'], ['Variant', 'VARCHAR'], ['Inv_Year', 'INTEGER'], ['Groups', 'LONGCHAR'],
+                     ['AddFiles', 'LONGCHAR'], ['FVSKeywords', 'LONGCHAR'], ['Latitude', 'DOUBLE'], ['Longitude', 'DOUBLE'],
+                     ['Region', 'INTEGER'], ['Forest', 'INTEGER'], ['District', 'INTEGER'], ['Compartment', 'INTEGER'],
+                     ['Location', 'INTEGER'], ['Ecoregion', 'VARCHAR'], ['PV_Code', 'VARCHAR'], ['PV_Ref_Code', 'INTEGER'],
+                     ['Age', 'INTEGER'], ['Aspect', 'DOUBLE'], ['Slope', 'DOUBLE'], ['Elevation', 'DOUBLE'], ['ElevFt', 'DOUBLE'],
+                     ['Basal_Area_Factor', 'DOUBLE'], ['Inv_Plot_Size', 'DOUBLE'], ['Brk_DBH', 'DOUBLE'], ['Num_Plots', 'INTEGER'],
+                     ['NonStk_Plots', 'INTEGER'], ['Sam_Wt', 'DOUBLE'], ['Stk_Pcnt', 'DOUBLE'], ['DG_Trans', 'INTEGER'],
+                     ['DG_Measure', 'INTEGER'], ['HTG_Trans', 'INTEGER'], ['HTG_Measure', 'INTEGER'], ['Mort_Measure', 'INTEGER'],
+                     ['Max_BA', 'DOUBLE'], ['Max_SDI', 'DOUBLE'], ['Site_Species', 'VARCHAR'], ['Site_Index', 'DOUBLE'],
+                     ['Model_Type', 'INTEGER'], ['Physio_Region', 'INTEGER'], ['Forest_Type', 'INTEGER'], ['State', 'INTEGER'],
+                     ['County', 'INTEGER'], ['Fuel_Model', 'INTEGER'], ['Fuel_0_25_H', 'DOUBLE'], ['Fuel_25_1_H', 'DOUBLE'],
+                     ['Fuel_1_3_H', 'DOUBLE'], ['Fuel_3_6_H', 'DOUBLE'], ['Fuel_6_12_H', 'DOUBLE'], ['Fuel_12_20_H', 'DOUBLE'],
+                     ['Fuel_20_35_H', 'DOUBLE'], ['Fuel_35_50_H', 'DOUBLE'], ['Fuel_gt_50_H', 'DOUBLE'], ['Fuel_0_25_S', 'DOUBLE'],
+                     ['Fuel_25_1_S', 'DOUBLE'], ['Fuel_1_3_S', 'DOUBLE'], ['Fuel_3_6_S', 'DOUBLE'], ['Fuel_6_12_S', 'DOUBLE'],
+                     ['Fuel_12_20_S', 'DOUBLE'], ['Fuel_20_35_S', 'DOUBLE'], ['Fuel_35_50_S', 'DOUBLE'], ['Fuel_gt_50_S', 'DOUBLE'],
+                     ['Fuel_Litter', 'DOUBLE'], ['Fuel_Duff', 'DOUBLE'], ['Photo_Ref', 'INTEGER'], ['Photo_code', 'VARCHAR']]]
+
+ACCESS_TREE_COLS = ['FVS_TreeInit', [['Stand_ID', 'VARCHAR'], ['StandPlot_ID', 'VARCHAR'], ['Plot_ID', 'DOUBLE'], ['Tree_ID', 'DOUBLE'],
+                    ['Tree_Count', 'DOUBLE'], ['History', 'DOUBLE'], ['Species', 'VARCHAR'], ['DBH', 'DOUBLE'], ['DG', 'DOUBLE'],
+                    ['Ht', 'DOUBLE'], ['HTG', 'DOUBLE'], ['HtTopK', 'DOUBLE'], ['CrRatio', 'DOUBLE'], ['Damage1', 'DOUBLE'],
+                    ['Severity1', 'DOUBLE'], ['Damage2', 'DOUBLE'], ['Severity2', 'DOUBLE'], ['Damage3', 'DOUBLE'], ['Severity3', 'DOUBLE'],
+                    ['TreeValue', 'DOUBLE'], ['Prescription', 'DOUBLE'], ['Age', 'DOUBLE'], ['Slope', 'INTEGER'], ['Aspect', 'INTEGER'],
+                    ['PV_Code', 'VARCHAR'], ['TopoCode', 'DOUBLE'], ['SitePrep', 'DOUBLE']]]
+
+SQL_GROUPS_COLS = ['FVS_GroupAddFilesAndKeywords', [['Groups', 'TEXT'], ['Addfiles', 'TEXT'], ['FVSKeywords', 'TEXT']]]
+
+SQL_STAND_COLS = ['FVS_StandInit', [['Stand_ID', 'TEXT'], ['Variant', 'TEXT'], ['Inv_Year', 'INTEGER'], ['Groups', 'TEXT'], ['AddFiles', 'TEXT'],
+                  ['FVSKeywords', 'TEXT'], ['Latitude', 'REAL'], ['Longitude', 'REAL'], ['Region', 'INTEGER'], ['Forest', 'INTEGER'],
+                  ['District', 'INTEGER'], ['Compartment', 'INTEGER'], ['Location', 'INTEGER'], ['Ecoregion', 'TEXT'], ['PV_Code', 'TEXT'],
+                  ['PV_Ref_Code', 'INTEGER'], ['Age', 'INTEGER'], ['Aspect', 'REAL'], ['Slope', 'REAL'], ['Elevation', 'REAL'],
+                  ['ElevFt', 'REAL'], ['Basal_Area_Factor', 'REAL'], ['Inv_Plot_Size', 'REAL'], ['Brk_DBH', 'REAL'],
+                  ['Num_Plots', 'INTEGER'], ['NonStk_Plots', 'INTEGER'], ['Sam_Wt', 'REAL'], ['Stk_Pcnt', 'REAL'], ['DG_Trans', 'INTEGER'],
+                  ['DG_Measure', 'INTEGER'], ['HTG_Trans', 'INTEGER'], ['HTG_Measure', 'INTEGER'], ['Mort_Measure', 'INTEGER'],
+                  ['Max_BA', 'REAL'], ['Max_SDI', 'REAL'], ['Site_Species', 'TEXT'], ['Site_Index', 'REAL'], ['Model_Type', 'INTEGER'],
+                  ['Physio_Region', 'INTEGER'], ['Forest_Type', 'INTEGER'], ['State', 'INTEGER'], ['County', 'INTEGER'],
+                  ['Fuel_Model', 'INTEGER'], ['Fuel_0_25_H', 'REAL'], ['Fuel_25_1_H', 'REAL'], ['Fuel_1_3_H', 'REAL'],
+                  ['Fuel_3_6_H', 'REAL'], ['Fuel_6_12_H', 'REAL'], ['Fuel_12_20_H', 'REAL'], ['Fuel_20_35_H', 'REAL'],
+                  ['Fuel_35_50_H', 'REAL'], ['Fuel_gt_50_H', 'REAL'], ['Fuel_0_25_S', 'REAL'], ['Fuel_25_1_S', 'REAL'],
+                  ['Fuel_1_3_S', 'REAL'], ['Fuel_3_6_S', 'REAL'], ['Fuel_6_12_S', 'REAL'], ['Fuel_12_20_S', 'REAL'],
+                  ['Fuel_20_35_S', 'REAL'], ['Fuel_35_50_S', 'REAL'], ['Fuel_gt_50_S', 'REAL'], ['Fuel_Litter', 'REAL'],
+                  ['Fuel_Duff', 'REAL'], ['Photo_Ref', 'INTEGER'], ['Photo_code', 'TEXT']]]
+
+SQL_TREE_COLS = ['FVS_TreeInit', [['Stand_ID', 'TEXT'], ['StandPlot_ID', 'TEXT'], ['Plot_ID', 'REAL'], ['Tree_ID', 'REAL'], ['Tree_Count', 'REAL'],
+                 ['History', 'REAL'], ['Species', 'TEXT'], ['DBH', 'REAL'], ['DG', 'REAL'], ['Ht', 'REAL'], ['HTG', 'REAL'],
+                 ['HtTopK', 'REAL'], ['CrRatio', 'REAL'], ['Damage1', 'REAL'], ['Severity1', 'REAL'], ['Damage2', 'REAL'],
+                 ['Severity2', 'REAL'], ['Damage3', 'REAL'], ['Severity3', 'REAL'], ['TreeValue', 'REAL'], ['Prescription', 'REAL'],
+                 ['Age', 'REAL'], ['Slope', 'INTEGER'], ['Aspect', 'INTEGER'], ['PV_Code', 'TEXT'], ['TopoCode', 'REAL'],
+                 ['SitePrep', 'REAL']]]
+
+
+
+
+
 
 
 def format_comma(val: float):
@@ -231,9 +286,15 @@ def sort_grade(item):
 
 
 def extension_check(filename, extension):
-    check = ''.join([filename[i] for i in range(-len(extension), 0)])
+    check = ''.join(filename[-len(extension):])
     if check != extension:
         filename += extension
     return filename
+
+
+def get_filename_only(file_path):
+    for i in range(-1, -len(file_path), -1):
+        if file_path[i] == '/':
+            return ''.join(file_path[i+1:])
 
 

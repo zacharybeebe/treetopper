@@ -87,8 +87,9 @@ class Stand(object):
 
         HAPPY CRUISING!"""
 
-    def __init__(self, name:str, acres:float = None, inventory_date:str = None):
+    def __init__(self, name:str, plot_factor: float, acres:float = None, inventory_date:str = None):
         self.name = name
+        self.plot_factor = plot_factor
         self.plots = []
         self.plot_count = 0
 
@@ -176,7 +177,7 @@ class Stand(object):
                     height = int((mets['dbh'] / 12) * avg_hdr)
                 else:
                     height = mets['height']
-                plot.add_tree(TimberQuick(mets['species'], mets['dbh'], height, mets['plot_factor'],
+                plot.add_tree(TimberQuick(mets['species'], mets['dbh'], height, self.plot_factor,
                                           preferred_log_length=mets['pref_log'], minimum_log_length=mets['min_log']))
             self.add_plot(plot)
 
@@ -191,7 +192,7 @@ class Stand(object):
                     height = int((mets['dbh'] / 12) * avg_hdr)
                 else:
                     height = mets['height']
-                tree = TimberFull(mets['species'], mets['dbh'], height, mets['plot_factor'])
+                tree = TimberFull(mets['species'], mets['dbh'], height, self.plot_factor)
                 for lnum in mets['logs']:
                     tree.add_log(*mets['logs'][lnum])
                 plot.add_tree(tree)
@@ -208,7 +209,7 @@ class Stand(object):
                     height = int((mets['dbh'] / 12) * avg_hdr)
                 else:
                     height = mets['height']
-                plot.add_tree(TimberQuick(mets['species'], mets['dbh'], height, mets['plot_factor'],
+                plot.add_tree(TimberQuick(mets['species'], mets['dbh'], height, self.plot_factor,
                                           preferred_log_length=mets['pref_log'], minimum_log_length=mets['min_log']))
             self.add_plot(plot)
 
@@ -223,7 +224,7 @@ class Stand(object):
                     height = int((mets['dbh'] / 12) * avg_hdr)
                 else:
                     height = mets['height']
-                tree = TimberFull(mets['species'], mets['dbh'], height, mets['plot_factor'])
+                tree = TimberFull(mets['species'], mets['dbh'], height, self.plot_factor)
                 for lnum in mets['logs']:
                     tree.add_log(*mets['logs'][lnum])
                 plot.add_tree(tree)
@@ -369,8 +370,8 @@ if __name__ == '__main__':
            Using the ThinTPA class, we will thin the stand to a Trees per Acre of 80 considering all species and diameter ranges
            and then will show a console report of the thinning"""
 
-        stand = Stand('WF1')
-        plot_factor = -20
+        stand = Stand('WF1', -20)
+        plot_factor = stand.plot_factor
         tree_data = [[TimberQuick('DF', 29.5, 119, plot_factor), TimberQuick('WH', 18.9, 102, plot_factor),
                       TimberQuick('WH', 20.2, 101, plot_factor), TimberQuick('WH', 19.9, 100, plot_factor),
                       TimberQuick('DF', 20.6, 112, plot_factor)],
@@ -400,8 +401,8 @@ if __name__ == '__main__':
            Using the ThinBA class, we will thin the stand to a BA/ac of 120 considering only DF and WH and all diameter ranges
            and then will show a console report of the thinning"""
 
-        stand = Stand('WF2')
-        plot_factor = 33.3
+        stand = Stand('WF2', 33.3)
+        plot_factor = stand.plot_factor
         tree_data = [[[TimberFull('DF', 29.5, 119, plot_factor), [[42, 40, 'S2', 5], [83, 40, 'S3', 0], [102, 18, 'S4', 10]]],
                       [TimberFull('WH', 18.9, 102, plot_factor), [[42, 40, 'S2', 0], [79, 36, 'S4', 5]]],
                       [TimberFull('WH', 20.2, 101, plot_factor), [[42, 40, 'S2', 5], [83, 40, 'S4', 0]]],
@@ -443,7 +444,7 @@ if __name__ == '__main__':
            harvest density, but this is to illustrate that the thinning will let the user know how much density was taken and how much
            more is needed to achieve the desired density target"""
 
-        stand = Stand('EX4')
+        stand = Stand('EX4', -30)
         stand.from_excel_quick('Example_Excel_quick.xlsx')
         stand.console_report()
 
@@ -462,7 +463,7 @@ if __name__ == '__main__':
            ** Note this thinning density is greater than the entire stand's density and the Thin Class will throw a
            TargetDensityError exception which will explain what went wrong"""
 
-        stand = Stand('OK2')
+        stand = Stand('OK2', 46.94)
         stand.from_csv_full('Example_CSV_full.csv')
         stand.console_report()
 
@@ -480,7 +481,7 @@ if __name__ == '__main__':
            with a maximum thinning DBH of 24 inches (thinning from below). Then a pdf report of the thinning will be exported
            in the current working directory as 'thin_report.pdf'"""
 
-        stand = Stand('EX3')
+        stand = Stand('EX3', 33.3)
         stand.from_csv_quick('Example_CSV_quick.csv')
         stand.pdf_report('stand_report.pdf')
 

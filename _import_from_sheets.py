@@ -2,7 +2,6 @@ from csv import reader
 from openpyxl import load_workbook
 from statistics import mean
 
-
 def import_csv_quick(directory, stand_name):
     hdrs = []
     plots = {}
@@ -14,20 +13,19 @@ def import_csv_quick(directory, stand_name):
                 pnum = int(line[1])
                 if pnum not in plots:
                     plots[pnum] = {}
-                dbh = float(line[5])
-                check_height = line[6]
+                dbh = float(line[4])
+                check_height = line[5]
                 if check_height != '':
                     height = int(check_height)
                     hdrs.append(height / (dbh / 12))
                 else:
                     height = check_height
 
-                plots[pnum][int(line[3])] = {'species': line[4],
+                plots[pnum][int(line[2])] = {'species': line[3],
                                              'dbh': dbh,
                                              'height': height,
-                                             'plot_factor': float(line[2]),
-                                             'pref_log': int(line[7]),
-                                             'min_log': int(line[8])}
+                                             'pref_log': int(line[6]),
+                                             'min_log': int(line[7])}
             else:
                 if plots:
                     break
@@ -47,21 +45,20 @@ def import_csv_full(directory, stand_name):
                 pnum = int(line[1])
                 if pnum not in plots:
                     plots[pnum] = {}
-                dbh = float(line[5])
-                check_height = line[6]
+                dbh = float(line[4])
+                check_height = line[5]
                 if check_height != '':
                     height = int(float(check_height))
                     hdrs.append(height / (dbh / 12))
                 else:
                     height = check_height
-                tree_num = int(line[3])
-                plots[pnum][tree_num] = {'species': line[4],
+                tree_num = int(line[2])
+                plots[pnum][tree_num] = {'species': line[3],
                                          'dbh': dbh,
-                                         'height': height,
-                                         'plot_factor': float(line[2])}
+                                         'height': height,}
                 logs = {}
-                stem_height = int(line[7])
-                for i in range(8, 41, 4):
+                stem_height = int(line[6])
+                for i in range(7, 40, 4):
                     if line[i] == '':
                         break
                     else:
@@ -98,17 +95,16 @@ def import_excel_quick(directory, stand_name):
             pnum = line[1]
             if pnum not in plots:
                 plots[pnum] = {}
-            dbh = line[5]
-            height = line[6]
+            dbh = line[4]
+            height = line[5]
             if height:
                 hdrs.append(height / (dbh / 12))
 
-            plots[pnum][line[3]] = {'species': line[4],
+            plots[pnum][line[2]] = {'species': line[3],
                                     'dbh': dbh,
                                     'height': height,
-                                    'plot_factor': line[2],
-                                    'pref_log': line[7],
-                                    'min_log': line[8]}
+                                    'pref_log': line[6],
+                                    'min_log': line[7]}
         else:
             if plots:
                 break
@@ -130,18 +126,17 @@ def import_excel_full(directory, stand_name):
             pnum = line[1]
             if pnum not in plots:
                 plots[pnum] = {}
-            dbh = line[5]
-            height = line[6]
+            dbh = line[4]
+            height = line[5]
             if height:
                 hdrs.append(height / (dbh / 12))
 
-            plots[pnum][line[3]] = {'species': line[4],
+            plots[pnum][line[2]] = {'species': line[3],
                                     'dbh': dbh,
-                                    'height': height,
-                                    'plot_factor': line[2]}
+                                    'height': height}
             logs = {}
-            stem_height = line[7]
-            for i in range(8, 41, 4):
+            stem_height = line[6]
+            for i in range(7, 40, 4):
                 length = line[i]
                 if not length:
                     break

@@ -441,7 +441,7 @@ if __name__ == '__main__':
            more is needed to achieve the desired density target"""
 
         stand = Stand('EX4', -30)
-        stand.from_excel_quick('Example_Excel_quick.xlsx')
+        stand.from_excel_quick('../example_csv_and_xlsx/Example_Excel_quick.xlsx')
         stand.console_report()
 
         thin25rd = ThinRD(stand, 25, species_to_cut=['DF', 'WH'], min_dbh_to_cut=10, max_dbh_to_cut=18)
@@ -460,7 +460,7 @@ if __name__ == '__main__':
            TargetDensityError exception which will explain what went wrong"""
 
         stand = Stand('OK2', 46.94)
-        stand.from_csv_full('Example_CSV_full.csv')
+        stand.from_csv_full('../example_csv_and_xlsx/Example_CSV_full.csv')
         stand.console_report()
 
         thin100tpa = ThinTPA(stand, 100)
@@ -478,7 +478,7 @@ if __name__ == '__main__':
            in the current working directory as 'thin_report.pdf'"""
 
         stand = Stand('EX3', 33.3)
-        stand.from_csv_quick('Example_CSV_quick.csv')
+        stand.from_csv_quick('../example_csv_and_xlsx/Example_CSV_quick.csv')
         stand.pdf_report('stand_report.pdf')
 
         thin140ba = ThinBA(stand, 140, species_to_cut=['DF', 'WH', 'RA'], max_dbh_to_cut=24)
@@ -496,7 +496,7 @@ if __name__ == '__main__':
            the same directory as the Access Database"""
 
         stand = Stand('OK1', -30)
-        stand.from_excel_full('Example_Excel_full.xlsx')
+        stand.from_excel_full('../example_csv_and_xlsx/Example_Excel_full.xlsx')
 
         fvs = FVS()
         fvs.set_stand(stand, 'PN', 612, 6, 45, 'DF', 110)

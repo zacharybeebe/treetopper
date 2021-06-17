@@ -290,7 +290,7 @@ if __name__ == '__main__':
     from stand import Stand
 
     stand = Stand('OK2', 46.94)
-    stand.from_csv_full('Example_CSV_full.csv')
+    stand.from_csv_full('../example_csv_and_xlsx/Example_CSV_full.csv')
     fvs = FVS()
     fvs.show_stand_args()
     fvs.set_stand(stand, 'PN', 612, 6, 50, 'DF', 120)

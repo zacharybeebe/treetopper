@@ -5,8 +5,8 @@ from copy import deepcopy
 from datetime import date
 from openpyxl import load_workbook, Workbook
 from openpyxl.styles import Alignment
-#from win32com.client import Dispatch
-#from pyodbc import connect as pycon
+from win32com.client import Dispatch
+from pyodbc import connect as pycon
 from sqlite3 import connect as sqcon
 from _constants import (ACCESS_GROUPS_COLS,
                         ACCESS_STAND_COLS,

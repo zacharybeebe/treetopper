@@ -1,3 +1,6 @@
+Plot
+====
+
 .. automodule:: treetopper.plot
    :members:
    :undoc-members:

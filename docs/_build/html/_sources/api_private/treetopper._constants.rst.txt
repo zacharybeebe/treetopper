@@ -1,7 +1,4 @@
-Stand
-=====
-
-.. automodule:: treetopper.stand
+.. automodule:: treetopper._constants
    :members:
    :undoc-members:
    :show-inheritance:

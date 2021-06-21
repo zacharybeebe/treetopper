@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>&lt;no title&gt; &mdash; treetopper 1.0 documentation</title>
+  <title>Timber &mdash; treetopper 1.0 documentation</title>
   
 
   
@@ -41,7 +41,7 @@
     
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="prev" title="&lt;no title&gt;" href="treetopper.thin.html" /> 
+    <link rel="prev" title="Thin" href="treetopper.thin.html" /> 
 </head>
 
 <body class="wy-body-for-nav">
@@ -87,8 +87,17 @@
             
             
               <p class="caption"><span class="caption-text">Contents:</span></p>
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="../api.html">API Documentation</a></li>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="../api.html">API Documentation</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="treetopper.blank_sheet.html">Blank Sheet</a></li>
+<li class="toctree-l2"><a class="reference internal" href="treetopper.fvs.html">FVS</a></li>
+<li class="toctree-l2"><a class="reference internal" href="treetopper.log.html">Log</a></li>
+<li class="toctree-l2"><a class="reference internal" href="treetopper.plot.html">Plot</a></li>
+<li class="toctree-l2"><a class="reference internal" href="treetopper.stand.html">Stand</a></li>
+<li class="toctree-l2"><a class="reference internal" href="treetopper.thin.html">Thin</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Timber</a></li>
+</ul>
+</li>
 </ul>
 
             
@@ -139,9 +148,7 @@
         
           <li><a href="../api.html">API Documentation</a> &raquo;</li>
         
-          <li><a href="treetopper.html">treetopper package</a> &raquo;</li>
-        
-      <li>&lt;no title&gt;</li>
+      <li>Timber</li>
     
     
       <li class="wy-breadcrumbs-aside">
@@ -160,7 +167,9 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
-  <span class="target" id="module-treetopper.timber"></span><dl class="py class">
+  <div class="section" id="module-treetopper.timber">
+<span id="timber"></span><h1>Timber<a class="headerlink" href="#module-treetopper.timber" title="Permalink to this headline">¶</a></h1>
+<dl class="py class">
 <dt class="sig sig-object py" id="treetopper.timber.TimberFull">
 <em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">treetopper.timber.</span></span><span class="sig-name descname"><span class="pre">TimberFull</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">species</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dbh</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">total_height</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">plot_factor</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">float</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#treetopper.timber.TimberFull" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
@@ -175,6 +184,12 @@ to which their volumes in Board Feet (using Scribner Coefficients based on Log L
 and Cubic Feet (based on the Two-End Conic Cubic Foot Rule) are calculated.</p>
 <p>For inventories, this class is meant to be added to the Plot Class using the Plot Class method of add_tree</p>
 <dl class="py method">
+<dt class="sig sig-object py" id="treetopper.timber.TimberFull._calc_volume_and_logs">
+<span class="sig-name descname"><span class="pre">_calc_volume_and_logs</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#treetopper.timber.TimberFull._calc_volume_and_logs" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calcuates the tree’s volume and volume-related metrics based on the log volumes</p>
+</dd></dl>
+
+<dl class="py method">
 <dt class="sig sig-object py" id="treetopper.timber.TimberFull._get_tpa_ba_ac_rd_ac">
 <span class="sig-name descname"><span class="pre">_get_tpa_ba_ac_rd_ac</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#treetopper.timber.TimberFull._get_tpa_ba_ac_rd_ac" title="Permalink to this definition">¶</a></dt>
 <dd><p>Calculates the Trees per Acre, Basal Area per Acre and Relative Density per Acre
@@ -186,12 +201,6 @@ based on the plot factor</p>
 <span class="sig-name descname"><span class="pre">add_log</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">stem_height</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">length</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">grade</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">defect</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#treetopper.timber.TimberFull.add_log" title="Permalink to this definition">¶</a></dt>
 <dd><p>Adds Log Class to the logs dictionary of TimberFull and recalculates the tree’s volumes and
 volume-related metrics</p>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="treetopper.timber.TimberFull.calc_volume_and_logs">
-<span class="sig-name descname"><span class="pre">calc_volume_and_logs</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#treetopper.timber.TimberFull.calc_volume_and_logs" title="Permalink to this definition">¶</a></dt>
-<dd><p>Calcuates the tree’s volume and volume-related metrics based on the log volumes</p>
 </dd></dl>
 
 <dl class="py method">
@@ -288,6 +297,7 @@ the Log Class for volume calculations, return a dictionary of the logs by log nu
 
 </dd></dl>
 
+</div>
 
 
            </div>
@@ -295,7 +305,7 @@ the Log Class for volume calculations, return a dictionary of the logs by log nu
           </div>
           <footer>
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
-        <a href="treetopper.thin.html" class="btn btn-neutral float-left" title="&lt;no title&gt;" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="treetopper.thin.html" class="btn btn-neutral float-left" title="Thin" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
     </div>
 
   <hr/>

@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>&lt;no title&gt; &mdash; treetopper 1.0 documentation</title>
+  <title>Thin &mdash; treetopper 1.0 documentation</title>
   
 
   
@@ -41,8 +41,8 @@
     
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="&lt;no title&gt;" href="treetopper.timber.html" />
-    <link rel="prev" title="&lt;no title&gt;" href="treetopper.stand.html" /> 
+    <link rel="next" title="Timber" href="treetopper.timber.html" />
+    <link rel="prev" title="Stand" href="treetopper.stand.html" /> 
 </head>
 
 <body class="wy-body-for-nav">
@@ -88,8 +88,17 @@
             
             
               <p class="caption"><span class="caption-text">Contents:</span></p>
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="../api.html">API Documentation</a></li>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="../api.html">API Documentation</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="treetopper.blank_sheet.html">Blank Sheet</a></li>
+<li class="toctree-l2"><a class="reference internal" href="treetopper.fvs.html">FVS</a></li>
+<li class="toctree-l2"><a class="reference internal" href="treetopper.log.html">Log</a></li>
+<li class="toctree-l2"><a class="reference internal" href="treetopper.plot.html">Plot</a></li>
+<li class="toctree-l2"><a class="reference internal" href="treetopper.stand.html">Stand</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Thin</a></li>
+<li class="toctree-l2"><a class="reference internal" href="treetopper.timber.html">Timber</a></li>
+</ul>
+</li>
 </ul>
 
             
@@ -140,9 +149,7 @@
         
           <li><a href="../api.html">API Documentation</a> &raquo;</li>
         
-          <li><a href="treetopper.html">treetopper package</a> &raquo;</li>
-        
-      <li>&lt;no title&gt;</li>
+      <li>Thin</li>
     
     
       <li class="wy-breadcrumbs-aside">
@@ -161,7 +168,9 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
-  <span class="target" id="module-treetopper.thin"></span><dl class="py exception">
+  <div class="section" id="module-treetopper.thin">
+<span id="thin"></span><h1>Thin<a class="headerlink" href="#module-treetopper.thin" title="Permalink to this headline">¶</a></h1>
+<dl class="py exception">
 <dt class="sig sig-object py" id="treetopper.thin.TargetDenistyError">
 <em class="property"><span class="pre">exception</span> </em><span class="sig-prename descclassname"><span class="pre">treetopper.thin.</span></span><span class="sig-name descname"><span class="pre">TargetDenistyError</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">target_density</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">current_density</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">target_metric</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#treetopper.thin.TargetDenistyError" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Exception</span></code></p>
@@ -181,6 +190,19 @@ species and diameter limitations (if any). The harvest ratio is used to calculat
 which are then used to calculate the other removal and residual per-diameter metrics by multiplying the respective TPAs by the
 per-diameter metric per tree values</p>
 <dl class="py method">
+<dt class="sig sig-object py" id="treetopper.thin.Thin._aggregate_trees">
+<span class="sig-name descname"><span class="pre">_aggregate_trees</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#treetopper.thin.Thin._aggregate_trees" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the compiled whole-number diameters dictionary separated by species</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="treetopper.thin.Thin._check_density">
+<span class="sig-name descname"><span class="pre">_check_density</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#treetopper.thin.Thin._check_density" title="Permalink to this definition">¶</a></dt>
+<dd><p>Will check to see if the target density is in fact lower than the total stand density. If the target density is higher,
+it will throw a custom exception: TargetDensityError</p>
+</dd></dl>
+
+<dl class="py method">
 <dt class="sig sig-object py" id="treetopper.thin.Thin._get_message_params_report">
 <span class="sig-name descname"><span class="pre">_get_message_params_report</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#treetopper.thin.Thin._get_message_params_report" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns the thinning parameters, formatted to be displayed in the console report or print report</p>
@@ -194,22 +216,16 @@ resultant self.trees (modified from self.thin_to_target())</p>
 </dd></dl>
 
 <dl class="py method">
+<dt class="sig sig-object py" id="treetopper.thin.Thin._thin_to_target">
+<span class="sig-name descname"><span class="pre">_thin_to_target</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">target_metric</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#treetopper.thin.Thin._thin_to_target" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculates the harvest ratio to produce the target density and then modifies the dictionary
+self.trees (which was created by self.aggregate_trees()) to the correct removal and residual values</p>
+</dd></dl>
+
+<dl class="py method">
 <dt class="sig sig-object py" id="treetopper.thin.Thin._update_species_conditions_dict">
 <span class="sig-name descname"><span class="pre">_update_species_conditions_dict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">master_condition_species</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">trees</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#treetopper.thin.Thin._update_species_conditions_dict" title="Permalink to this definition">¶</a></dt>
 <dd><p>Updates the species data dictionary being compiled in self._get_species_conditions(), used internally</p>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="treetopper.thin.Thin.aggregate_trees">
-<span class="sig-name descname"><span class="pre">aggregate_trees</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#treetopper.thin.Thin.aggregate_trees" title="Permalink to this definition">¶</a></dt>
-<dd><p>Returns the compiled whole-number diameters dictionary separated by species</p>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="treetopper.thin.Thin.check_density">
-<span class="sig-name descname"><span class="pre">check_density</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#treetopper.thin.Thin.check_density" title="Permalink to this definition">¶</a></dt>
-<dd><p>Will check to see if the target density is in fact lower than the total stand density. If the target density is higher,
-it will throw a custom exception: TargetDensityError</p>
 </dd></dl>
 
 <dl class="py method">
@@ -222,13 +238,6 @@ it will throw a custom exception: TargetDensityError</p>
 <dt class="sig sig-object py" id="treetopper.thin.Thin.pdf_report">
 <span class="sig-name descname"><span class="pre">pdf_report</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">directory</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#treetopper.thin.Thin.pdf_report" title="Permalink to this definition">¶</a></dt>
 <dd><p>Exports a pdf of the thinning report to a user specified directory or if directory is None, to the current working directory</p>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="treetopper.thin.Thin.thin_to_target">
-<span class="sig-name descname"><span class="pre">thin_to_target</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">target_metric</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#treetopper.thin.Thin.thin_to_target" title="Permalink to this definition">¶</a></dt>
-<dd><p>Calculates the harvest ratio to produce the target density and then modifies the dictionary
-self.trees (which was created by self.aggregate_trees()) to the correct removal and residual values</p>
 </dd></dl>
 
 </dd></dl>
@@ -254,6 +263,7 @@ self.trees (which was created by self.aggregate_trees()) to the correct removal 
 <p>Thin by Trees per Acre</p>
 </dd></dl>
 
+</div>
 
 
            </div>
@@ -261,8 +271,8 @@ self.trees (which was created by self.aggregate_trees()) to the correct removal 
           </div>
           <footer>
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
-        <a href="treetopper.timber.html" class="btn btn-neutral float-right" title="&lt;no title&gt;" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
-        <a href="treetopper.stand.html" class="btn btn-neutral float-left" title="&lt;no title&gt;" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="treetopper.timber.html" class="btn btn-neutral float-right" title="Timber" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="treetopper.stand.html" class="btn btn-neutral float-left" title="Stand" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
     </div>
 
   <hr/>

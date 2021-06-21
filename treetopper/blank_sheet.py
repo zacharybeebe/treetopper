@@ -1,6 +1,6 @@
 from openpyxl import Workbook
 from csv import writer
-from os.path import join, isfile, expanduser
+#from os.path import join, isfile, expanduser
 
 METRICS_QUICK = ['Stand', 'Plot Number', 'Tree Number', 'Species', 'DBH', 'Height', 'Preferred Log Length', 'Min Log Length']
 METRICS_FULL = ['Stand', 'Plot Number', 'Tree Number', 'Species', 'DBH', 'Height', 'Stump Height',

@@ -1,11 +1,11 @@
+import math
 from os import startfile, getcwd
 from os.path import join
 from copy import deepcopy
 from statistics import mean
-import math
-from _console_print import print_thin_species
-from _pdf_print import PDF
-from _constants import extension_check
+from treetopper._console_print import print_thin_species
+from treetopper._pdf_print import PDF
+from treetopper._constants import extension_check
 
 
 class Thin(object):
@@ -277,7 +277,7 @@ class TargetDenistyError(Exception):
 
 
 if __name__ == '__main__':
-    from stand import Stand
+    from treetopper.stand import Stand
 
     stand = Stand('OK2', 46.94)
     stand.from_csv_full('../example_csv_and_xlsx/Example_CSV_full.csv')

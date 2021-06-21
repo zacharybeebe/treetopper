@@ -5,20 +5,20 @@ from datetime import (datetime,
 from statistics import (mean,
                         variance,
                         stdev)
-from plot import Plot
-from timber import (TimberQuick,
-                    TimberFull)
-from _constants import (math,
-                        extension_check,
-                        LOG_LENGTHS)
-from _import_from_sheets import (import_csv_quick,
-                                 import_csv_full,
-                                 import_excel_quick,
-                                 import_excel_full)
-from _console_print import (print_species,
-                            print_logs,
-                            print_species_stats)
-from _pdf_print import PDF
+from treetopper.plot import Plot
+from treetopper.timber import (TimberQuick,
+                               TimberFull)
+from treetopper._constants import (math,
+                                   extension_check,
+                                   LOG_LENGTHS)
+from treetopper._import_from_sheets import (import_csv_quick,
+                                            import_csv_full,
+                                            import_excel_quick,
+                                            import_excel_full)
+from treetopper._console_print import (print_species,
+                                       print_logs,
+                                       print_species_stats)
+from treetopper._pdf_print import PDF
 
 
 
@@ -378,10 +378,10 @@ class Stand(object):
 """EXAMPLE WORK FLOWS"""
 
 if __name__ == '__main__':
-    from thin import (ThinTPA,
-                      ThinBA,
-                      ThinRD)
-    from fvs import FVS
+    from treetopper.thin import (ThinTPA,
+                                 ThinBA,
+                                 ThinRD)
+    from treetopper.fvs import FVS
 
     def workflow_1():
         """Workflow 1 will create a quick cruise stand from manually entered trees and plots and will then show a console report.

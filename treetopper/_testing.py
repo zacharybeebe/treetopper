@@ -1,7 +1,7 @@
 from random import choice, randrange
 from time import perf_counter
-from _constants import (ALL_SPECIES_NAMES,
-                        OFFICIAL_GRADES)
+from treetopper._constants import (ALL_SPECIES_NAMES,
+                                   OFFICIAL_GRADES)
 
 
 SPECIES_RANGE = 3

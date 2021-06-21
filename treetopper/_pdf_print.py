@@ -1,9 +1,9 @@
 from fpdf import FPDF
-from _constants import (format_comma,
-                        sort_grade,
-                        SORTED_HEADS,
-                        ALL_SPECIES_NAMES,
-                        LOG_LENGTHS)
+from treetopper._constants import (format_comma,
+                                   sort_grade,
+                                   SORTED_HEADS,
+                                   ALL_SPECIES_NAMES,
+                                   LOG_LENGTHS)
 
 
 class PDF(FPDF):

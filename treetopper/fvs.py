@@ -8,14 +8,14 @@ from openpyxl.styles import Alignment
 from win32com.client import Dispatch
 from pyodbc import connect as pycon
 from sqlite3 import connect as sqcon
-from _constants import (ACCESS_GROUPS_COLS,
-                        ACCESS_STAND_COLS,
-                        ACCESS_TREE_COLS,
-                        SQL_GROUPS_COLS,
-                        SQL_STAND_COLS,
-                        SQL_TREE_COLS,
-                        GROUPS_DEFAULTS,
-                        extension_check)
+from treetopper._constants import (ACCESS_GROUPS_COLS,
+                                   ACCESS_STAND_COLS,
+                                   ACCESS_TREE_COLS,
+                                   SQL_GROUPS_COLS,
+                                   SQL_STAND_COLS,
+                                   SQL_TREE_COLS,
+                                   GROUPS_DEFAULTS,
+                                   extension_check)
 
 
 class FVS(object):
@@ -287,7 +287,7 @@ class FVS(object):
 
 
 if __name__ == '__main__':
-    from stand import Stand
+    from treetopper.stand import Stand
 
     stand = Stand('OK2', 46.94)
     stand.from_csv_full('../example_csv_and_xlsx/Example_CSV_full.csv')

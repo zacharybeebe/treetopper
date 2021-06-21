@@ -1,8 +1,8 @@
 from statistics import mean
-from _constants import (math,
-                        GRADE_NAMES,
-                        LOG_LENGTHS)
-from _console_print import print_plot_logs
+from treetopper._constants import (math,
+                                   GRADE_NAMES,
+                                   LOG_LENGTHS)
+from treetopper._console_print import print_plot_logs
 
 
 class Plot(object):
@@ -121,7 +121,7 @@ class Plot(object):
 
 if __name__ == '__main__':
     from random import randrange
-    from _testing import generate_random_trees_quick
+    from treetopper._testing import generate_random_trees_quick
 
     trees, tree_count = generate_random_trees_quick(randrange(4, 9))
 

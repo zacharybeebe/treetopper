@@ -1,8 +1,8 @@
-from _constants import (format_comma,
-                        sort_grade,
-                        LOG_LENGTHS,
-                        ALL_SPECIES_NAMES,
-                        SORTED_HEADS)
+from treetopper._constants import (format_comma,
+                                   sort_grade,
+                                   LOG_LENGTHS,
+                                   ALL_SPECIES_NAMES,
+                                   SORTED_HEADS)
 
 SPACE = 20
 

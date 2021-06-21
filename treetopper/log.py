@@ -1,8 +1,8 @@
-from _constants import (math,
-                        GRADE_NAMES,
-                        LOG_LENGTHS,
-                        OFFICIAL_GRADES,
-                        SCRIBNER_DICT)
+from treetopper._constants import (math,
+                                   GRADE_NAMES,
+                                   LOG_LENGTHS,
+                                   OFFICIAL_GRADES,
+                                   SCRIBNER_DICT)
 
 
 

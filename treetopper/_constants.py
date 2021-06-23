@@ -196,9 +196,6 @@ LOG_LENGTHS = {'<= 10 feet': (1, 10),
 SORTED_HEADS = [['tpa', 'TPA'], ['ba_ac', 'BASAL AREA'], ['rd_ac', 'RD'], ['qmd', 'QMD'], ['vbar', 'VBAR'],
                 ['avg_hgt', 'AVG HEIGHT'], ['hdr', 'HDR'], ['bf_ac', 'BOARD FEET'], ['cf_ac', 'CUBIC FEET']]
 
-OUTPUT_STAND_TABLE_HEADS = ('Stand', 'Plot Number', 'Tree Number', 'Species', 'DBH', 'Height',
-                            'Stump Height', 'Log 1 Length', 'Log 1 Grade', 'Log 1 Defect', 'Between Logs Feet')
-
 #FVS
 
 FVS_KEYWORDS = """Database\r
@@ -299,14 +296,7 @@ def get_filename_only(file_path):
             return ''.join(file_path[i+1:])
 
 
-def add_logs_to_table_heads(max_logs):
-    master = []
-    for i in range(2, max_logs + 1):
-        for name in ['Length', 'Grade', 'Defect']:
-            master.append(f'Log {i} {name}')
-        if i < max_logs:
-            master.append('Between Logs Feet')
-    return master
+
 
 
 

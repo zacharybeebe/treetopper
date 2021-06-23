@@ -1,5 +1,11 @@
-from os import startfile, getcwd
-from os.path import join
+from os import (startfile,
+                getcwd)
+from os.path import (join,
+                     isfile)
+from csv import (writer,
+                 excel)
+from openpyxl import (Workbook,
+                      load_workbook)
 from datetime import (datetime,
                       date)
 from statistics import (mean,
@@ -10,9 +16,7 @@ from treetopper.timber import (TimberQuick,
                                TimberFull)
 from treetopper._constants import (math,
                                    extension_check,
-                                   add_logs_to_table_heads,
-                                   LOG_LENGTHS,
-                                   OUTPUT_STAND_TABLE_HEADS)
+                                   LOG_LENGTHS)
 from treetopper._import_from_sheets import (import_csv_quick,
                                             import_csv_full,
                                             import_excel_quick,
@@ -250,8 +254,50 @@ class Stand(object):
                 plot.add_tree(tree)
             self.add_plot(plot)
 
+    def table_to_csv(self, filename: str, directory: str = None):
+        """Creates or appends a CSV file with tree data from self.table_data"""
+        check = extension_check(filename, '.csv')
+        if directory:
+            file = join(directory, check)
+        else:
+            file = join(getcwd(), check)
+
+        if isfile(file):
+            allow = 'a'
+            start = 1
+        else:
+            allow = 'w'
+            start = 0
+
+        with open(file, allow, newline='') as csv_file:
+            csv_write = writer(csv_file, dialect=excel)
+            for i in self.table_data[start:]:
+                csv_write.writerow(i)
+
+    def table_to_excel(self, filename: str, directory: str = None):
+        """Creates or appends an Excel file with tree data from self.table_data"""
+        check = extension_check(filename, '.xlsx')
+        if directory:
+            file = join(directory, check)
+        else:
+            file = join(getcwd(), check)
+
+        if isfile(file):
+            wb = load_workbook(file)
+            ws = wb.active
+            for i in self.table_data[1:]:
+                ws.append(i)
+            wb.save(file)
+        else:
+            wb = Workbook()
+            ws = wb.active
+            for i in self.table_data:
+                ws.append(i)
+            wb.save(file)
+
     def _update_table_data(self):
-        heads = list(OUTPUT_STAND_TABLE_HEADS)
+        heads = ['Stand', 'Plot Number', 'Tree Number', 'Species', 'DBH', 'Height',
+                 'Stump Height', 'Log 1 Length', 'Log 1 Grade', 'Log 1 Defect', 'Between Logs Feet']
         master = []
         max_logs = []
         for i, plot in enumerate(self.plots):
@@ -267,10 +313,14 @@ class Stand(object):
                         temp.append(log.stem_height - log.length - 1)
                     for lkey in ['length', 'grade', 'defect']:
                         temp.append(log[lkey])
-                    if 1 < k < len(tree.logs) - 1:
-                        temp.append(log.stem_height - tree.logs[lnum-1].stem_height - log.length - 1)
+                    if k < len(tree.logs) - 1:
+                        between = tree.logs[lnum+1].stem_height - log.stem_height - tree.logs[lnum+1].length - 1
+                        if between < 0:
+                            temp.append(0)
+                        else:
+                            temp.append(between)
                 master.append(temp)
-        heads += add_logs_to_table_heads(max(max_logs))
+        heads += self._add_logs_to_table_heads(max(max_logs))
         master.insert(0, heads)
         return master
 
@@ -376,6 +426,16 @@ class Stand(object):
         else:
             raise Exception('Invalid date')
 
+    def _add_logs_to_table_heads(self, max_logs):
+        """Adds log headers to table data depending on the maximum number of logs from trees within the stand"""
+        master = []
+        for i in range(2, max_logs + 1):
+            for name in ['Length', 'Grade', 'Defect']:
+                master.append(f'Log {i} {name}')
+            if i < max_logs:
+                master.append('Between Logs Feet')
+        return master
+
     def _get_stats(self, data):
         """Runs the statistical calculations on a set of the stand conditions data, returns an updated sub dict"""
         m = mean(data)
@@ -417,7 +477,9 @@ if __name__ == '__main__':
         """Workflow 1 will create a quick cruise stand from manually entered trees and plots and will then show a console report.
 
            Using the ThinTPA class, we will thin the stand to a Trees per Acre of 80 considering all species and diameter ranges
-           and then will show a console report of the thinning"""
+           and then will show a console report of the thinning
+
+           Finally we will export the stand's tree-level data (stand.table_data) to a CSV file in the current working directory"""
 
         stand = Stand('WF1', -20)
         plot_factor = stand.plot_factor
@@ -441,12 +503,16 @@ if __name__ == '__main__':
         thin80tpa = ThinTPA(stand, 80)
         thin80tpa.console_report()
 
+        stand.table_to_csv('example_csv_export.csv')
+
 
     def workflow_2():
         """Workflow 2 will create a full cruise stand from manually entered trees and plots and will then show a console report.
 
            Using the ThinBA class, we will thin the stand to a BA/ac of 120 considering only DF and WH and all diameter ranges
-           and then will show a console report of the thinning"""
+           and then will show a console report of the thinning
+
+           Finally we will export the stand's tree-level data (stand.table_data) to an Excel file in the current working directory"""
 
         stand = Stand('WF2', 33.3)
         plot_factor = stand.plot_factor
@@ -473,13 +539,12 @@ if __name__ == '__main__':
                 plot.add_tree(tree[0])
             stand.add_plot(plot)
 
-        for i in stand.table_data:
-            print(i)
+        stand.console_report()
 
-        # stand.console_report()
-        #
-        # thin120ba = ThinBA(stand, 120, species_to_cut=['DF', 'WH'])
-        # thin120ba.console_report()
+        thin120ba = ThinBA(stand, 120, species_to_cut=['DF', 'WH'])
+        thin120ba.console_report()
+
+        stand.table_to_excel('example_xlsx_export.xlsx')
 
 
     def workflow_3():
@@ -517,8 +582,10 @@ if __name__ == '__main__':
         stand.from_csv_full('../example_csv_and_xlsx/Example_CSV_full.csv')
         stand.console_report()
 
-        thin100tpa = ThinTPA(stand, 100)
-        thin100tpa.console_report()
+        stand.table_to_excel('test')
+
+        # thin100tpa = ThinTPA(stand, 100)
+        # thin100tpa.console_report()
 
     def workflow_5():
         """Workflow 5 will create a full cruise stand from importing a stand from a full cruise CSV file and export a PDF report.
@@ -561,7 +628,7 @@ if __name__ == '__main__':
 
 
     # workflow_1()
-    workflow_2()
+    # workflow_2()
     # workflow_3()
     # workflow_4()
     # workflow_5()

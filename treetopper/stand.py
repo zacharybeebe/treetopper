@@ -73,7 +73,7 @@ class Stand(object):
 
        ** these files need to be formatted correctly **
 
-       To create a formatted blank CSV or Excel file, open the terminal and type "python treetopper.blank_sheet.py" and
+       To create a formatted blank CSV or Excel file, open the terminal and type "python -m treetopper.blank_sheet" and
        run through the prompts
 
        Once data has been added to the sheet, instantiate a Stand and call either:
@@ -582,10 +582,8 @@ if __name__ == '__main__':
         stand.from_csv_full('../example_csv_and_xlsx/Example_CSV_full.csv')
         stand.console_report()
 
-        stand.table_to_excel('test')
-
-        # thin100tpa = ThinTPA(stand, 100)
-        # thin100tpa.console_report()
+        thin100tpa = ThinTPA(stand, 100)
+        thin100tpa.console_report()
 
     def workflow_5():
         """Workflow 5 will create a full cruise stand from importing a stand from a full cruise CSV file and export a PDF report.

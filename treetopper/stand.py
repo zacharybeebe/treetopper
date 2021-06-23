@@ -10,7 +10,9 @@ from treetopper.timber import (TimberQuick,
                                TimberFull)
 from treetopper._constants import (math,
                                    extension_check,
-                                   LOG_LENGTHS)
+                                   add_logs_to_table_heads,
+                                   LOG_LENGTHS,
+                                   OUTPUT_STAND_TABLE_HEADS)
 from treetopper._import_from_sheets import (import_csv_quick,
                                             import_csv_full,
                                             import_excel_quick,
@@ -130,6 +132,8 @@ class Stand(object):
 
         self.logs = {}
 
+        self.table_data = []
+
         self.metrics = ['tpa', 'ba_ac', 'rd_ac', 'bf_ac', 'cf_ac']
         self.attrs = ['_gross', '_stats', '']
 
@@ -180,6 +184,7 @@ class Stand(object):
         self.vbar = self.bf_ac / self.ba_ac
         self._update_species(plot)
         self._update_logs(plot)
+        self.table_data = self._update_table_data()
 
     def from_csv_quick(self, file_path):
         """Imports tree and plot data from a CSV file for a quick cruise and adds that data to the stand"""
@@ -244,6 +249,31 @@ class Stand(object):
                     tree.add_log(*mets['logs'][lnum])
                 plot.add_tree(tree)
             self.add_plot(plot)
+
+    def _update_table_data(self):
+        heads = list(OUTPUT_STAND_TABLE_HEADS)
+        master = []
+        max_logs = []
+        for i, plot in enumerate(self.plots):
+            for j, tree in enumerate(plot.trees):
+                temp = [self.name, i + 1, j + 1]
+                for key in ['species', 'dbh', 'height']:
+                    temp.append(tree[key])
+                len_logs = len(tree.logs)
+                max_logs.append(len_logs)
+                for k, lnum in enumerate(tree.logs):
+                    log = tree.logs[lnum]
+                    if lnum == 1:
+                        temp.append(log.stem_height - log.length - 1)
+                    for lkey in ['length', 'grade', 'defect']:
+                        temp.append(log[lkey])
+                    if 1 < k < len(tree.logs) - 1:
+                        temp.append(log.stem_height - tree.logs[lnum-1].stem_height - log.length - 1)
+                master.append(temp)
+        heads += add_logs_to_table_heads(max(max_logs))
+        master.insert(0, heads)
+        return master
+
 
     def _update_metrics(self, metric: str):
         """Updates stand metrics based on the metric entered in the argument, used internally"""
@@ -443,10 +473,13 @@ if __name__ == '__main__':
                 plot.add_tree(tree[0])
             stand.add_plot(plot)
 
-        stand.console_report()
+        for i in stand.table_data:
+            print(i)
 
-        thin120ba = ThinBA(stand, 120, species_to_cut=['DF', 'WH'])
-        thin120ba.console_report()
+        # stand.console_report()
+        #
+        # thin120ba = ThinBA(stand, 120, species_to_cut=['DF', 'WH'])
+        # thin120ba.console_report()
 
 
     def workflow_3():
@@ -528,7 +561,7 @@ if __name__ == '__main__':
 
 
     # workflow_1()
-    # workflow_2()
+    workflow_2()
     # workflow_3()
     # workflow_4()
     # workflow_5()

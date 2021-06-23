@@ -1,6 +1,11 @@
 Change Log
 ==========
 
-1.0 (06/17/2021)
+1.0.2 (06/17/2021)
 ------------------
 -First Release
+
+1.0.3 (06/22/2021)
+-Added attribute table_data to Stand Class: a list of the tree-level data for trees within the stand
+-Added method table_to_csv: exports  stand.table_data to a csv file
+-Added method table_to_excel: exports stand.table_data to an xlsx file

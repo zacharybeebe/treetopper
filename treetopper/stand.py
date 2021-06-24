@@ -320,7 +320,13 @@ class Stand(object):
                         else:
                             temp.append(between)
                 master.append(temp)
+
         heads += self._add_logs_to_table_heads(max(max_logs))
+        len_heads = len(heads)
+        for i in master:
+            len_i = len(i)
+            if len_i < len_heads:
+                i += ['' for j in range(len_heads - len_i)]
         master.insert(0, heads)
         return master
 

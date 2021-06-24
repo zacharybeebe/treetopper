@@ -11,4 +11,4 @@ Change Log
 -Added method table_to_excel: exports stand.table_data to an xlsx file
 
 1.0.4 (06/23/2021)
--Evened out the lengths of the sub lists within
+-Evened out the lengths of the sub lists within stand.table_data

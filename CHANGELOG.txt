@@ -9,3 +9,6 @@ Change Log
 -Added attribute table_data to Stand Class: a list of the tree-level data for trees within the stand
 -Added method table_to_csv: exports  stand.table_data to a csv file
 -Added method table_to_excel: exports stand.table_data to an xlsx file
+
+1.0.4 (06/23/2021)
+-Evened out the lengths of the sub lists within

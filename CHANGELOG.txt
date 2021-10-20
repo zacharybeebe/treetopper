@@ -12,3 +12,7 @@ Change Log
 
 1.0.4 (06/23/2021)
 -Evened out the lengths of the sub lists within stand.table_data
+
+1.0.5 (10/20/2021)
+-Changed the way you import the main classes (Stand, Plot, TimberQuick, etc.),
+you can now just import them from treetopper instead of from the modules

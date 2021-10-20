@@ -34,13 +34,17 @@ The species available for calculation are below and must have the correct specie
 An example of how to get started is....
 
 
-    from treetopper.timber import (TimberQuick,
-				   TimberFull)
-    from treetopper.stand import Stand
-    from treetopper.thin import (ThinTPA,
-				 ThinBA,
-				 ThinRD)
-    from treetopper.fvs import FVS
+    from treetopper.stand import (
+        Stand,
+        Plot,
+        TimberQuick,
+        TimberFull,
+        Log,
+        ThinTPA,
+        ThinBA,
+        ThinRD,
+        FVS
+    )
 
     def workflow_1():
         """Workflow 1 will create a quick cruise stand from manually entered trees and plots and will then show a console report.

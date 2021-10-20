@@ -14,6 +14,13 @@ from statistics import (mean,
 from treetopper.plot import Plot
 from treetopper.timber import (TimberQuick,
                                TimberFull)
+from treetopper.log import Log
+from treetopper.thin import (
+    ThinTPA,
+    ThinBA,
+    ThinRD
+)
+from treetopper.fvs import FVS
 from treetopper._constants import (math,
                                    extension_check,
                                    LOG_LENGTHS)
@@ -474,10 +481,6 @@ class Stand(object):
 """EXAMPLE WORK FLOWS"""
 
 if __name__ == '__main__':
-    from treetopper.thin import (ThinTPA,
-                                 ThinBA,
-                                 ThinRD)
-    from treetopper.fvs import FVS
 
     def workflow_1():
         """Workflow 1 will create a quick cruise stand from manually entered trees and plots and will then show a console report.
@@ -632,7 +635,7 @@ if __name__ == '__main__':
 
 
     # workflow_1()
-    # workflow_2()
+    workflow_2()
     # workflow_3()
     # workflow_4()
     # workflow_5()

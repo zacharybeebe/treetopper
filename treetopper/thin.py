@@ -8,6 +8,24 @@ from treetopper._pdf_print import PDF
 from treetopper._constants import extension_check
 
 
+NOT_FULL_THIN_MESSAGE = """
+** COULD NOT ACHIEVE TARGET DENSITY OF {target} {thin_param} **
+** THINNING PARAMETERS ONLY ALLOWED {actual} {thin_param} OF THE {needed} {thin_param} NEEDED TO BE HARVESTED **
+   THINNING PARAMETERS:
+   \tSPECIES: {species}
+   \tMIN DBH: {min_dbh}
+   \tMAX DBH: {max_dbh}
+"""
+
+SUCCESS_MESSAGE = """
+TARGET DENSITY OF {target} {thin_param} ACHIEVED
+THINNING PARAMETERS:
+   \tSPECIES: {species}
+   \tMIN DBH: {min_dbh}
+   \tMAX DBH: {max_dbh}
+"""
+
+
 class Thin(object):
     """The Thin Class is the parent class of the three thinning child classes: ThinTPA, ThinBA, and ThinRD.
 
@@ -47,26 +65,22 @@ class Thin(object):
         return self.__dict__[attribute]
 
     def console_report(self):
-        """Prints a report to the console of the stands conditions: current, removals, and residual shown by species and totals"""
+        """Returns a console-formatted string of the stands conditions: current, removals, and residual shown by species and totals,
+        to be called by the standard print() function"""
         species, min_dbh, max_dbh = self._get_message_params_report()
+        thin_param = self.full_thin[2].replace('_', '/').upper()
+        console_text = '\nTHINNING RESULTS\n'
         if not self.full_thin[0]:
-            needed = round(self[f'current_{self.full_thin[2]}'] - self.target)
-            message = f"""\n** COULD NOT ACHIEVE TARGET DENSITY OF {self.target} {self.full_thin[2].replace('_', ' ').upper()} **
-** THINNING PARAMETERS ONLY ALLOWED {round(self.full_thin[1], 1)} {self.full_thin[2].replace('_', '/').upper()} OF THE {needed} NEEDED TO BE HARVESTED **
-   THINNING PARAMETERS:
-   \tSPECIES: {', '.join(species)}
-   \tMIN DBH: {min_dbh}
-   \tMAX DBH: {max_dbh}\n"""
-            print(message)
-            print_thin_species(self.species_data)
+            needed = round(self[f'current_{self.full_thin[2]}'] - self.target, 1)
+            console_text += NOT_FULL_THIN_MESSAGE.format(target=self.target, thin_param=thin_param, actual=round(self.full_thin[1], 1),
+                                                   needed=needed, species=', '.join(species), min_dbh=min_dbh, max_dbh=max_dbh)
+            console_text += print_thin_species(self.species_data)
         else:
-            message = f"""\nTARGET DENSITY OF {self.target} {self.full_thin[2].replace('_', '/').upper()} ACHIEVED
-THINNING PARAMETERS:
-   \tSPECIES: {', '.join(species)}
-   \tMIN DBH: {min_dbh}
-   \tMAX DBH: {max_dbh}\n"""
-            print(message)
-            print_thin_species(self.species_data)
+            console_text += SUCCESS_MESSAGE.format(target=self.target, thin_param=thin_param, species=', '.join(species),
+                                              min_dbh=min_dbh, max_dbh=max_dbh)
+            console_text += print_thin_species(self.species_data)
+        # print(console_text)
+        return console_text
 
     def pdf_report(self, filename: str, directory: str = None):
         """Exports a pdf of the thinning report to a user specified directory or if directory is None, to the current working directory"""

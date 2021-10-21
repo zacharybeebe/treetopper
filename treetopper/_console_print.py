@@ -23,10 +23,11 @@ def print_species(species):
 
     formatted_data.append(formatted_data.pop(0))
 
-    print(formatted_heads)
-    print('-' * SPACE * len(heads))
+    text = f'{formatted_heads}\n'
+    text += f'{"-" * SPACE * len(heads)}\n'
     for i in formatted_data:
-        print(i)
+        text += f'{i}\n'
+    return text
 
 
 def print_logs(logs):
@@ -73,16 +74,18 @@ def print_logs(logs):
 
         table_data.append(temp)
 
+    text = ''
     for i in table_data:
         for z, j in enumerate(i):
             for k in j:
-                print(k)
+                text += f'{k}\n'
             if z > 0:
                 if z == len(i) - 1:
-                    print('-' * (SPACE * len(heads)))
+                    text += f'{"-" * SPACE * len(heads)}\n'
                 else:
-                    print()
-        print('\n\n')
+                    text += '\n'
+        text += '\n\n'
+    return text
 
 
 def print_species_stats(species):
@@ -123,10 +126,12 @@ def print_species_stats(species):
     else:
         print_data.append(print_data.pop(0))
 
+    text = ''
     for i in print_data:
         for j in i:
-            print(j)
-        print()
+            text += f'\n{j}'
+        text += '\n'
+    return text
 
 
 def print_thin_species(species):
@@ -152,10 +157,15 @@ def print_thin_species(species):
 
     all_data.append(all_data.pop(1))
 
+    text = ''
+
     for i in all_data:
         for j in i:
-            print(j)
-        print('\n')
+            #print(j)
+            text += f'\n{j}'
+        text += '\n\n'
+        #print('\n')
+    return text
 
 
 def print_plot_logs(plot):

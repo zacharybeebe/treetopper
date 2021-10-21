@@ -158,16 +158,15 @@ class Stand(object):
         return self.__dict__[attribute]
 
     def console_report(self):
-        """Prints a stand report to the console"""
-        print()
-        print('STAND METRICS')
-        print_species(self.species)
-        print('\n\n')
-        print('LOG METRICS')
-        print_logs(self.logs)
-        print()
-        print('STAND STATISTICS')
-        print_species_stats(self.species_stats)
+        """Returns a console-formatted string of the processed stand data, to be called by the standard print() function"""
+        console_text = '\nSTAND METRICS'
+        console_text += f'\n{print_species(self.species)}'
+        console_text += '\n\nLOG METRICS'
+        console_text += f'\n{print_logs(self.logs)}'
+        console_text += '\nSTAND STATISTICS'
+        console_text += f'{print_species_stats(self.species_stats)}'
+        # print(console_text)
+        return console_text
 
     def pdf_report(self, filename: str, directory: str = None):
         """Exports a pdf of the stand report to a user specified directory or if directory is None, to the current working directory"""
@@ -337,7 +336,6 @@ class Stand(object):
         master.insert(0, heads)
         return master
 
-
     def _update_metrics(self, metric: str):
         """Updates stand metrics based on the metric entered in the argument, used internally"""
         metric_list = [plot[metric] for plot in self.plots]
@@ -475,9 +473,6 @@ class Stand(object):
 
 
 
-
-
-
 """EXAMPLE WORK FLOWS"""
 
 if __name__ == '__main__':
@@ -507,10 +502,10 @@ if __name__ == '__main__':
                 plot.add_tree(tree)
             stand.add_plot(plot)
 
-        stand.console_report()
+        print(stand.console_report())
 
         thin80tpa = ThinTPA(stand, 80)
-        thin80tpa.console_report()
+        print(thin80tpa.console_report())
 
         stand.table_to_csv('example_csv_export.csv')
 
@@ -548,10 +543,10 @@ if __name__ == '__main__':
                 plot.add_tree(tree[0])
             stand.add_plot(plot)
 
-        stand.console_report()
+        print(stand.console_report())
 
         thin120ba = ThinBA(stand, 120, species_to_cut=['DF', 'WH'])
-        thin120ba.console_report()
+        print(thin120ba.console_report())
 
         stand.table_to_excel('example_xlsx_export.xlsx')
 
@@ -570,10 +565,10 @@ if __name__ == '__main__':
 
         stand = Stand('EX4', -30)
         stand.from_excel_quick('../example_csv_and_xlsx/Example_Excel_quick.xlsx')
-        stand.console_report()
+        print(stand.console_report())
 
         thin25rd = ThinRD(stand, 25, species_to_cut=['DF', 'WH'], min_dbh_to_cut=10, max_dbh_to_cut=18)
-        thin25rd.console_report()
+        print(thin25rd.console_report())
 
 
     def workflow_4():
@@ -589,10 +584,11 @@ if __name__ == '__main__':
 
         stand = Stand('OK2', 46.94)
         stand.from_csv_full('../example_csv_and_xlsx/Example_CSV_full.csv')
-        stand.console_report()
+
+        print(stand.console_report())
 
         thin100tpa = ThinTPA(stand, 100)
-        thin100tpa.console_report()
+        print(thin100tpa.console_report())
 
     def workflow_5():
         """Workflow 5 will create a full cruise stand from importing a stand from a full cruise CSV file and export a PDF report.

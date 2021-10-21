@@ -1,4 +1,4 @@
 fpdf >= 1.7.2
 openpyxl >= 3.0.6
-pyodbc >= 4.0.30
+pyodbc == 4.0.30
 pywin32 >=1.0 ; sys_platform == 'win32'

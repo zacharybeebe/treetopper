@@ -18,7 +18,8 @@ from treetopper.log import Log
 from treetopper.thin import (
     ThinTPA,
     ThinBA,
-    ThinRD
+    ThinRD,
+    TargetDenistyError
 )
 from treetopper.fvs import FVS
 from treetopper._constants import (math,
@@ -630,8 +631,8 @@ if __name__ == '__main__':
         fvs.excel_db('excel_db')
 
 
-    # workflow_1()
-    workflow_2()
+    workflow_1()
+    #workflow_2()
     # workflow_3()
     # workflow_4()
     # workflow_5()

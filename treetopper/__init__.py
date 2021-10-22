@@ -7,5 +7,6 @@ from treetopper.stand import (
     ThinTPA,
     ThinBA,
     ThinRD,
-    FVS
+    FVS,
+    TargetDenistyError
 )

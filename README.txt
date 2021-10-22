@@ -4,6 +4,17 @@ Python module for calculating Stand data using tree species of the west coast.
 DOCUMENTATION
 https://zacharybeebe.github.io/treetopper/
 
+pip install treetopper
+
+
+If you would like to download a blank, formatted inventory .csv or .xlsx...
+    In the terminal
+
+        pip install treetopper [if you haven't already]
+        python -m treetopper.blank_sheet
+
+    And follow the prompts
+
 
 The species available for calculation are below and must have the correct species code...
 

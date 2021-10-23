@@ -19,7 +19,7 @@ from treetopper.thin import (
     ThinTPA,
     ThinBA,
     ThinRD,
-    TargetDenistyError
+    TargetDensityError
 )
 from treetopper.fvs import FVS
 from treetopper._constants import (math,
@@ -471,21 +471,44 @@ class Stand(object):
         return d
 
 
-
-
-
-"""EXAMPLE WORK FLOWS"""
-
 if __name__ == '__main__':
+    import argparse
+    import traceback
+    from os import mkdir
+    from os.path import join, isfile, isdir, expanduser
 
-    def workflow_1():
-        """Workflow 1 will create a quick cruise stand from manually entered trees and plots and will then show a console report.
+    def get_desktop_path():
+        return join(expanduser("~"), "desktop")
 
-           Using the ThinTPA class, we will thin the stand to a Trees per Acre of 80 considering all species and diameter ranges
-           and then will show a console report of the thinning
+    def make_dir_and_subdir(workflow_num):
+        desktop = get_desktop_path()
 
-           Finally we will export the stand's tree-level data (stand.table_data) to a CSV file in the current working directory"""
+        tt_dir = join(desktop, 'treetopper_outputs')
+        if not isdir(tt_dir):
+            mkdir(tt_dir)
 
+        wf_dir = join(tt_dir, f'workflow_{workflow_num}')
+        if not isdir(wf_dir):
+            mkdir(wf_dir)
+
+        return wf_dir
+
+
+    parser = argparse.ArgumentParser(description='treetopper Example Workflows')
+    parser.add_argument('workflow_number', help='Enter the number of the workflow to run.\n Valid workflow numbers: 1, 2, 3, 4, 5, 6)')
+    args = parser.parse_args()
+
+    wf = args.workflow_number
+    while True:
+        if wf not in ['1', '2', '3', '4', '5', '6']:
+            print('Please enter a workflow number 1, 2, 3, 4, 5, or 6')
+            wf = input('Workflow #: ')
+        else:
+            break
+    wf = int(wf)
+
+
+    def workflow_1(workflow_number):
         stand = Stand('WF1', -20)
         plot_factor = stand.plot_factor
         tree_data = [[TimberQuick('DF', 29.5, 119, plot_factor), TimberQuick('WH', 18.9, 102, plot_factor),
@@ -503,22 +526,27 @@ if __name__ == '__main__':
                 plot.add_tree(tree)
             stand.add_plot(plot)
 
+        path = make_dir_and_subdir(workflow_number)
+
         print(stand.console_report())
+        stand.table_to_csv(join(path, 'example_csv_export.csv'))
 
         thin80tpa = ThinTPA(stand, 80)
         print(thin80tpa.console_report())
 
-        stand.table_to_csv('example_csv_export.csv')
+        end_message = """**WORKFLOW 1 created a QUICK CRUISE stand from manually entered tree data.
+
+  It then ran a thinning scenario with a target density of 80 Trees per Acre considering all species and diameter ranges.
+
+  Outputs:
+      Stand console report in terminal [print(stand_class.console_report)] ^above^
+      Thinning console report in terminal [print(thin_class.console_report))] ^above^
+      Plot data .csv "example_csv_export.csv" in desktop/treetopper_outputs/workflow_1/
+"""
+        print(f'\n\n{end_message}')
 
 
-    def workflow_2():
-        """Workflow 2 will create a full cruise stand from manually entered trees and plots and will then show a console report.
-
-           Using the ThinBA class, we will thin the stand to a BA/ac of 120 considering only DF and WH and all diameter ranges
-           and then will show a console report of the thinning
-
-           Finally we will export the stand's tree-level data (stand.table_data) to an Excel file in the current working directory"""
-
+    def workflow_2(workflow_number):
         stand = Stand('WF2', 33.3)
         plot_factor = stand.plot_factor
         tree_data = [[[TimberFull('DF', 29.5, 119, plot_factor), [[42, 40, 'S2', 5], [83, 40, 'S3', 0], [102, 18, 'S4', 10]]],
@@ -544,99 +572,311 @@ if __name__ == '__main__':
                 plot.add_tree(tree[0])
             stand.add_plot(plot)
 
+        path = make_dir_and_subdir(workflow_number)
+
         print(stand.console_report())
+        stand.table_to_excel(join(path, 'example_xlsx_export.xlsx'))
 
         thin120ba = ThinBA(stand, 120, species_to_cut=['DF', 'WH'])
         print(thin120ba.console_report())
 
-        stand.table_to_excel('example_xlsx_export.xlsx')
+        end_message = """**WORKFLOW 2 created a FULL CRUISE stand from manually entered tree data.
+
+  It then ran a thinning scenario with a target density of 120 Basal Area per Acre harvesting only DF and WH considering all diameter ranges.
+
+  Outputs:
+      Stand console report in terminal [print(stand_class.console_report)] ^above^
+      Thinning console report in terminal [print(thin_class.console_report))] ^above^
+      Plot data .xlsx "example_xlsx_export.xlsx" in desktop/treetopper_outputs/workflow_2/
+"""
+        print(f'\n\n{end_message}')
 
 
-    def workflow_3():
-        """Workflow 3 will create a quick cruise stand from importing a stand from a quick cruise Excel file and show a console report.
-           The stand class' name needs to match the stand name within the Excel file, we will use "EX4". The Excel file we will be using is
-           Example_Excel_quick.xlsx
-
-           Using the ThinRD class, we will thin the stand to a RD/ac of 25 considering only DF and WH with a
-           minimum diameter of 10 inches and a max of 18 inches, and then will show a console report of the thinning.
-
-           ** Note this thinning density won't be able to be achieved fully because our parameters don't allow for the needed
-           harvest density, but this is to illustrate that the thinning will let the user know how much density was taken and how much
-           more is needed to achieve the desired density target"""
+    def workflow_3(workflow_number):
+        path = make_dir_and_subdir(workflow_number)
 
         stand = Stand('EX4', -30)
         stand.from_excel_quick('../example_csv_and_xlsx/Example_Excel_quick.xlsx')
         print(stand.console_report())
 
+        stand.table_to_excel(join(path, 'example_xlsx_export.xlsx'))
+
         thin25rd = ThinRD(stand, 25, species_to_cut=['DF', 'WH'], min_dbh_to_cut=10, max_dbh_to_cut=18)
         print(thin25rd.console_report())
 
+        end_message = """**WORKFLOW 3 created a QUICK CRUISE stand from importing plot data from an excel sheet.
 
-    def workflow_4():
-        """Workflow 4 will create a full cruise stand from importing a stand from a full cruise CSV file and show a console report.
-           The stand class' name needs to match the stand name within the CSV file, we will use "OK2". The CSV file we will be using is
-           Example_CSV_full.csv
+  It then ran a thinning scenario with a target density of 25 Relative Density per Acre harvesting only DF and WH, with a
+  minimum dbh of 10 inches and a maximum dbh of 18 inches. ** Note this thinning density won't be able to be achieved
+  fully because our parameters don't allow for the needed harvest density, but this is to illustrate that the thinning
+  will let the user know how much density was taken and how much more is needed to achieve the desired density target
 
-           Using the ThinTPA class, we will thin the stand to a TPA of 100 considering all species and diameter ranges
-           and then will TRY to show a console report of the thinning.
+  Outputs:
+      Stand console report in terminal [print(stand_class.console_report)] ^above^
+      Thinning console report in terminal [print(thin_class.console_report))] ^above^
+      Plot data .xlsx "example_xlsx_export.xlsx" in desktop/treetopper_outputs/workflow_3/
+"""
+        print(f'\n\n{end_message}')
 
-           ** Note this thinning density is greater than the entire stand's density and the Thin Class will throw a
-           TargetDensityError exception which will explain what went wrong"""
+
+    def workflow_4(workflow_number):
+        path = make_dir_and_subdir(workflow_number)
 
         stand = Stand('OK2', 46.94)
         stand.from_csv_full('../example_csv_and_xlsx/Example_CSV_full.csv')
-
         print(stand.console_report())
+        stand.table_to_excel(join(path, 'example_xlsx_export.xlsx'))
 
-        thin100tpa = ThinTPA(stand, 100)
-        print(thin100tpa.console_report())
+        try:
+            thin100tpa = ThinTPA(stand, 100)
+            print(thin100tpa.console_report())
+        except TargetDensityError as e:
+            print(traceback.format_exc())
 
-    def workflow_5():
-        """Workflow 5 will create a full cruise stand from importing a stand from a full cruise CSV file and export a PDF report.
-           The stand class' name needs to match the stand name within the CSV file, we will use "EX3". The CSV file we will be using is
-           Example_CSV_quick.csv.
+        end_message = """**WORKFLOW 4 created a FULL CRUISE stand from importing plot data from an csv sheet.
 
-           The PDF will exported to the current working directory as 'stand_report.pdf'
+  It then ran a thinning scenario with a target density of 100 Trees per Acre considering all species and diameter ranges.
+  ** Note this thinning density is greater than the current stand density and the Thin Class will throw a TargetDensityError exception
+  which will explain what went wrong.
 
-           Using the ThinBA class, we will thin the stand to a BA/ac of 140 considering only DF, WH and RA
-           with a maximum thinning DBH of 24 inches (thinning from below). Then a pdf report of the thinning will be exported
-           in the current working directory as 'thin_report.pdf'"""
+  Outputs:
+      Stand console report in terminal [print(stand_class.console_report)] ^above^
+      Thinning console report in terminal [print(thin_class.console_report))] ^above^
+      Plot data .xlsx "example_xlsx_export.xlsx" in desktop/treetopper_outputs/workflow_4/
+"""
+        print(f'\n\n{end_message}')
+
+
+    def workflow_5(workflow_number):
+        path = make_dir_and_subdir(workflow_number)
 
         stand = Stand('EX3', 33.3)
         stand.from_csv_quick('../example_csv_and_xlsx/Example_CSV_quick.csv')
-        stand.pdf_report('stand_report.pdf')
+        stand.pdf_report(join(path, 'stand_report.pdf'))
+        stand.table_to_excel(join(path, 'example_xlsx_export.xlsx'))
 
         thin140ba = ThinBA(stand, 140, species_to_cut=['DF', 'WH', 'RA'], max_dbh_to_cut=24)
-        thin140ba.pdf_report('thin_report.pdf')
+        thin140ba.pdf_report(join(path, 'thin_report.pdf'))
 
-    def workflow_6():
-        """Workflow 6 will create a full cruise stand from importing a stand from a full cruise Excel file.
-           The stand class' name needs to match the stand name within the Excel file, we will use "OK1". The Excel file we will be using is
-           Example_Excel_full.csv
+        end_message = """**WORKFLOW 5 created a QUICK CRUISE stand from importing plot data from an csv sheet.
 
-           We will then use the FVS class to export the stand's data to three databases in the current working directory.
-           These are for use in FVS which is the Forest Service's Forest Vegetation Simulator software
+  It then ran a thinning scenario with a target density of 140 Basal Area per Acre harvesting only DF, WH and RA with a maximum diameter of 24 inches.
 
-           ** Note the Access Database also needs to have a Suppose.loc file associated with it, this is created as well in
-           the same directory as the Access Database"""
+  Outputs:
+      Stand PDF report "stand_report.pdf" from [stand_class.pdf_report()] in desktop/treetopper_outputs/workflow_5/
+      Thinning PDF report "thin_report.pdf" from [thin_class.pdf_report()] in desktop/treetopper_outputs/workflow_5/
+      Plot data .xlsx "example_xlsx_export.xlsx" in desktop/treetopper_outputs/workflow_5/
+"""
+        print(f'\n\n{end_message}')
+
+
+    def workflow_6(workflow_number):
+        path = make_dir_and_subdir(workflow_number)
 
         stand = Stand('OK1', -30)
         stand.from_excel_full('../example_csv_and_xlsx/Example_Excel_full.xlsx')
+        stand.table_to_excel(join(path, 'example_xlsx_export.xlsx'))
 
         fvs = FVS()
         fvs.set_stand(stand, 'PN', 612, 6, 45, 'DF', 110)
 
-        fvs.access_db('access_db')
-        fvs.sqlite_db('sqlite_db')
-        fvs.excel_db('excel_db')
+        fvs.access_db('access_db', directory=path)
+        fvs.sqlite_db('sqlite_db', directory=path)
+        fvs.excel_db('excel_db', directory=path)
+
+        end_message = """**WORKFLOW 6 created a FULL CRUISE stand from importing plot data from an excel sheet.
+
+  It then ran the FVS module to create FVS formatted databases from the stand data. FVS is the US Forest Service's Forest Vegetation Simulator.
+
+  Outputs:
+      FVS Access database "access_db.db" from [fvs_class.access_db()] in desktop/treetopper_outputs/workflow_6/
+      FVS Suppose file "Suppose.loc" in desktop/treetopper_outputs/workflow_6/. ** FVS Legacy needs a .loc file along with the database.
+      FVS SQLite database "sqlite_db.db" from [fvs_class.sqlite_db()] in desktop/treetopper_outputs/workflow_6/
+      FVS Excel database "excel_db.db" from [fvs_class.excel_db()] in desktop/treetopper_outputs/workflow_6/
+      Plot data .xlsx "example_xlsx_export.xlsx" in desktop/treetopper_outputs/workflow_6/
+"""
+        print(f'\n\n{end_message}')
 
 
-    workflow_1()
-    #workflow_2()
-    # workflow_3()
-    # workflow_4()
-    # workflow_5()
-    # workflow_6()
+    def main(workflow_number):
+        opts = {
+            1: workflow_1,
+            2: workflow_2,
+            3: workflow_3,
+            4: workflow_4,
+            5: workflow_5,
+            6: workflow_6
+        }
+
+        opts[workflow_number](workflow_number)
+
+
+    main(wf)
+
+
+# """EXAMPLE WORK FLOWS"""
+#
+# if __name__ == '__main__':
+#
+#     def workflow_1():
+#         """Workflow 1 will create a quick cruise stand from manually entered trees and plots and will then show a console report.
+#
+#            Using the ThinTPA class, we will thin the stand to a Trees per Acre of 80 considering all species and diameter ranges
+#            and then will show a console report of the thinning
+#
+#            Finally we will export the stand's tree-level data (stand.table_data) to a CSV file in the current working directory"""
+#
+#         stand = Stand('WF1', -20)
+#         plot_factor = stand.plot_factor
+#         tree_data = [[TimberQuick('DF', 29.5, 119, plot_factor), TimberQuick('WH', 18.9, 102, plot_factor),
+#                       TimberQuick('WH', 20.2, 101, plot_factor), TimberQuick('WH', 19.9, 100, plot_factor),
+#                       TimberQuick('DF', 20.6, 112, plot_factor)],
+#                      [TimberQuick('DF', 25.0, 117, plot_factor), TimberQuick('DF', 14.3, 105, plot_factor),
+#                       TimberQuick('DF', 20.4, 119, plot_factor), TimberQuick('DF', 16.0, 108, plot_factor),
+#                       TimberQuick('RC', 20.2, 124, plot_factor), TimberQuick('RC', 19.5, 116, plot_factor),
+#                       TimberQuick('RC', 23.4, 121, plot_factor), TimberQuick('DF', 17.8, 116, plot_factor),
+#                       TimberQuick('DF', 22.3, 125, plot_factor)]
+#                      ]
+#         for trees in tree_data:
+#             plot = Plot()
+#             for tree in trees:
+#                 plot.add_tree(tree)
+#             stand.add_plot(plot)
+#
+#         print(stand.console_report())
+#
+#         thin80tpa = ThinTPA(stand, 80)
+#         print(thin80tpa.console_report())
+#
+#         stand.table_to_csv('example_csv_export.csv')
+#
+#
+#     def workflow_2():
+#         """Workflow 2 will create a full cruise stand from manually entered trees and plots and will then show a console report.
+#
+#            Using the ThinBA class, we will thin the stand to a BA/ac of 120 considering only DF and WH and all diameter ranges
+#            and then will show a console report of the thinning
+#
+#            Finally we will export the stand's tree-level data (stand.table_data) to an Excel file in the current working directory"""
+#
+#         stand = Stand('WF2', 33.3)
+#         plot_factor = stand.plot_factor
+#         tree_data = [[[TimberFull('DF', 29.5, 119, plot_factor), [[42, 40, 'S2', 5], [83, 40, 'S3', 0], [102, 18, 'S4', 10]]],
+#                       [TimberFull('WH', 18.9, 102, plot_factor), [[42, 40, 'S2', 0], [79, 36, 'S4', 5]]],
+#                       [TimberFull('WH', 20.2, 101, plot_factor), [[42, 40, 'S2', 5], [83, 40, 'S4', 0]]],
+#                       [TimberFull('WH', 19.9, 100, plot_factor), [[42, 40, 'S2', 0], [83, 40, 'S4', 15]]],
+#                       [TimberFull('DF', 20.6, 112, plot_factor), [[42, 40, 'S2', 0], [83, 40, 'S3', 5], [100, 16, 'UT', 10]]]],
+#                      [[TimberFull('DF', 25.0, 117, plot_factor), [[42, 40, 'SM', 0], [83, 40, 'S3', 5], [100, 16, 'S4', 0]]],
+#                       [TimberFull('DF', 14.3, 105, plot_factor), [[42, 40, 'S3', 0], [79, 36, 'S4', 0]]],
+#                       [TimberFull('DF', 20.4, 119, plot_factor), [[42, 40, 'S2', 5], [83, 40, 'S3', 5], [100, 16, 'S4', 5]]],
+#                       [TimberFull('DF', 16.0, 108, plot_factor), [[42, 40, 'S3', 5], [83, 40, 'S3', 10]]],
+#                       [TimberFull('RC', 20.2, 124, plot_factor), [[42, 40, 'CR', 5], [83, 40, 'CR', 5], [104, 20, 'CR', 5]]],
+#                       [TimberFull('RC', 19.5, 116, plot_factor), [[42, 40, 'CR', 10], [83, 40, 'CR', 5], [100, 16, 'CR', 0]]],
+#                       [TimberFull('RC', 23.4, 121, plot_factor), [[42, 40, 'CR', 0], [83, 40, 'CR', 0], [106, 22, 'CR', 5]]],
+#                       [TimberFull('DF', 17.8, 116, plot_factor), [[42, 40, 'S2', 0], [83, 40, 'S3', 0], [100, 16, 'S4', 10]]],
+#                       [TimberFull('DF', 22.3, 125, plot_factor), [[42, 40, 'SM', 0], [83, 40, 'S3', 5], [108, 24, 'S4', 0]]]]
+#                      ]
+#         for trees in tree_data:
+#             plot = Plot()
+#             for tree in trees:
+#                 for log in tree[1]:
+#                     tree[0].add_log(*log)
+#                 plot.add_tree(tree[0])
+#             stand.add_plot(plot)
+#
+#         print(stand.console_report())
+#
+#         thin120ba = ThinBA(stand, 120, species_to_cut=['DF', 'WH'])
+#         print(thin120ba.console_report())
+#
+#         stand.table_to_excel('example_xlsx_export.xlsx')
+#
+#
+#     def workflow_3():
+#         """Workflow 3 will create a quick cruise stand from importing a stand from a quick cruise Excel file and show a console report.
+#            The stand class' name needs to match the stand name within the Excel file, we will use "EX4". The Excel file we will be using is
+#            Example_Excel_quick.xlsx
+#
+#            Using the ThinRD class, we will thin the stand to a RD/ac of 25 considering only DF and WH with a
+#            minimum diameter of 10 inches and a max of 18 inches, and then will show a console report of the thinning.
+#
+#            ** Note this thinning density won't be able to be achieved fully because our parameters don't allow for the needed
+#            harvest density, but this is to illustrate that the thinning will let the user know how much density was taken and how much
+#            more is needed to achieve the desired density target"""
+#
+#         stand = Stand('EX4', -30)
+#         stand.from_excel_quick('../example_csv_and_xlsx/Example_Excel_quick.xlsx')
+#         print(stand.console_report())
+#
+#         thin25rd = ThinRD(stand, 25, species_to_cut=['DF', 'WH'], min_dbh_to_cut=10, max_dbh_to_cut=18)
+#         print(thin25rd.console_report())
+#
+#
+#     def workflow_4():
+#         """Workflow 4 will create a full cruise stand from importing a stand from a full cruise CSV file and show a console report.
+#            The stand class' name needs to match the stand name within the CSV file, we will use "OK2". The CSV file we will be using is
+#            Example_CSV_full.csv
+#
+#            Using the ThinTPA class, we will thin the stand to a TPA of 100 considering all species and diameter ranges
+#            and then will TRY to show a console report of the thinning.
+#
+#            ** Note this thinning density is greater than the entire stand's density and the Thin Class will throw a
+#            TargetDensityError exception which will explain what went wrong"""
+#
+#         stand = Stand('OK2', 46.94)
+#         stand.from_csv_full('../example_csv_and_xlsx/Example_CSV_full.csv')
+#
+#         print(stand.console_report())
+#
+#         thin100tpa = ThinTPA(stand, 100)
+#         print(thin100tpa.console_report())
+#
+#     def workflow_5():
+#         """Workflow 5 will create a full cruise stand from importing a stand from a full cruise CSV file and export a PDF report.
+#            The stand class' name needs to match the stand name within the CSV file, we will use "EX3". The CSV file we will be using is
+#            Example_CSV_quick.csv.
+#
+#            The PDF will exported to the current working directory as 'stand_report.pdf'
+#
+#            Using the ThinBA class, we will thin the stand to a BA/ac of 140 considering only DF, WH and RA
+#            with a maximum thinning DBH of 24 inches (thinning from below). Then a pdf report of the thinning will be exported
+#            in the current working directory as 'thin_report.pdf'"""
+#
+#         stand = Stand('EX3', 33.3)
+#         stand.from_csv_quick('../example_csv_and_xlsx/Example_CSV_quick.csv')
+#         stand.pdf_report('stand_report.pdf')
+#
+#         thin140ba = ThinBA(stand, 140, species_to_cut=['DF', 'WH', 'RA'], max_dbh_to_cut=24)
+#         thin140ba.pdf_report('thin_report.pdf')
+#
+#     def workflow_6():
+#         """Workflow 6 will create a full cruise stand from importing a stand from a full cruise Excel file.
+#            The stand class' name needs to match the stand name within the Excel file, we will use "OK1". The Excel file we will be using is
+#            Example_Excel_full.csv
+#
+#            We will then use the FVS class to export the stand's data to three databases in the current working directory.
+#            These are for use in FVS which is the Forest Service's Forest Vegetation Simulator software
+#
+#            ** Note the Access Database also needs to have a Suppose.loc file associated with it, this is created as well in
+#            the same directory as the Access Database"""
+#
+#         stand = Stand('OK1', -30)
+#         stand.from_excel_full('../example_csv_and_xlsx/Example_Excel_full.xlsx')
+#
+#         fvs = FVS()
+#         fvs.set_stand(stand, 'PN', 612, 6, 45, 'DF', 110)
+#
+#         fvs.access_db('access_db')
+#         fvs.sqlite_db('sqlite_db')
+#         fvs.excel_db('excel_db')
+#
+#
+#     workflow_1()
+#     #workflow_2()
+#     # workflow_3()
+#     # workflow_4()
+#     # workflow_5()
+#     # workflow_6()
 
 
 

@@ -56,6 +56,8 @@ class Thin(object):
         self.adds = [['ba_ac', 'ba_tree'], ['rd_ac', 'rd_tree'], ['bf_ac', 'bf_tree'], ['cf_ac', 'cf_tree']]
         self.conditions = ['current_', 'residual_', 'removal_']
 
+        self.report_message = None
+
         for key in self.keys:
             setattr(self, f'{self.conditions[0]}{key}', 0)
 
@@ -72,12 +74,15 @@ class Thin(object):
         console_text = '\nTHINNING RESULTS\n'
         if not self.full_thin[0]:
             needed = round(self[f'current_{self.full_thin[2]}'] - self.target, 1)
-            console_text += NOT_FULL_THIN_MESSAGE.format(target=self.target, thin_param=thin_param, actual=round(self.full_thin[1], 1),
-                                                   needed=needed, species=', '.join(species), min_dbh=min_dbh, max_dbh=max_dbh)
+            self.report_message = NOT_FULL_THIN_MESSAGE.format(target=self.target, thin_param=thin_param,
+                                                               actual=round(self.full_thin[1], 1), needed=needed,
+                                                               species=', '.join(species), min_dbh=min_dbh, max_dbh=max_dbh)
+            console_text += self.report_message
             console_text += print_thin_species(self.species_data)
         else:
-            console_text += SUCCESS_MESSAGE.format(target=self.target, thin_param=thin_param, species=', '.join(species),
-                                              min_dbh=min_dbh, max_dbh=max_dbh)
+            self.report_message = SUCCESS_MESSAGE.format(target=self.target, thin_param=thin_param, species=', '.join(species),
+                                                         min_dbh=min_dbh, max_dbh=max_dbh)
+            console_text += self.report_message
             console_text += print_thin_species(self.species_data)
         # print(console_text)
         return console_text
@@ -244,7 +249,7 @@ class Thin(object):
         current_density = self[f'current_{self.target_metric}']
         met = self.target_metric.replace('_', '/').upper()
         if current_density < self.target:
-            raise TargetDenistyError(self.target, current_density, met)
+            raise TargetDensityError(self.target, current_density, met)
 
 
 class ThinTPA(Thin):
@@ -280,13 +285,13 @@ class ThinRD(Thin):
         self.species_data = self._get_species_conditions()
 
 
-class TargetDenistyError(Exception):
+class TargetDensityError(Exception):
     def __init__(self, target_density, current_density, target_metric):
         p1 = f"""Target Density of {target_density} {target_metric} """
         p2 = f"""is greater than Stand Total of {round(current_density, 1)} {target_metric}. """
         p3 = f"""Please lower Target Density"""
         self.message = p1 + p2 + p3
-        super(TargetDenistyError, self).__init__(self.message)
+        super(TargetDensityError, self).__init__(self.message)
 
 
 

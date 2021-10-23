@@ -8,5 +8,5 @@ from treetopper.stand import (
     ThinBA,
     ThinRD,
     FVS,
-    TargetDenistyError
+    TargetDensityError
 )

@@ -474,7 +474,7 @@ class Stand(object):
 if __name__ == '__main__':
     import argparse
     import traceback
-    from os import mkdir
+    from os import mkdir, getcwd
     from os.path import join, isfile, isdir, expanduser
 
     def get_desktop_path():
@@ -596,7 +596,7 @@ if __name__ == '__main__':
         path = make_dir_and_subdir(workflow_number)
 
         stand = Stand('EX4', -30)
-        stand.from_excel_quick('Example_Excel_quick.xlsx')
+        stand.from_excel_quick(join(getcwd(), 'Example_Excel_quick.xlsx'))
         print(stand.console_report())
 
         stand.table_to_excel(join(path, 'example_xlsx_export.xlsx'))
@@ -623,7 +623,7 @@ if __name__ == '__main__':
         path = make_dir_and_subdir(workflow_number)
 
         stand = Stand('OK2', 46.94)
-        stand.from_csv_full('Example_CSV_full.csv')
+        stand.from_csv_full(join(getcwd(), 'Example_CSV_full.csv'))
         print(stand.console_report())
         stand.table_to_excel(join(path, 'example_xlsx_export.xlsx'))
 
@@ -651,7 +651,7 @@ if __name__ == '__main__':
         path = make_dir_and_subdir(workflow_number)
 
         stand = Stand('EX3', 33.3)
-        stand.from_csv_quick('Example_CSV_quick.csv')
+        stand.from_csv_quick(join(getcwd(), 'Example_CSV_quick.csv'))
         stand.pdf_report(join(path, 'stand_report.pdf'))
         stand.table_to_excel(join(path, 'example_xlsx_export.xlsx'))
 
@@ -674,7 +674,7 @@ if __name__ == '__main__':
         path = make_dir_and_subdir(workflow_number)
 
         stand = Stand('OK1', -30)
-        stand.from_excel_full('Example_Excel_full.xlsx')
+        stand.from_excel_full(join(getcwd(), 'Example_Excel_full.xlsx'))
         stand.table_to_excel(join(path, 'example_xlsx_export.xlsx'))
 
         fvs = FVS()

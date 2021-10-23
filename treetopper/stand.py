@@ -474,6 +474,7 @@ class Stand(object):
 if __name__ == '__main__':
     import argparse
     import traceback
+    import sys
     from os import mkdir, getcwd
     from os.path import join, isfile, isdir, expanduser
 
@@ -492,6 +493,18 @@ if __name__ == '__main__':
             mkdir(wf_dir)
 
         return wf_dir
+
+    def get_package_path(filename):
+        path = None
+        for i in sys.path:
+            if 'AppData' in i and i[-13:] == 'site-packages':
+                path = i
+                break
+        tt_path = join(path, 'treetopper')
+        final = join(tt_path, filename)
+        print(final)
+        return final
+
 
 
     parser = argparse.ArgumentParser(description='treetopper Example Workflows')
@@ -623,7 +636,7 @@ if __name__ == '__main__':
         path = make_dir_and_subdir(workflow_number)
 
         stand = Stand('OK2', 46.94)
-        stand.from_csv_full(join(getcwd(), 'Example_CSV_full.csv'))
+        stand.from_csv_full(get_package_path('Example_CSV_full.csv'))
         print(stand.console_report())
         stand.table_to_excel(join(path, 'example_xlsx_export.xlsx'))
 
@@ -651,7 +664,7 @@ if __name__ == '__main__':
         path = make_dir_and_subdir(workflow_number)
 
         stand = Stand('EX3', 33.3)
-        stand.from_csv_quick(join(getcwd(), 'Example_CSV_quick.csv'))
+        stand.from_csv_quick(get_package_path('Example_CSV_quick.csv'))
         stand.pdf_report(join(path, 'stand_report.pdf'))
         stand.table_to_excel(join(path, 'example_xlsx_export.xlsx'))
 
@@ -674,7 +687,7 @@ if __name__ == '__main__':
         path = make_dir_and_subdir(workflow_number)
 
         stand = Stand('OK1', -30)
-        stand.from_excel_full(join(getcwd(), 'Example_Excel_full.xlsx'))
+        stand.from_excel_full(get_package_path('Example_Excel_full.xlsx'))
         stand.table_to_excel(join(path, 'example_xlsx_export.xlsx'))
 
         fvs = FVS()

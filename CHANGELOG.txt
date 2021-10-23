@@ -28,3 +28,12 @@ you can now just import them from treetopper instead of from the modules
 
 1.0.9 (10/22/2021)
 -Added TargetDensityError to the treetopper imports
+
+1.0.10 (10/22/2021)
+-Added the option to run through various workflow examples from the terminal using "python -m treetopper.stand"
+-Added example inventory data sheets to the package installer, these will be used when using the stand module workflows
+-Updated the README
+-Fixed a typo for TargetDensityError (previously TargetDenistyError)
+
+1.0.11 (10/22/2021)
+-Testing the inclusion of inventory data sheets to the package installer, apologies for the frequent version increasing

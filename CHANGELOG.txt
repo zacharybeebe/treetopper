@@ -62,3 +62,8 @@ you can now just import them from treetopper instead of from the modules
 1.0.17 (10/22/2021)
 -Changed the stands inventory sheet path to find site-package path, current working directory did not work
 -Testing the inclusion of inventory data sheets to the package installer, apologies for the frequent version increasing
+
+1.1.0 (10/22/2021)
+-Completed the inclusion of data sheets for package installer, "python -m treetopper.stand [workflow number]" is stable now
+-Still need to update docs -- coming soon
+

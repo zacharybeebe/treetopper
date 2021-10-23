@@ -609,7 +609,7 @@ if __name__ == '__main__':
         path = make_dir_and_subdir(workflow_number)
 
         stand = Stand('EX4', -30)
-        stand.from_excel_quick(join(getcwd(), 'Example_Excel_quick.xlsx'))
+        stand.from_excel_quick(get_package_path('Example_Excel_quick.xlsx'))
         print(stand.console_report())
 
         stand.table_to_excel(join(path, 'example_xlsx_export.xlsx'))

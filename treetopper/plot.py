@@ -52,46 +52,6 @@ class Plot(object):
                 self.logs[log.species] = self._format_logs_species_dict()
             self._update_logs(log)
 
-    def _format_logs_species_dict(self):
-        """Returns a sub-dictionary for the species key of the plot's logs dictionary"""
-        master = {}
-        sub = {'lpa': 0,
-               'bf_ac': 0,
-               'cf_ac': 0}
-        for grade in GRADE_NAMES:
-            master[grade] = {rng: sub.copy() for rng in LOG_LENGTHS}
-            master[grade].update({'totals_by_grade': sub.copy()})
-            master[grade].update({'display': False})
-        master['totals_by_length'] = {rng: sub.copy() for rng in LOG_LENGTHS}
-        master['totals_by_length'].update({'totals_by_grade': sub.copy()})
-        master['totals_by_length'].update({'display': False})
-        return master
-
-    def _update_logs(self, log):
-        """Updated logs per acre, log board feet per acre, and log cubic feet per acre based on log grade and
-           log length range for both the species key and the totals_all key of the plot's logs dictionary"""
-        for key in [log.species, 'totals_all']:
-            for sub in ['lpa', 'bf_ac', 'cf_ac']:
-                self.logs[key][log.grade][log.length_range][sub] += log[sub]
-                self.logs[key][log.grade]['totals_by_grade'][sub] += log[sub]
-                self.logs[key][log.grade]['display'] = True
-                self.logs[key]['totals_by_length'][log.length_range][sub] += log[sub]
-                self.logs[key]['totals_by_length']['totals_by_grade'][sub] += log[sub]
-                self.logs[key]['totals_by_length']['display'] = True
-
-    def _format_species_dict(self):
-        """Returns a sub-dictionary for the species key of the plot's species dictionary"""
-        master = {'tpa': 0,
-                  'ba_ac': 0,
-                  'qmd': 0,
-                  'avg_hgt': 0,
-                  'hdr': 0,
-                  'rd_ac': 0,
-                  'bf_ac': 0,
-                  'cf_ac': 0,
-                  'vbar': 0}
-        return master
-
     def _update_species(self, tree):
         """Updates the plot's overall calculations from the new data within the plot's species dictionary"""
         update_after = ['qmd', 'vbar', 'avg_hgt', 'hdr']
@@ -112,6 +72,48 @@ class Plot(object):
             else:
                 self.species[key]['avg_hgt'] = mean([t.height for t in self.trees if t.species == tree.species])
                 self.species[key]['hdr'] = mean([t.hdr for t in self.trees if t.species == tree.species])
+
+    def _update_logs(self, log):
+        """Updated logs per acre, log board feet per acre, and log cubic feet per acre based on log grade and
+           log length range for both the species key and the totals_all key of the plot's logs dictionary"""
+        for key in [log.species, 'totals_all']:
+            for sub in ['lpa', 'bf_ac', 'cf_ac']:
+                self.logs[key][log.grade][log.length_range][sub] += log[sub]
+                self.logs[key][log.grade]['totals_by_grade'][sub] += log[sub]
+                self.logs[key][log.grade]['display'] = True
+                self.logs[key]['totals_by_length'][log.length_range][sub] += log[sub]
+                self.logs[key]['totals_by_length']['totals_by_grade'][sub] += log[sub]
+                self.logs[key]['totals_by_length']['display'] = True
+
+    @staticmethod
+    def _format_species_dict():
+        """Returns a sub-dictionary for the species key of the plot's species dictionary"""
+        master = {'tpa': 0,
+                  'ba_ac': 0,
+                  'qmd': 0,
+                  'avg_hgt': 0,
+                  'hdr': 0,
+                  'rd_ac': 0,
+                  'bf_ac': 0,
+                  'cf_ac': 0,
+                  'vbar': 0}
+        return master
+
+    @staticmethod
+    def _format_logs_species_dict():
+        """Returns a sub-dictionary for the species key of the plot's logs dictionary"""
+        master = {}
+        sub = {'lpa': 0,
+               'bf_ac': 0,
+               'cf_ac': 0}
+        for grade in GRADE_NAMES:
+            master[grade] = {rng: sub.copy() for rng in LOG_LENGTHS}
+            master[grade].update({'totals_by_grade': sub.copy()})
+            master[grade].update({'display': False})
+        master['totals_by_length'] = {rng: sub.copy() for rng in LOG_LENGTHS}
+        master['totals_by_length'].update({'totals_by_grade': sub.copy()})
+        master['totals_by_length'].update({'display': False})
+        return master
 
 
 

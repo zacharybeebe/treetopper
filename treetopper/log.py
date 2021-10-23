@@ -1,8 +1,10 @@
-from treetopper._constants import (math,
-                                   GRADE_NAMES,
-                                   LOG_LENGTHS,
-                                   OFFICIAL_GRADES,
-                                   SCRIBNER_DICT)
+from treetopper._constants import (
+    math,
+    GRADE_NAMES,
+    LOG_LENGTHS,
+    OFFICIAL_GRADES,
+    SCRIBNER_DICT
+)
 
 
 
@@ -48,7 +50,7 @@ class Log(object):
     def _calc_top_dib(self):
         """Uses the Timber Class' stem taper equation to calculate the top diameter inside bark (DIB) of the log
            from the stem_height argument"""
-        return int(math.floor(self.tree.equation(self.tree.dbh, self.tree.height, self.stem_height, **self.tree.coef[1])))
+        return self.tree.get_any_dib(self.stem_height)
 
     def _calc_log_grade(self):
         """Used when the Timber Class is TimberQuick, it will get the grade of the log based on species, minimum log lengths,

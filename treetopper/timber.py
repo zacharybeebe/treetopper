@@ -1,8 +1,9 @@
 from treetopper.log import Log
-from treetopper._constants import (math,
-                                   ALL_TAPERS_DICT,
-                                   EQUATION_DICT)
-
+from treetopper._constants import (
+    math,
+    TAPER_EQ_COEF,
+    TAPER_EQ
+)
 
 
 class TimberQuick(object):
@@ -45,8 +46,6 @@ class TimberQuick(object):
         self.hdr = self.height / (self.dbh / 12)
         self.ba = self.dbh ** 2 * 0.005454
         self.rd = self.ba / math.sqrt(self.dbh)
-        self.coef = ALL_TAPERS_DICT[self.species]
-        self.equation = EQUATION_DICT[self.coef[0]]
 
         self.merch_dib = self._get_merch_dib()
         self.merch_height = self._get_merch_height()
@@ -67,7 +66,7 @@ class TimberQuick(object):
 
     def get_any_dib(self, stem_height):
         """Returns the diameter inside bark (DIB) at any given stem height"""
-        return math.floor(self.equation(self.dbh, self.height, stem_height, **self.coef[1]))
+        return math.floor(TAPER_EQ[self.species](self.dbh, self.height, stem_height, *TAPER_EQ_COEF[self.species]))
 
     def _get_tpa_ba_ac_rd_ac(self):
         """Calculates the Trees per Acre, Basal Area per Acre and Relative Density per Acre
@@ -100,17 +99,16 @@ class TimberQuick(object):
         chkhgt = (ceiling - floor) // 4 * 3
 
         while notcheck:
-            chkdib = int(math.floor(self.equation(self.dbh, self.height, chkhgt, **self.coef[1])))
-                
-            if chkdib == int(self.merch_dib):
+            chkdib = self.get_any_dib(chkhgt)
+            if chkdib == self.merch_dib:
                 for i in range(1, 21):
                     chkhgt += 1
-                    chkdib_after = int(math.floor(self.equation(self.dbh, self.height, chkhgt, **self.coef[1])))
+                    chkdib_after = self.get_any_dib(chkhgt)
 
                     if chkdib_after != chkdib:
                         notcheck = False
                         break
-            elif chkdib > int(self.merch_dib):
+            elif chkdib > self.merch_dib:
                 floor = chkhgt
                 chkhgt = ceiling - ((ceiling - floor) // 2)
             else:
@@ -118,7 +116,6 @@ class TimberQuick(object):
                 chkhgt = ceiling - ((ceiling - floor) // 2)
                        
         return chkhgt - 1
-
 
     def _get_volume_and_logs(self):
         """Method for cruising the tree, this will determine the stem heights and lengths of the logs, which are sent to
@@ -171,7 +168,8 @@ class TimberQuick(object):
             else:
                 return self.merch_height
 
-    def _calc_log_length(self, previous_log_stem_height, current_log_stem_height):
+    @staticmethod
+    def _calc_log_length(previous_log_stem_height, current_log_stem_height):
         """Returns a log length in multiples of 2 (24, 26, 28... feet)"""
         return (current_log_stem_height - previous_log_stem_height - 1) // 2 * 2
 
@@ -202,9 +200,6 @@ class TimberFull(object):
         self.ba = self.dbh ** 2 * 0.005454
         self.rd = self.ba / math.sqrt(self.dbh)
 
-        self.coef = ALL_TAPERS_DICT[self.species]
-        self.equation = EQUATION_DICT[self.coef[0]]
-
         self.tpa, self.ba_ac, self.rd_ac = 0, 0, 0
         self._get_tpa_ba_ac_rd_ac()
 
@@ -231,7 +226,7 @@ class TimberFull(object):
 
     def get_any_dib(self, stem_height):
         """Returns the diameter inside bark (DIB) at any given stem height"""
-        return math.floor(self.equation(self.dbh, self.height, stem_height, **self.coef[1]))
+        return math.floor(TAPER_EQ[self.species](self.dbh, self.height, stem_height, *TAPER_EQ_COEF[self.species]))
 
     def _calc_volume_and_logs(self):
         """Calcuates the tree's volume and volume-related metrics based on the log volumes"""
@@ -272,45 +267,36 @@ class TimberFull(object):
 """EXAMPLE OF TIMBER CLASSES"""
 
 if __name__ == ('__main__'):
+    # tree_data_list -> [Species, DBH, Total Height, Plot Factor]
 
-    #tree_data_list -> [Species, DBH, Total Height, Plot Factor]
+    def display_tree_attrs(tree):
+        print('Tree Attributes')
+        for attr in tree.__dict__:
+            print(f'\t{attr}: {tree.__dict__[attr]}')
+        print('\nTree Logs from Log class:')
+        for lnum in tree.logs:
+            print(f'\tLog # {lnum} Attributes:')
+            log = tree.logs[lnum]
+            for l_attr in log.__dict__:
+                print(f'\t\t{l_attr}: {log.__dict__[l_attr]}')
+            print()
+
 
     tree_data_list = ['PP', 32.2, 145, 33.3]
-    tree = TimberQuick(tree_data_list[0], tree_data_list[1], tree_data_list[2], tree_data_list[3])
-    print(f'Tree BF: {tree.bf}')
-    print(f'Tree RD/ac: {tree.rd_ac}')
-    print(f'Tree BF/ac: {tree.bf_ac}')
-    print(f'Tree CF/ac: {tree.cf_ac}')
-    print('Tree Logs:')
-    for lnum in tree.logs:
-        print(f'\tLog # {lnum}:')
-        log = tree.logs[lnum]
-        print(f'\t\tLog Stem Height: {log.stem_height}')
-        print(f'\t\tLog Length: {log.length}')
-        print(f'\t\tLog Top DIB: {log.top_dib}')
-        print(f'\t\tLog Grade: {log.grade}')
-        print(f'\t\tLog BF: {log.bf}')
-        print(f'\t\tLog CF: {log.cf}\n')
+    tree = TimberQuick(*tree_data_list)
+    print('TREE EXAMPLE 1 - FROM TimberQuick')
+    display_tree_attrs(tree)
 
-    tree2_data_list = ['DF', 25.5, 125, 40]
-    tree2 = TimberFull(tree2_data_list[0], tree2_data_list[1], tree2_data_list[2], tree2_data_list[3])
-    tree2.add_log(42, 40, 'SM', 5)
-    tree2.add_log(83, 40, 'S2', 0)
-    tree2.add_log(102, 18, 'S4', 10)
-    print(f'Tree BF: {tree2.bf}')
-    print(f'Tree RD/ac: {tree2.rd_ac}')
-    print(f'Tree BF/ac: {tree2.bf_ac}')
-    print(f'Tree CF/ac: {tree2.cf_ac}')
-    print('Tree Logs:')
-    for lnum in tree2.logs:
-        print(f'\tLog # {lnum}:')
-        log = tree2.logs[lnum]
-        print(f'\t\tLog Stem Height: {log.stem_height}')
-        print(f'\t\tLog Length: {log.length}')
-        print(f'\t\tLog Top DIB: {log.top_dib}')
-        print(f'\t\tLog Grade: {log.grade}')
-        print(f'\t\tLog BF: {log.bf}')
-        print(f'\t\tLog CF: {log.cf}\n')
+    print('\n\n')
+
+    tree_data_list = ['DF', 25.5, 125, 40]
+    tree = TimberFull(*tree_data_list)
+    tree.add_log(42, 40, 'SM', 5)
+    tree.add_log(83, 40, 'S2', 0)
+    tree.add_log(102, 18, 'S4', 10)
+
+    print('TREE EXAMPLE 2 - FROM TimberFull')
+    display_tree_attrs(tree)
 
 
 

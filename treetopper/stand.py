@@ -1,19 +1,26 @@
-from os import (startfile,
-                getcwd)
-from os.path import (join,
-                     isfile)
-from csv import (writer,
-                 excel)
-from openpyxl import (Workbook,
-                      load_workbook)
-from datetime import (datetime,
-                      date)
-from statistics import (mean,
-                        variance,
-                        stdev)
+from os import startfile
+from csv import (
+    writer,
+    excel
+)
+from openpyxl import (
+    Workbook,
+    load_workbook
+)
+from datetime import (
+    datetime,
+    date
+)
+from statistics import (
+    mean,
+    variance,
+    stdev
+)
 from treetopper.plot import Plot
-from treetopper.timber import (TimberQuick,
-                               TimberFull)
+from treetopper.timber import (
+    TimberQuick,
+    TimberFull
+)
 from treetopper.log import Log
 from treetopper.thin import (
     ThinTPA,
@@ -22,16 +29,27 @@ from treetopper.thin import (
     TargetDensityError
 )
 from treetopper.fvs import FVS
-from treetopper._constants import (math,
-                                   extension_check,
-                                   LOG_LENGTHS)
-from treetopper._import_from_sheets import (import_csv_quick,
-                                            import_csv_full,
-                                            import_excel_quick,
-                                            import_excel_full)
-from treetopper._console_print import (print_species,
-                                       print_logs,
-                                       print_species_stats)
+from treetopper._constants import (
+    math,
+    extension_check,
+    format_comma,
+    format_pct,
+    ALL_SPECIES_NAMES,
+    GRADE_SORT,
+    LOG_LENGTHS,
+    SORTED_HEADS
+)
+from treetopper._import_from_sheets import (
+    import_csv_quick,
+    import_csv_full,
+    import_excel_quick,
+    import_excel_full
+)
+from treetopper._console_print import (
+    print_species,
+    print_logs,
+    print_species_stats
+)
 from treetopper._pdf_print import PDF
 
 
@@ -146,6 +164,10 @@ class Stand(object):
 
         self.table_data = []
 
+        self.summary_stand = []
+        self.summary_logs = {}
+        self.summary_stats = []
+
         self.metrics = ['tpa', 'ba_ac', 'rd_ac', 'bf_ac', 'cf_ac']
         self.attrs = ['_gross', '_stats', '']
 
@@ -158,16 +180,22 @@ class Stand(object):
     def __getitem__(self, attribute: str):
         return self.__dict__[attribute]
 
-    def console_report(self):
+    def get_stand_table_text(self):
+        return print_species(self.summary_stand)
+
+    def get_logs_table_text(self):
+        return print_logs(self.summary_logs)
+
+    def get_stats_table_text(self):
+        return print_species_stats(self.summary_stats)
+
+    def get_console_report_text(self):
         """Returns a console-formatted string of the processed stand data, to be called by the standard print() function"""
-        console_text = '\nSTAND METRICS'
-        console_text += f'\n{print_species(self.species)}'
-        console_text += '\n\nLOG METRICS'
-        console_text += f'\n{print_logs(self.logs)}'
-        console_text += '\nSTAND STATISTICS'
-        console_text += f'{print_species_stats(self.species_stats)}'
-        # print(console_text)
-        return console_text
+        return self._compile_report_text()
+
+    def console_report(self):
+        """Prints a console-formatted string of the processed stand data, to be called by the standard print() function"""
+        print(self._compile_report_text())
 
     def pdf_report(self, filename: str, directory: str = None):
         """Exports a pdf of the stand report to a user specified directory or if directory is None, to the current working directory"""
@@ -189,13 +217,19 @@ class Stand(object):
            plot argument needs to be the a Plot Class"""
         self.plots.append(plot)
         self.plot_count += 1
+
         for met in self.metrics:
             self._update_metrics(met)
         self.qmd = math.sqrt((self.ba_ac / self.tpa) / .005454)
         self.vbar = self.bf_ac / self.ba_ac
+
         self._update_species(plot)
         self._update_logs(plot)
         self.table_data = self._update_table_data()
+
+        self.summary_stand = self._update_summary_stand()
+        self.summary_logs = self._update_summary_logs()
+        self.summary_stats = self._update_summary_stats()
 
     def from_csv_quick(self, file_path):
         """Imports tree and plot data from a CSV file for a quick cruise and adds that data to the stand"""
@@ -302,41 +336,6 @@ class Stand(object):
                 ws.append(i)
             wb.save(file)
 
-    def _update_table_data(self):
-        heads = ['Stand', 'Plot Number', 'Tree Number', 'Species', 'DBH', 'Height',
-                 'Stump Height', 'Log 1 Length', 'Log 1 Grade', 'Log 1 Defect', 'Between Logs Feet']
-        master = []
-        max_logs = []
-        for i, plot in enumerate(self.plots):
-            for j, tree in enumerate(plot.trees):
-                temp = [self.name, i + 1, j + 1]
-                for key in ['species', 'dbh', 'height']:
-                    temp.append(tree[key])
-                len_logs = len(tree.logs)
-                max_logs.append(len_logs)
-                for k, lnum in enumerate(tree.logs):
-                    log = tree.logs[lnum]
-                    if lnum == 1:
-                        temp.append(log.stem_height - log.length - 1)
-                    for lkey in ['length', 'grade', 'defect']:
-                        temp.append(log[lkey])
-                    if k < len(tree.logs) - 1:
-                        between = tree.logs[lnum+1].stem_height - log.stem_height - tree.logs[lnum+1].length - 1
-                        if between < 0:
-                            temp.append(0)
-                        else:
-                            temp.append(between)
-                master.append(temp)
-
-        heads += self._add_logs_to_table_heads(max(max_logs))
-        len_heads = len(heads)
-        for i in master:
-            len_i = len(i)
-            if len_i < len_heads:
-                i += ['' for j in range(len_heads - len_i)]
-        master.insert(0, heads)
-        return master
-
     def _update_metrics(self, metric: str):
         """Updates stand metrics based on the metric entered in the argument, used internally"""
         metric_list = [plot[metric] for plot in self.plots]
@@ -408,8 +407,155 @@ class Stand(object):
                                 gross += ([0] * (self.plot_count - len(gross)))
                             self.logs[species][grade][rng][sub]['mean'] = mean(gross)
 
+    def _update_table_data(self):
+        heads = ['Stand', 'Plot Number', 'Tree Number', 'Species', 'DBH', 'Height',
+                 'Stump Height', 'Log 1 Length', 'Log 1 Grade', 'Log 1 Defect', 'Between Logs Feet']
+        master = []
+        max_logs = []
+        for i, plot in enumerate(self.plots):
+            for j, tree in enumerate(plot.trees):
+                temp = [self.name, i + 1, j + 1]
+                for key in ['species', 'dbh', 'height']:
+                    temp.append(tree[key])
+                len_logs = len(tree.logs)
+                max_logs.append(len_logs)
+                for k, lnum in enumerate(tree.logs):
+                    log = tree.logs[lnum]
+                    if lnum == 1:
+                        temp.append(log.stem_height - log.length - 1)
+                    for lkey in ['length', 'grade', 'defect']:
+                        temp.append(log[lkey])
+                    if k < len(tree.logs) - 1:
+                        between = tree.logs[lnum+1].stem_height - log.stem_height - tree.logs[lnum+1].length - 1
+                        if between < 0:
+                            temp.append(0)
+                        else:
+                            temp.append(between)
+                master.append(temp)
 
-    def _check_date(self, value):
+        heads += self._add_logs_to_table_heads(max(max_logs))
+        len_heads = len(heads)
+        for i in master:
+            len_i = len(i)
+            if len_i < len_heads:
+                i += ['' for j in range(len_heads - len_i)]
+        master.insert(0, heads)
+        return master
+
+    def _update_summary_stand(self):
+        heads = ['SPECIES'] + [head[1] for head in SORTED_HEADS]
+        body_data = []
+        for key in self.species:
+            if key == 'totals_all':
+                show = 'TOTALS'
+            else:
+                show = key
+            temp = [str(show)] + [format_comma(self.species[key][i[0]]) for i in SORTED_HEADS]
+            body_data.append(temp)
+        body_data.append(body_data.pop(0))
+        body_data.insert(0, heads)
+        return body_data
+
+    def _update_summary_logs(self):
+        table_data = {}
+        tables = [['bf_ac', 'BOARD FEET PER ACRE'], ['cf_ac', 'CUBIC FEET PER ACRE'], ['lpa', 'LOGS PER ACRE']]
+        for table in tables:
+            metric_key = table[0]
+            key = table[1]
+            table_data[key] = {}
+            for species in self.logs:
+                if species == 'totals_all':
+                    show = 'TOTALS'
+                else:
+                    show = ALL_SPECIES_NAMES[species]
+
+                table_data[key][show] = [['LOG GRADES'] + [rng.upper() for rng in LOG_LENGTHS] + ['TOTALS']]
+
+                grade_sort = []
+                for grade in self.logs[species]:
+                    values = [self.logs[species][grade][rng][metric_key]['mean'] for rng in self.logs[species][grade]]
+                    if sum(values) > 0:
+                        if grade == 'totals_by_length':
+                            col_text = 'TOTALS'
+                        else:
+                            col_text = grade
+                        grade_sort.append([col_text] + [format_comma(z) for z in values])
+                grade_sort = sorted(grade_sort, key=lambda x: GRADE_SORT[x[0]])
+                for g in grade_sort:
+                    table_data[key][show].append(g)
+
+            table_data[key] = self._reorder_dict(table_data[key])
+        return table_data
+
+    def _update_summary_stats(self):
+        tables = {}
+        for spp in self.species_stats:
+            if spp == 'totals_all':
+                show = 'TOTALS'
+            else:
+                show = ALL_SPECIES_NAMES[spp]
+
+            tables[show] = [['METRIC'] + [head.upper() for head in self.species_stats[spp]['tpa'] if head != 'low_avg_high'] + ['LOW',
+                                                                                                                                'AVERAGE',
+                                                                                                                                'HIGH']]
+            for key in self.species_stats[spp]:
+                temp = [key.upper()]
+                not_enough_data = False
+                for sub in self.species_stats[spp][key]:
+                    x = self.species_stats[spp][key][sub]
+                    if not_enough_data:
+                        if x == 'Not enough data':
+                            if sub == 'low_avg_high':
+                                for i in range(3):
+                                    temp.append('-')
+                            else:
+                                temp.append('-')
+                    else:
+                        if x == 'Not enough data':
+                            temp.append(x)
+                            not_enough_data = True
+                        else:
+                            if sub == 'low_avg_high':
+                                for i in x:
+                                    temp.append(format_comma(i))
+                            elif sub == 'stderr_pct':
+                                temp.append(format_pct(x))
+                            else:
+                                temp.append(format_comma(x))
+                tables[show].append(temp)
+        return self._reorder_dict(tables)
+
+    def _get_stats(self, data):
+        """Runs the statistical calculations on a set of the stand conditions data, returns an updated sub dict"""
+        m = mean(data)
+        if len(data) >= 2:
+            std = stdev(data)
+            ste = std / math.sqrt(self.plot_count)
+            low_avg_high = [max(round(m - ste, 1), 0), m, m + ste]
+            d = {'mean': m,
+                 'variance': variance(data),
+                 'stdev': std,
+                 'stderr': ste,
+                 'stderr_pct': (ste / m) * 100,
+                 'low_avg_high': low_avg_high}
+        else:
+            d = {'mean': m,
+                 'variance': 'Not enough data',
+                 'stdev': 'Not enough data',
+                 'stderr': 'Not enough data',
+                 'stderr_pct': 'Not enough data',
+                 'low_avg_high': 'Not enough data'}
+        return d
+
+    def _compile_report_text(self):
+        n = '\n' * 4
+        console_text = f'{print_species(self.summary_stand)}{n}'
+        console_text += f'{print_logs(self.summary_logs)}{n}'
+        console_text += f'{print_species_stats(self.summary_stats)}'
+        return console_text
+
+    @staticmethod
+    def _check_date(value):
         """Checks the value of the inventory_date class-argument and returns a date object"""
         delimiters = [',', '.', '/', '-', '_', ':', ';', '?', '|', '~', '`']
         if isinstance(value, str):
@@ -438,7 +584,8 @@ class Stand(object):
         else:
             raise Exception('Invalid date')
 
-    def _add_logs_to_table_heads(self, max_logs):
+    @staticmethod
+    def _add_logs_to_table_heads(max_logs):
         """Adds log headers to table data depending on the maximum number of logs from trees within the stand"""
         master = []
         for i in range(2, max_logs + 1):
@@ -448,27 +595,14 @@ class Stand(object):
                 master.append('Between Logs Feet')
         return master
 
-    def _get_stats(self, data):
-        """Runs the statistical calculations on a set of the stand conditions data, returns an updated sub dict"""
-        m = mean(data)
-        if len(data) >= 2:
-            std = stdev(data)
-            ste = std / math.sqrt(self.plot_count)
-            low_avg_high = [max(round(m - ste, 1), 0), m, m + ste]
-            d = {'mean': m,
-                 'variance': variance(data),
-                 'stdev': std,
-                 'stderr': ste,
-                 'stderr_pct': (ste / m) * 100,
-                 'low_avg_high': low_avg_high}
-        else:
-            d = {'mean': m,
-                 'variance': 'Not enough data',
-                 'stdev': 'Not enough data',
-                 'stderr': 'Not enough data',
-                 'stderr_pct': 'Not enough data',
-                 'low_avg_high': 'Not enough data'}
-        return d
+    @staticmethod
+    def _reorder_dict(unordered):
+        reorder = {}
+        unordered_list = list(unordered)
+        unordered_list.append(unordered_list.pop(0))
+        for i in unordered_list:
+            reorder[i] = unordered[i]
+        return reorder
 
 
 if __name__ == '__main__':
@@ -491,7 +625,6 @@ if __name__ == '__main__':
         wf_dir = join(tt_dir, f'workflow_{workflow_num}')
         if not isdir(wf_dir):
             mkdir(wf_dir)
-
         return wf_dir
 
     def get_package_path(filename):
@@ -502,9 +635,7 @@ if __name__ == '__main__':
                 break
         tt_path = join(path, 'treetopper')
         final = join(tt_path, filename)
-        print(final)
         return final
-
 
 
     parser = argparse.ArgumentParser(description='treetopper Example Workflows')

@@ -1,2 +1,5 @@
 global-include *.txt *.py
-global-include example_csv_and_excel/*
+include example_csv_and_xlsx/Example_CSV_full.csv
+include example_csv_and_xlsx/Example_CSV_quick.csv
+include example_csv_and_xlsx/Example_Excel_full.xlsx
+include example_csv_and_xlsx/Example_Excel_quick.xlsx

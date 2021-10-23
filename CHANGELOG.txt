@@ -37,3 +37,6 @@ you can now just import them from treetopper instead of from the modules
 
 1.0.11 (10/22/2021)
 -Testing the inclusion of inventory data sheets to the package installer, apologies for the frequent version increasing
+
+1.0.12 (10/22/2021)
+-Testing the inclusion of inventory data sheets to the package installer, apologies for the frequent version increasing

@@ -50,3 +50,7 @@ you can now just import them from treetopper instead of from the modules
 -Moved inventory sheets into the package directory
 -Added *.csv and *.xlsx to the global-include of Manifest.in
 -Testing the inclusion of inventory data sheets to the package installer, apologies for the frequent version increasing
+
+1.0.15 (10/22/2021)
+-Forgot to edit the stand's path to inventory sheet
+-Testing the inclusion of inventory data sheets to the package installer, apologies for the frequent version increasing

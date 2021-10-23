@@ -39,7 +39,14 @@ you can now just import them from treetopper instead of from the modules
 -Testing the inclusion of inventory data sheets to the package installer, apologies for the frequent version increasing
 
 1.0.12 (10/22/2021)
+-Changed the Manifest.in to include inventory sheets
 -Testing the inclusion of inventory data sheets to the package installer, apologies for the frequent version increasing
 
 1.0.13 (10/22/2021)
+-Changed the Manifest.in to graft inventory sheets dir
+-Testing the inclusion of inventory data sheets to the package installer, apologies for the frequent version increasing
+
+1.0.14 (10/22/2021)
+-Moved inventory sheets into the package directory
+-Added *.csv and *.xlsx to the global-include of Manifest.in
 -Testing the inclusion of inventory data sheets to the package installer, apologies for the frequent version increasing

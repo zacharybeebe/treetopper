@@ -1,2 +1,1 @@
-global-include *.txt *.py
-graft example_csv_and_xlsx
+global-include *.txt *.py *.csv *.xlsx

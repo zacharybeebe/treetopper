@@ -1,0 +1,412 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>treetopper mods &#8212; treetopper 1.1.1 documentation</title>
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="_static/nature.css" />
+    <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/doctools.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">treetopper 1.1.1 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">treetopper mods</a></li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="treetopper-mods">
+<h1>treetopper mods<a class="headerlink" href="#treetopper-mods" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="treetopper-blank-sheet-module">
+<h2>treetopper.blank_sheet module<a class="headerlink" href="#treetopper-blank-sheet-module" title="Permalink to this headline">¶</a></h2>
+<p>To create a formatted blank CSV or Excel inventory sheet, call the blank_sheet module from the terminal and run throught the prompts</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">python</span> <span class="o">-</span><span class="n">m</span> <span class="n">treetopper</span><span class="o">.</span><span class="n">blank_sheet</span>
+</pre></div>
+</div>
+<span class="target" id="module-treetopper.blank_sheet"></span><dl class="py function">
+<dt class="sig sig-object py" id="treetopper.blank_sheet.create_blank_csv">
+<span class="sig-prename descclassname"><span class="pre">treetopper.blank_sheet.</span></span><span class="sig-name descname"><span class="pre">create_blank_csv</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">directory</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">full_cruise</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#treetopper.blank_sheet.create_blank_csv" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="treetopper.blank_sheet.create_blank_excel">
+<span class="sig-prename descclassname"><span class="pre">treetopper.blank_sheet.</span></span><span class="sig-name descname"><span class="pre">create_blank_excel</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">directory</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">full_cruise</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#treetopper.blank_sheet.create_blank_excel" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</div>
+<div class="section" id="module-treetopper.fvs">
+<span id="treetopper-fvs-module"></span><h2>treetopper.fvs module<a class="headerlink" href="#module-treetopper.fvs" title="Permalink to this headline">¶</a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="treetopper.fvs.FVS">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">treetopper.fvs.</span></span><span class="sig-name descname"><span class="pre">FVS</span></span><a class="headerlink" href="#treetopper.fvs.FVS" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>The FVS class will create FVS-formatted databases for use in FVS. FVS is a software made by the US Forest Service to
+run models, inventories and simulations on different forest stands. The three types of databases the FVS class creates
+are Microsoft Access, Microsoft Excel and SQLite</p>
+<p>If you would like a blank database to manually input your data, you can call the fvs module from the terminal and run through the prompts</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">python</span> <span class="o">-</span><span class="n">m</span> <span class="n">treetopper</span><span class="o">.</span><span class="n">fvs</span>
+</pre></div>
+</div>
+<p>If you would like to create the databases from a Stand Class, you can instantiate the FVS class and call the
+fvs.set_stand method. There are seven required arguments, these are data that the FVS software needs for its models, they include</p>
+<p>stand (the Stand Class)
+variant (str) [These are two-letter acronyms for different eco-regions throughout the US]
+forest_code (int) [This is the forest code for the closest national forest to your stand]
+region (int) [This is the region code for the forest service region your stand is in]
+stand_age (int) [The approximate age of the stand]
+site_species (str) [The species acronym for the species being used to measure site index]
+site_index (int) [The site index of the stand]</p>
+<p>kwargs can be used to add additional data to your stand. To see the list of the other stand data call the
+fvs.show_stand_args method, use this console printout to find the index of your desired argument(s),
+then use the list index to set your argument to fill in the kwargs,
+for example fvs.set_stand(… fvs.stand_args[4]=22)</p>
+<p>After setting the stand in the FVS class, you can then create or append your databases by calling the database-specific methods
+listed above</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="treetopper.fvs.FVS.access_db">
+<span class="sig-name descname"><span class="pre">access_db</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">directory</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">blank_db</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">bool</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#treetopper.fvs.FVS.access_db" title="Permalink to this definition">¶</a></dt>
+<dd><p>Creates or updates an FVS-formatted Microsoft Access Database (.accdb)</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="treetopper.fvs.FVS.excel_db">
+<span class="sig-name descname"><span class="pre">excel_db</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">directory</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">blank_db</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">bool</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#treetopper.fvs.FVS.excel_db" title="Permalink to this definition">¶</a></dt>
+<dd><p>Creates or updates an FVS-formatted Microsoft Excel Database (.xlsx)</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="treetopper.fvs.FVS.set_stand">
+<span class="sig-name descname"><span class="pre">set_stand</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">stand</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">variant</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">forest_code</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">region</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stand_age</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">site_species</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">site_index</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#treetopper.fvs.FVS.set_stand" title="Permalink to this definition">¶</a></dt>
+<dd><p>Extracts the stand and tree data from the Stand class and updates the stand_fvs and tree_fvs dictionaries which will be used
+to create or update the databases</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="treetopper.fvs.FVS.show_stand_args">
+<span class="sig-name descname"><span class="pre">show_stand_args</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#treetopper.fvs.FVS.show_stand_args" title="Permalink to this definition">¶</a></dt>
+<dd><p>Shows the optional stand data and their indices within self.stand_args</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="treetopper.fvs.FVS.sqlite_db">
+<span class="sig-name descname"><span class="pre">sqlite_db</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">directory</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">blank_db</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">bool</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#treetopper.fvs.FVS.sqlite_db" title="Permalink to this definition">¶</a></dt>
+<dd><p>Creates or updates an FVS-formatted SQLite Database (.db)</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-treetopper.log">
+<span id="treetopper-log-module"></span><h2>treetopper.log module<a class="headerlink" href="#module-treetopper.log" title="Permalink to this headline">¶</a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="treetopper.log.Log">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">treetopper.log.</span></span><span class="sig-name descname"><span class="pre">Log</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">timber</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stem_height</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">length</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">defect_pct</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">grade</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#treetopper.log.Log" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Log Class calculates the volume of an individual log from the Timber Classes. If coming from
+the TimberQuick class, it will also calculate the grade of the log</p>
+</dd></dl>
+
+</div>
+<div class="section" id="module-treetopper.plot">
+<span id="treetopper-plot-module"></span><h2>treetopper.plot module<a class="headerlink" href="#module-treetopper.plot" title="Permalink to this headline">¶</a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="treetopper.plot.Plot">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">treetopper.plot.</span></span><span class="sig-name descname"><span class="pre">Plot</span></span><a class="headerlink" href="#treetopper.plot.Plot" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>The Plot Class is an individual plot within a Stand’s Inventory. It holds Timber Classes of the trees
+within the plot and runs calculations and statistics from those tree’s metrics.</p>
+<p>For inventories, this class is meant to be added to the Stand Class using the Stand Class method of add_plot</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="treetopper.plot.Plot.add_tree">
+<span class="sig-name descname"><span class="pre">add_tree</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">timber</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#treetopper.plot.Plot.add_tree" title="Permalink to this definition">¶</a></dt>
+<dd><p>The timber argument should be one of the two Timber Classes (TimberQuick and/or TimberFull).
+The Timber Class is added to the plot’s trees list and plot calculations and statistics are re-run</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-treetopper.stand">
+<span id="treetopper-stand-module"></span><h2>treetopper.stand module<a class="headerlink" href="#module-treetopper.stand" title="Permalink to this headline">¶</a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="treetopper.stand.Stand">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">treetopper.stand.</span></span><span class="sig-name descname"><span class="pre">Stand</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">plot_factor</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">acres</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">inventory_date</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#treetopper.stand.Stand" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>The Stand Class represents a stand of timber that has had an inventory conducted on it. It should made up of plots (Plot Class)
+which contain trees (Timber Classes).</p>
+<p>The Stand class will run calculations and statistics of the current stand conditions and it will run calculations of the log
+merchantabilty for three metrics: logs per acre, log board feet per acre, and log cubic feet per acre, based on log grades,
+log length ranges and species.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="treetopper.stand.Stand.add_plot">
+<span class="sig-name descname"><span class="pre">add_plot</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">plot</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><a class="reference internal" href="#treetopper.plot.Plot" title="treetopper.plot.Plot"><span class="pre">treetopper.plot.Plot</span></a></span></em><span class="sig-paren">)</span><a class="headerlink" href="#treetopper.stand.Stand.add_plot" title="Permalink to this definition">¶</a></dt>
+<dd><p>Adds a plot to the stand’s plots list and re-runs the calculations and statistics of the stand.
+plot argument needs to be the a Plot Class</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="treetopper.stand.Stand.console_report">
+<span class="sig-name descname"><span class="pre">console_report</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#treetopper.stand.Stand.console_report" title="Permalink to this definition">¶</a></dt>
+<dd><p>Prints a console-formatted string of the complete stand report</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="treetopper.stand.Stand.get_console_report_text">
+<span class="sig-name descname"><span class="pre">get_console_report_text</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#treetopper.stand.Stand.get_console_report_text" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a console-formatted string of the complete stand report</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="treetopper.stand.Stand.get_logs_table_text">
+<span class="sig-name descname"><span class="pre">get_logs_table_text</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#treetopper.stand.Stand.get_logs_table_text" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a console-formatted string of stand logs data</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="treetopper.stand.Stand.get_stand_table_text">
+<span class="sig-name descname"><span class="pre">get_stand_table_text</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#treetopper.stand.Stand.get_stand_table_text" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a console-formatted string of current stand conditions</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="treetopper.stand.Stand.get_stats_table_text">
+<span class="sig-name descname"><span class="pre">get_stats_table_text</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#treetopper.stand.Stand.get_stats_table_text" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns and console-formatted string of stand stand statistics</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="treetopper.stand.Stand.import_sheet_full">
+<span class="sig-name descname"><span class="pre">import_sheet_full</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">file_path</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#treetopper.stand.Stand.import_sheet_full" title="Permalink to this definition">¶</a></dt>
+<dd><p>Imports tree and plot data from a CSV or XLSX file for a full cruise and adds that data to the stand</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="treetopper.stand.Stand.import_sheet_quick">
+<span class="sig-name descname"><span class="pre">import_sheet_quick</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">file_path</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#treetopper.stand.Stand.import_sheet_quick" title="Permalink to this definition">¶</a></dt>
+<dd><p>Imports tree and plot data from a CSV or XLSX file for a quick cruise and adds that data to the stand</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="treetopper.stand.Stand.pdf_report">
+<span class="sig-name descname"><span class="pre">pdf_report</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">directory</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">start_file_upon_creation</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">bool</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#treetopper.stand.Stand.pdf_report" title="Permalink to this definition">¶</a></dt>
+<dd><p>Exports a pdf of the complete stand report to a user specified directory or if directory is None,
+to the current working directory. Will open the created pdf report if start_file_upon_creation is True</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="treetopper.stand.Stand.table_to_csv">
+<span class="sig-name descname"><span class="pre">table_to_csv</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">directory</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#treetopper.stand.Stand.table_to_csv" title="Permalink to this definition">¶</a></dt>
+<dd><p>Creates or appends a CSV file with tree data from self.table_data</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="treetopper.stand.Stand.table_to_excel">
+<span class="sig-name descname"><span class="pre">table_to_excel</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">directory</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#treetopper.stand.Stand.table_to_excel" title="Permalink to this definition">¶</a></dt>
+<dd><p>Creates or appends an Excel file with tree data from self.table_data</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-treetopper.thin">
+<span id="treetopper-thin-module"></span><h2>treetopper.thin module<a class="headerlink" href="#module-treetopper.thin" title="Permalink to this headline">¶</a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="treetopper.thin.Thin">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">treetopper.thin.</span></span><span class="sig-name descname"><span class="pre">Thin</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">stand</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">target_density</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">species_to_cut</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">list</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">min_dbh_to_cut</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_dbh_to_cut</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#treetopper.thin.Thin" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>The Thin Class is the parent class of the three thinning child classes: ThinTPA, ThinBA, and ThinRD.</p>
+<p>The thinning classes create a deepcopy of the stand class so as not to disrupt any of the tree information.</p>
+<p>The thinning classes start to thin the stand by getting a dictionary of whole-number diameters based on species,
+these contain per-diameter metrics such as tpa, ba_ac, rd_ac, bf_ac…, and these metrics, other than tpa,
+also have a corresponding metric per tree value, by dividing the per-diameter metric by the per-diameter tpa.</p>
+<p>The thinnings then calculate a harvest-ratio to lower the stand’s density to the target density, in accordance to the
+species and diameter limitations (if any). The harvest ratio is used to calculate the removal and residual per-diameter TPAs,
+which are then used to calculate the other removal and residual per-diameter metrics by multiplying the respective TPAs by the
+per-diameter metric per tree values</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="treetopper.thin.Thin.console_report">
+<span class="sig-name descname"><span class="pre">console_report</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#treetopper.thin.Thin.console_report" title="Permalink to this definition">¶</a></dt>
+<dd><p>Prints a console-formatted string of the thinning report</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="treetopper.thin.Thin.get_console_report_text">
+<span class="sig-name descname"><span class="pre">get_console_report_text</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#treetopper.thin.Thin.get_console_report_text" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a console-formatted string of the thinning report</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="treetopper.thin.Thin.pdf_report">
+<span class="sig-name descname"><span class="pre">pdf_report</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">directory</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">start_file_upon_creation</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">bool</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#treetopper.thin.Thin.pdf_report" title="Permalink to this definition">¶</a></dt>
+<dd><p>Exports a pdf of the thinning report to a user specified directory or if directory is None, to the current working directory</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="treetopper.thin.ThinBA">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">treetopper.thin.</span></span><span class="sig-name descname"><span class="pre">ThinBA</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">stand</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">target_density</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">species_to_cut</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">list</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">'all'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">min_dbh_to_cut</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_dbh_to_cut</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">999</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#treetopper.thin.ThinBA" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#treetopper.thin.Thin" title="treetopper.thin.Thin"><code class="xref py py-class docutils literal notranslate"><span class="pre">treetopper.thin.Thin</span></code></a></p>
+<p>Thin by Basal Area per Acre</p>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="treetopper.thin.ThinRD">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">treetopper.thin.</span></span><span class="sig-name descname"><span class="pre">ThinRD</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">stand</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">target_density</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">species_to_cut</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">list</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">'all'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">min_dbh_to_cut</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_dbh_to_cut</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">999</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#treetopper.thin.ThinRD" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#treetopper.thin.Thin" title="treetopper.thin.Thin"><code class="xref py py-class docutils literal notranslate"><span class="pre">treetopper.thin.Thin</span></code></a></p>
+<p>Thin by Relative Density per Acre</p>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="treetopper.thin.ThinTPA">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">treetopper.thin.</span></span><span class="sig-name descname"><span class="pre">ThinTPA</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">stand</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">target_density</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">species_to_cut</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">list</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">'all'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">min_dbh_to_cut</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_dbh_to_cut</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">999</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#treetopper.thin.ThinTPA" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#treetopper.thin.Thin" title="treetopper.thin.Thin"><code class="xref py py-class docutils literal notranslate"><span class="pre">treetopper.thin.Thin</span></code></a></p>
+<p>Thin by Trees per Acre</p>
+</dd></dl>
+
+</div>
+<div class="section" id="module-treetopper.timber">
+<span id="treetopper-timber-module"></span><h2>treetopper.timber module<a class="headerlink" href="#module-treetopper.timber" title="Permalink to this headline">¶</a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="treetopper.timber.TimberFull">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">treetopper.timber.</span></span><span class="sig-name descname"><span class="pre">TimberFull</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">plot_factor</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">species</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dbh</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">total_height</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#treetopper.timber.TimberFull" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>TimberFull is a class that will cruise a tree based on it’s based on the user-cruised logs. These logs can be manually
+added to the class using the add_log method. Required arguments for add_log are stem height (int), log length (int),
+log grade (str), and log defect (int). Log defect should be the whole number value of the estimated percent defect 10% = 10.</p>
+<p>Like TimberQuick, TimberFull uses stem-taper equations from Czaplewski, Kozak, or Wensel
+(depending on species) to calculate the DIB (diameter inside bark) at any stem height.</p>
+<p>TimberFull will instantiate the tree with common individual and per acre metrics based on the input args.</p>
+<p>When the user adds a log using the add_log method, the log metrics are sent to the Log Class,
+to which their volumes in Board Feet (using Scribner Coefficients based on Log Length and top DIB)
+and Cubic Feet (based on the Two-End Conic Cubic Foot Rule) are calculated.</p>
+<p>For inventories, this class is meant to be added to the Plot Class using the Plot Class method of add_tree</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="treetopper.timber.TimberFull.add_log">
+<span class="sig-name descname"><span class="pre">add_log</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">stem_height</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">length</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">grade</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">defect</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#treetopper.timber.TimberFull.add_log" title="Permalink to this definition">¶</a></dt>
+<dd><p>Adds Log Class to the logs dictionary of TimberFull and recalculates the tree’s volumes and
+volume-related metrics</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="treetopper.timber.TimberFull.get_any_dib">
+<span class="sig-name descname"><span class="pre">get_any_dib</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">stem_height</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#treetopper.timber.TimberFull.get_any_dib" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the diameter inside bark (DIB) at any given stem height</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="treetopper.timber.TimberQuick">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">treetopper.timber.</span></span><span class="sig-name descname"><span class="pre">TimberQuick</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">plot_factor</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">species</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dbh</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">total_height</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">preferred_log_length</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">40</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">minimum_log_length</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">16</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#treetopper.timber.TimberQuick" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>TimberQuick is a class that will virtually cruise a tree based on it’s
+species, DBH, total height and plot factor. For fixed-area plots use the negative inverse of the plot size (1/30th ac = -30),
+for variable-area plots use the Basal Area Factor (BAF) (40 BAF = 40).</p>
+<p>Preferred Log Length and Minimum Log Length are needed
+but set at the default industry standard of 40 foot preferred and 16 foot minimum.</p>
+<p>TimberQuick uses stem-taper equations from Czaplewski, Kozak, or Wensel
+(depending on species) to calculate the DIB (diameter inside bark) at any stem height.</p>
+<p>TimberQuick will instantiate the tree with common individual and per acre metrics based on the input args.</p>
+<p>To cruise the tree, first TimberQuick determines the merchantable DIB of the tree, this is calculated from
+40% of the DIB at a stem height of 17 feet (the FORM height). This is industry standard.</p>
+<p>TimberQuick then correlates that Merch DIB to a merchantable height. The tree is then split up into logs,
+based on this Merch Height with priority given to the preferred log length and if preferred log length
+cannot be achieved, then if the remaining length up to Merch Height is greater than or equal to the minimum log length,
+that final log is added.</p>
+<p>Log metrics are sent to the Log Class, to which their volumes in Board Feet
+(using Scribner Coefficients based on Log Length and top DIB) and Cubic Feet (based on the Two-End Conic Cubic Foot Rule).
+Log grades are determined by species, minimum log lengths and minimum top DIBs set forth by the
+Official Rules for the Log Scaling and Grading Bureaus. Log defect is always 0%</p>
+<p>For inventories, this class is meant to be added to the Plot Class using the Plot Class method of add_tree</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="treetopper.timber.TimberQuick.get_any_dib">
+<span class="sig-name descname"><span class="pre">get_any_dib</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">stem_height</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#treetopper.timber.TimberQuick.get_any_dib" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the diameter inside bark (DIB) at any given stem height</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+</div>
+
+
+            <div class="clearer"></div>
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">treetopper mods</a><ul>
+<li><a class="reference internal" href="#treetopper-blank-sheet-module">treetopper.blank_sheet module</a></li>
+<li><a class="reference internal" href="#module-treetopper.fvs">treetopper.fvs module</a></li>
+<li><a class="reference internal" href="#module-treetopper.log">treetopper.log module</a></li>
+<li><a class="reference internal" href="#module-treetopper.plot">treetopper.plot module</a></li>
+<li><a class="reference internal" href="#module-treetopper.stand">treetopper.stand module</a></li>
+<li><a class="reference internal" href="#module-treetopper.thin">treetopper.thin module</a></li>
+<li><a class="reference internal" href="#module-treetopper.timber">treetopper.timber module</a></li>
+</ul>
+</li>
+</ul>
+
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/treetopper.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">treetopper 1.1.1 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">treetopper mods</a></li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2021, Zachary Beebe.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 4.0.2.
+    </div>
+  </body>
+</html>

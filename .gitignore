@@ -1,0 +1,6 @@
+/dist/
+/.idea/
+/treetopper.egg-info/
+/venv/
+/how_to_change_pypi.txt
+/setup.py

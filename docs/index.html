@@ -1,0 +1,260 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>treetopper 1.1.1 &#8212; treetopper 1.1.1 documentation</title>
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="_static/nature.css" />
+    <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/doctools.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="#">treetopper 1.1.1 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">treetopper 1.1.1</a></li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="treetopper-1-1-1">
+<h1>treetopper 1.1.1<a class="headerlink" href="#treetopper-1-1-1" title="Permalink to this headline">¶</a></h1>
+<p><strong>Python inventory program from timber stands of the western united states.</strong></p>
+<p>treetopper is a package to run timber stand calculations for timber stands of the western united states. The four main classes that
+accomplish this are Stand, Plot, TimberQuick, and TimberFull.</p>
+<p>Plots should be made up of the Timber Classes, using the Plot.add_tree() method.
+Stands should be made up of Plot Classes, using the Stand.add_plot() method.</p>
+<p>Tree and Plot data can be entered manually into the Stand Class…</p>
+<div class="section" id="timberquick">
+<h2>TimberQuick<a class="headerlink" href="#timberquick" title="Permalink to this headline">¶</a></h2>
+<p>The TimberQuick class takes minimal data (Plot Factor, Species, DBH, Total Height) and will virtually cruise the tree for logs.
+Logs will be generated up to the tree’s merchantable height, which is calculated as the height at which equals
+a diameter of 40% of the tree’s diameter at 17 feet (the form height).</p>
+<p>If manually creating a Stand with the TimberQuick class, the flow could look like this</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">treetopper</span> <span class="kn">import</span> <span class="n">Stand</span><span class="p">,</span> <span class="n">Plot</span><span class="p">,</span> <span class="n">TimberQuick</span>
+
+<span class="c1"># TimberQuick(Plot Factor, Species, DBH, Total Height, [optional] Preferred Log Length, Minimum Log Length)</span>
+<span class="c1"># example_tree = TimberQuick(40, &#39;DF&#39;, 15.5, 87)</span>
+
+<span class="n">stand</span> <span class="o">=</span> <span class="n">Stand</span><span class="p">(</span><span class="n">Stand</span> <span class="n">Name</span><span class="p">,</span> <span class="n">Plot</span> <span class="n">Factor</span><span class="p">,</span> <span class="p">[</span><span class="n">optional</span><span class="p">]</span> <span class="n">Acres</span><span class="p">,</span> <span class="n">Inventory</span> <span class="n">Date</span><span class="p">)</span>
+
+<span class="c1"># List of trees broken out by plot</span>
+<span class="n">tree_list</span> <span class="o">=</span> <span class="p">[</span>
+           <span class="c1">#Plot1</span>
+           <span class="p">[</span><span class="n">TimberQuick</span><span class="p">(</span><span class="o">...</span><span class="p">),</span> <span class="n">TimberQuick</span><span class="p">(</span><span class="o">...</span><span class="p">),</span> <span class="n">TimberQuick</span><span class="p">(</span><span class="o">...</span><span class="p">),</span> <span class="n">TimberQuick</span><span class="p">(</span><span class="o">...</span><span class="p">)],</span>
+
+           <span class="c1">#Plot2</span>
+           <span class="p">[</span><span class="n">TimberQuick</span><span class="p">(</span><span class="o">...</span><span class="p">),</span> <span class="n">TimberQuick</span><span class="p">(</span><span class="o">...</span><span class="p">),</span> <span class="n">TimberQuick</span><span class="p">(</span><span class="o">...</span><span class="p">),</span> <span class="n">TimberQuick</span><span class="p">(</span><span class="o">...</span><span class="p">),</span> <span class="n">TimberQuick</span><span class="p">(</span><span class="o">...</span><span class="p">)]</span>
+           <span class="p">]</span>
+<span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">tree_list</span><span class="p">:</span>
+   <span class="n">plot</span> <span class="o">=</span> <span class="n">Plot</span><span class="p">()</span>
+   <span class="k">for</span> <span class="n">tree</span> <span class="ow">in</span> <span class="n">row</span><span class="p">:</span>
+       <span class="n">plot</span><span class="o">.</span><span class="n">add_tree</span><span class="p">(</span><span class="n">tree</span><span class="p">)</span>
+   <span class="n">stand</span><span class="o">.</span><span class="n">add_plot</span><span class="p">(</span><span class="n">plot</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="timberfull">
+<h2>TimberFull<a class="headerlink" href="#timberfull" title="Permalink to this headline">¶</a></h2>
+<p>The TimberFull class can be used if the user has cruised his/her own trees within an inventory. TimberFull still needs the base
+params of Plot Factor, Species, DBH and Total Height. And then log data can be added with the add_log() method of TimberFull.
+The params for add_log() are Stem Height, Log Length, Log Grade, and Log Defect</p>
+<p>If manually creating a Stand with the TimberFull class, the flow could look like this:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">treetopper</span> <span class="kn">import</span> <span class="n">Stand</span><span class="p">,</span> <span class="n">Plot</span><span class="p">,</span> <span class="n">TimberFull</span>
+
+<span class="c1"># TimberFull(Plot Factor, Species, DBH, Total Height)</span>
+<span class="c1"># Log Params within Logs List [Stem Height, Log Length, Log Grade, Log Defect]</span>
+
+<span class="c1"># tree = TimberFull(-25, &#39;RC&#39;, 22.2, 124)</span>
+<span class="c1"># log_list = [[42, 40, &#39;S2&#39;, 10], [83, 40, &#39;S3&#39;, 0], [102, 18, &#39;S4&#39;, 15]]</span>
+
+<span class="n">stand</span> <span class="o">=</span> <span class="n">Stand</span><span class="p">(</span><span class="o">...</span><span class="p">)</span>
+
+<span class="n">tree_list</span> <span class="o">=</span> <span class="p">[</span>
+           <span class="c1">#Plot1</span>
+           <span class="p">[[</span><span class="n">TimberFull</span><span class="p">(</span><span class="o">...</span><span class="p">),</span> <span class="n">log_list</span><span class="p">],</span> <span class="p">[</span><span class="n">TimberFull</span><span class="p">(</span><span class="o">...</span><span class="p">),</span> <span class="n">log_list</span><span class="p">],</span> <span class="p">[</span><span class="n">TimberFull</span><span class="p">(</span><span class="o">...</span><span class="p">),</span> <span class="n">log_list</span><span class="p">]],</span>
+
+           <span class="c1">#Plot2</span>
+           <span class="p">[[</span><span class="n">TimberFull</span><span class="p">(</span><span class="o">...</span><span class="p">),</span> <span class="n">log_list</span><span class="p">],</span> <span class="p">[</span><span class="n">TimberFull</span><span class="p">(</span><span class="o">...</span><span class="p">),</span> <span class="n">log_list</span><span class="p">],</span> <span class="p">[</span><span class="n">TimberFull</span><span class="p">(</span><span class="o">...</span><span class="p">),</span> <span class="n">log_list</span><span class="p">]]</span>
+           <span class="p">]</span>
+<span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">tree_list</span><span class="p">:</span>
+   <span class="n">plot</span> <span class="o">=</span> <span class="n">Plot</span><span class="p">()</span>
+   <span class="k">for</span> <span class="n">tree</span><span class="p">,</span> <span class="n">logs</span> <span class="ow">in</span> <span class="n">row</span><span class="p">:</span>
+       <span class="k">for</span> <span class="n">log</span> <span class="ow">in</span> <span class="n">logs</span><span class="p">:</span>
+           <span class="n">tree</span><span class="o">.</span><span class="n">add_log</span><span class="p">(</span><span class="o">*</span><span class="n">log</span><span class="p">)</span>
+       <span class="n">plot</span><span class="o">.</span><span class="n">add_tree</span><span class="p">(</span><span class="n">tree</span><span class="p">)</span>
+   <span class="n">stand</span><span class="o">.</span><span class="n">add_plot</span><span class="p">(</span><span class="n">plot</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="import-from-inventory-csv-xlsx">
+<h2>Import from inventory (.csv, .xlsx)<a class="headerlink" href="#import-from-inventory-csv-xlsx" title="Permalink to this headline">¶</a></h2>
+<p>Plots and Tree inventories can also be read from CSV and Excel files.</p>
+<p>** these files need to be formatted correctly **</p>
+<p>To create a formatted blank CSV or Excel inventory sheet, call the blank_sheet module from the terminal and run throught the prompts</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">python</span> <span class="o">-</span><span class="n">m</span> <span class="n">treetopper</span><span class="o">.</span><span class="n">blank_sheet</span>
+</pre></div>
+</div>
+<p>Once inventory data is in a correctly formatted sheet, the work flow could look like this:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">treetopper</span> <span class="kn">import</span> <span class="n">Stand</span>
+
+<span class="n">stand</span> <span class="o">=</span> <span class="n">Stand</span><span class="p">(</span><span class="o">...</span><span class="p">)</span>
+
+<span class="c1"># If using a quick cruise sheet</span>
+<span class="n">stand</span><span class="o">.</span><span class="n">import_sheet_quick</span><span class="p">(</span><span class="n">File</span> <span class="n">Path</span><span class="p">)</span>
+
+<span class="c1"># If using a full cruise sheet</span>
+<span class="n">stand</span><span class="o">.</span><span class="n">import_sheet_full</span><span class="p">(</span><span class="n">File</span> <span class="n">Path</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="stand-reports">
+<h2>Stand Reports<a class="headerlink" href="#stand-reports" title="Permalink to this headline">¶</a></h2>
+<p>Once Plots and Trees have been added, two types of reports can be generated: a PDF report or a simple console report, these
+reports will display the current stand conditions by species and totals; the log merchantability by grade, log length range,
+and species in three categories: logs per acre, board feet per acre and cubic feet per acre; and the stand condition statistics
+by species and totals. To generate these reports call either:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">stand</span><span class="o">.</span><span class="n">pdf_report</span><span class="p">()</span> <span class="c1">#OR</span>
+<span class="n">stand</span><span class="o">.</span><span class="n">console_report</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="thinning-a-stand">
+<h2>Thinning a Stand<a class="headerlink" href="#thinning-a-stand" title="Permalink to this headline">¶</a></h2>
+<p>Stands can also be thinned using the Thinning Classes, the three thinning classes are ThinTPA, ThinBA, and ThinRD, they will thin
+the stand based on a target Trees per Acre, Basal Area per Acre or Relative Density per Acre, respectively. The user can also
+choose only certain species to cut, and minimum and maximum diameter limits. A workflow for this could look like:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">treetopper</span> <span class="kn">import</span> <span class="n">Stand</span><span class="p">,</span> <span class="n">ThinTPA</span>
+
+<span class="n">stand</span> <span class="o">=</span> <span class="n">Stand</span><span class="p">(</span><span class="o">...</span><span class="p">)</span>
+<span class="n">stand</span><span class="o">.</span><span class="n">import_sheet_quick</span><span class="p">(</span><span class="s1">&#39;example_quick_cruise_sheet.xlsx&#39;</span><span class="p">)</span>
+
+<span class="c1"># thin = ThinClass(Stand Class, Target Density, [optional] Species to Cut (list), Minimum DBH to Cut, Maximum DBH to Cut)</span>
+
+<span class="n">thin80tpa</span> <span class="o">=</span> <span class="n">ThinTPA</span><span class="p">(</span><span class="n">stand</span><span class="p">,</span> <span class="mi">80</span><span class="p">,</span> <span class="n">species_to_cut</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;DF&#39;</span><span class="p">,</span> <span class="s1">&#39;RC&#39;</span><span class="p">,</span> <span class="s1">&#39;WH&#39;</span><span class="p">],</span> <span class="n">maximum_dbh_to_cut</span><span class="o">=</span><span class="mi">18</span><span class="p">)</span>
+<span class="n">thin80tpa</span><span class="o">.</span><span class="n">console_report</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="linking-to-fvs">
+<h2>Linking to FVS<a class="headerlink" href="#linking-to-fvs" title="Permalink to this headline">¶</a></h2>
+<p>Finally if you would like to use the US Forest Service’s Forest Vegeation Simulator software, treetopper makes it easy to transfer
+stand data to FVS-formatted databases. For more detailed information, view the docs for the FVS class, but a simple example workflow
+could look like this:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">treetopper</span> <span class="kn">import</span> <span class="n">Stand</span><span class="p">,</span> <span class="n">FVS</span>
+
+<span class="n">stand</span> <span class="o">=</span> <span class="n">Stand</span><span class="p">(</span><span class="o">...</span><span class="p">)</span>
+<span class="n">stand</span><span class="o">.</span><span class="n">import_sheet_full</span><span class="p">(</span><span class="s1">&#39;example_full_cruise_sheet.xlsx&#39;</span><span class="p">)</span>
+
+<span class="n">fvs</span> <span class="o">=</span> <span class="n">FVS</span><span class="p">()</span>
+
+<span class="c1"># fvs.set_stand(Stand Class, FVS Variant Code, FVS Forest Code, FVS Region Code, Stand Age, Site Class Species, Site Index, **kwargs)</span>
+<span class="c1"># **kwargs for this method can fill the other columns of a stand database table, to see all columns visit the Forest Service website</span>
+
+<span class="n">fvs</span><span class="o">.</span><span class="n">set_stand</span><span class="p">(</span><span class="n">stand</span><span class="p">,</span> <span class="s1">&#39;PN&#39;</span><span class="p">,</span> <span class="mi">612</span><span class="p">,</span> <span class="mi">6</span><span class="p">,</span> <span class="mi">45</span><span class="p">,</span> <span class="s1">&#39;DF&#39;</span><span class="p">,</span> <span class="mi">110</span><span class="p">)</span>
+
+<span class="c1"># create a FVS-formatted SQLite Database</span>
+<span class="n">fvs</span><span class="o">.</span><span class="n">sqlite_db</span><span class="p">(</span><span class="s1">&#39;example_sqlite_db.db&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="workflow-tutorial-and-walk-through">
+<h2>Workflow Tutorial and Walk Through<a class="headerlink" href="#workflow-tutorial-and-walk-through" title="Permalink to this headline">¶</a></h2>
+<p>To walk though six example workflows open the terminal and type</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">python</span> <span class="o">-</span><span class="n">m</span> <span class="n">treetopper</span><span class="o">.</span><span class="n">stand</span> <span class="p">[</span><span class="n">workflow</span> <span class="n">number</span><span class="p">]</span>
+</pre></div>
+</div>
+<p>[workflow number] should be a number between 1 and 6</p>
+<p><strong>HAPPY CRUISING!</strong></p>
+<div class="toctree-wrapper compound">
+</div>
+</div>
+<div class="section" id="indices-and-tables">
+<h2>Indices and tables<a class="headerlink" href="#indices-and-tables" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li><p><a class="reference internal" href="genindex.html"><span class="std std-ref">Index</span></a></p></li>
+<li><p><a class="reference internal" href="py-modindex.html"><span class="std std-ref">Module Index</span></a></p></li>
+<li><p><a class="reference internal" href="search.html"><span class="std std-ref">Search Page</span></a></p></li>
+</ul>
+</div>
+</div>
+
+
+            <div class="clearer"></div>
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="#">Table of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">treetopper 1.1.1</a><ul>
+<li><a class="reference internal" href="#timberquick">TimberQuick</a></li>
+<li><a class="reference internal" href="#timberfull">TimberFull</a></li>
+<li><a class="reference internal" href="#import-from-inventory-csv-xlsx">Import from inventory (.csv, .xlsx)</a></li>
+<li><a class="reference internal" href="#stand-reports">Stand Reports</a></li>
+<li><a class="reference internal" href="#thinning-a-stand">Thinning a Stand</a></li>
+<li><a class="reference internal" href="#linking-to-fvs">Linking to FVS</a></li>
+<li><a class="reference internal" href="#workflow-tutorial-and-walk-through">Workflow Tutorial and Walk Through</a></li>
+<li><a class="reference internal" href="#indices-and-tables">Indices and tables</a></li>
+</ul>
+</li>
+</ul>
+
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/index.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="#">treetopper 1.1.1 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">treetopper 1.1.1</a></li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2021, Zachary Beebe.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 4.0.2.
+    </div>
+  </body>
+</html>

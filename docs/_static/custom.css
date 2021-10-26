@@ -1,0 +1,8 @@
+/* This file intentionally left blank. */
+.wy-nav-content {
+    max-width: none;
+}
+
+.wy-nav-content {
+    max-width: 1200px !important;
+}

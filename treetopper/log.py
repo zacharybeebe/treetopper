@@ -7,7 +7,6 @@ from treetopper._constants import (
 )
 
 
-
 class Log(object):
     """Log Class calculates the volume of an individual log from the Timber Classes. If coming from
        the TimberQuick class, it will also calculate the grade of the log"""
@@ -33,10 +32,8 @@ class Log(object):
         self.bf_ac = self.bf * self.lpa
         self.cf_ac = self.cf * self.lpa
 
-
         self.grade_name = GRADE_NAMES[self.grade]
         self.length_range = self._get_length_range()
-
 
     def __getitem__(self, attribute: str):
         return self.__dict__[attribute]

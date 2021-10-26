@@ -1,4 +1,7 @@
 import math
+from treetopper._utils import (
+    is_err_num
+)
 
 
 # TAPER EQUATION FUNCTIONS
@@ -30,7 +33,7 @@ def wensel(DBH, Total_Height, Stem_Height, a, b, c, d, e):
     dib = DBH * (a - (X * (math.log(1 - (Z ** b) * (1 - math.exp(a / X))))))
     return math.floor(dib)
 
-
+# STEM TAPER EQUATION ACCORDING TO SPECIES
 TAPER_EQ = {
     'SF': czaplewski,
     'GF': czaplewski,
@@ -55,7 +58,7 @@ TAPER_EQ = {
     'RW': wensel,
     'IC': wensel
 }
-##### STEM TAPER EQUATION COEFFICIENTS ACCORDING TO SPECIES
+# STEM TAPER EQUATION COEFFICIENTS ACCORDING TO SPECIES
 TAPER_EQ_COEF = {
     'SF': [0.5, 0.06, -1.742, 0.6184, -0.8838, 94.3683],
     'GF': [0.59, 0.06, -1.5332, 0.56, -0.4781, 129.9282],
@@ -81,6 +84,7 @@ TAPER_EQ_COEF = {
     'IC': [1.0, 0.3155, -0.34316, 0,  -0.00039283]
 }
 
+# SPECIES CODE AND SPECIES NAME
 ALL_SPECIES_NAMES = {
     'DF': 'DOUGLAS-FIR',
     'WH': 'WESTERN HEMLOCK',
@@ -106,7 +110,7 @@ ALL_SPECIES_NAMES = {
     'AS': 'QUAKING ASPEN'
 }
 
-## LOG GRADE LIST FORMAT: [(Minimum DIB, Minimum Log Length, Grade)]
+## LOG GRADE LIST ACCORDING TO SPECIES -- LIST FORMAT: [(Minimum DIB, Minimum Log Length, Grade)]
 OFFICIAL_GRADES = {
     'DF': [(24, 17, "P3"), (16, 17, "SM"), (12, 12, "S2"), (6, 1, "S3"), (5, 1, "S4"), (1, 1, 'UT')],
     'WH': [(24, 17, "P3"), (16, 17, "SM"), (12, 12, "S2"), (6, 1, "S3"), (5, 1, "S4"), (1, 1, 'UT')],
@@ -132,6 +136,7 @@ OFFICIAL_GRADES = {
     'AS': [(16, 8, "S1"), (12, 8, "S2"), (10, 8, "S3"), (5, 1, "S4"), (1, 1, 'UT')]
 }
 
+# LOG GRADE CODE AND NAME
 GRADE_NAMES = {
     'P3': 'PEELER 3',
     'SM': 'SPECIAL MILL',
@@ -145,6 +150,7 @@ GRADE_NAMES = {
     'CR': 'CAMP RUN'
 }
 
+# SORTING HELPER FOR LOG GRADES
 GRADE_SORT = {
     'P3': 0,
     'SM': 1,
@@ -159,8 +165,8 @@ GRADE_SORT = {
     'TOTALS': 10
 }
 
-#### SCRIBNER LOG LENGTH COEEFICIENTS AND FUNCTION
-# KEY: VALUE -> {DIB: SCRIB COEFFICIENT}
+# SCRIBNER LOG LENGTH COEEFICIENTS AND FUNCTION -- KEY: VALUE -> {DIB: SCRIB COEFFICIENT}
+# WHEN VALUES ARE LISTS THE COEFFICIENT DEPENDS ON LOG LENGTH (SEE _calc_scribner() IN LOG CLASS)
 SCRIBNER_DICT = {
     0: 0.0, 1: 0.0, 2: 0.143, 3: 0.39, 4: 0.676, 5: 1.07, 6: [1.16, 1.249, 1.57], 7: [1.4, 1.608, 1.8],
     8: [1.501, 1.854, 2.2], 9: [2.084, 2.41, 2.9], 10: [3.126, 3.542, 3.815], 11: [3.749, 4.167, 4.499],
@@ -180,7 +186,7 @@ SCRIBNER_DICT = {
     120: 695.011
 }
 
-
+# LOG LENGTH TITLES AND RANGES
 LOG_LENGTHS = {
     '<= 10 feet': (1, 10),
     '11 - 20 feet': (11, 20),
@@ -189,11 +195,58 @@ LOG_LENGTHS = {
     '> 40 feet': (41, 999)
 }
 
+
+# CHECK IF SPECIES CODE IS CORRECT
+def is_err_species(val, row_num, col_num):
+    if val == '' or val is None:
+        return True, val, f'Row {row_num}, Col {col_num} Species cannot be blank'
+    else:
+        check_val = val.upper()
+        if check_val not in ALL_SPECIES_NAMES:
+            return True, val, f'Row {row_num}, Col {col_num} Incorrect Species Code ({val})'
+        else:
+            return False, check_val, None
+
+
+# CHECK IF GRADE CODE IS CORRECT
+def is_err_grade(val, row_num, col_num):
+    if val == '' or val is None:
+        return True, val, f'Row {row_num}, Col {col_num} Grade cannot be blank if Log Length is filled'
+    else:
+        check_val = val.upper()
+        if check_val not in GRADE_NAMES:
+            # Check Reverse "2S" --> "S2"
+            check_reverse = check_val[::-1]
+            if check_reverse in GRADE_NAMES:
+                return False, check_reverse, None
+            else:
+                return True, val, f'Row {row_num}, Col {col_num} Incorrect Grade Code ({val})'
+        else:
+            return False, check_val, None
+
+
+# ERROR CHECKING BY LIST INDEX
+SHEET_ROW_COL_CONV = {
+    1: lambda val, row, col: is_err_num(val, row, col, int),
+    2: lambda val, row, col: is_err_num(val, row, col, int),
+    3: is_err_species,
+    4: lambda val, row, col: is_err_num(val, row, col, float),
+    5: lambda val, row, col: is_err_num(val, row, col, float, required=False),
+    6: lambda val, row, col: is_err_num(val, row, col, int, default=40),
+    7: lambda val, row, col: is_err_num(val, row, col, int, default=16)
+}
+
+SHEET_FULL_LOG_CONV = {
+    0: lambda val, row, col: is_err_num(val, row, col, int),
+    1: is_err_grade,
+    2: lambda val, row, col: is_err_num(val, row, col, int, default=0),
+    3: lambda val, row, col: is_err_num(val, row, col, int, default=0)
+}
+
 SORTED_HEADS = [['tpa', 'TPA'], ['ba_ac', 'BASAL AREA'], ['rd_ac', 'RD'], ['qmd', 'QMD'], ['vbar', 'VBAR'],
                 ['avg_hgt', 'AVG HEIGHT'], ['hdr', 'HDR'], ['bf_ac', 'BOARD FEET'], ['cf_ac', 'CUBIC FEET']]
 
-#FVS
-
+# FVS INITIAL DATA
 FVS_KEYWORDS = """Database\r
 DSNin\r
 {DB_NAME}\r
@@ -258,45 +311,6 @@ SQL_TREE_COLS = ['FVS_TreeInit', [['Stand_ID', 'TEXT'], ['StandPlot_ID', 'TEXT']
                  ['Age', 'REAL'], ['Slope', 'INTEGER'], ['Aspect', 'INTEGER'], ['PV_Code', 'TEXT'], ['TopoCode', 'REAL'],
                  ['SitePrep', 'REAL']]]
 
-
-# USEFUL FUNCTIONS
-
-
-def format_comma(val: float):
-    if val == 0:
-        return '-'
-    else:
-        show = [i for i in str(round(val, 1))]
-        if len(show) > 5:
-            start = -5
-            for i in range((len(show) // 3) - 1):
-                show.insert(start, ',')
-                start -= 4
-        return ''.join(show)
-
-
-def format_pct(val: float):
-    if val <= 1:
-        return f'{round(val * 100, 1)} %'
-    else:
-        return f'{round(val, 1)} %'
-
-
-def sort_grade(item):
-    return GRADE_SORT[item[0]]
-
-
-def extension_check(filename, extension):
-    check = ''.join(filename[-len(extension):])
-    if check != extension:
-        filename += extension
-    return filename
-
-
-def get_filename_only(file_path):
-    for i in range(-1, -len(file_path), -1):
-        if file_path[i] == '/':
-            return ''.join(file_path[i+1:])
 
 
 

@@ -1,6 +1,7 @@
 from openpyxl import Workbook
 from csv import writer
 from os.path import join, isfile, expanduser
+from treetopper._utils import get_desktop_path
 
 METRICS_QUICK = ['Stand', 'Plot Number', 'Tree Number', 'Species', 'DBH', 'Height', 'Preferred Log Length', 'Min Log Length']
 METRICS_FULL = ['Stand', 'Plot Number', 'Tree Number', 'Species', 'DBH', 'Height', 'Stump Height',
@@ -16,9 +17,6 @@ METRICS_FULL = ['Stand', 'Plot Number', 'Tree Number', 'Species', 'DBH', 'Height
 DEFAULT_NAME_QUICK = 'stand_data_quick'
 DEFAULT_NAME_FULL = 'stand_data_full'
 
-def getdesktoppath():
-    return join(expanduser("~"), "desktop")
-
 
 def create_blank_csv(directory: str = None, full_cruise=False):
     if full_cruise:
@@ -27,7 +25,7 @@ def create_blank_csv(directory: str = None, full_cruise=False):
         use_name = DEFAULT_NAME_QUICK
 
     if not directory:
-        dir_ = getdesktoppath()
+        dir_ = get_desktop_path()
         title = join(dir_, use_name + '.csv')
     else:
         dir_ = directory
@@ -60,7 +58,7 @@ def create_blank_excel(directory: str = None, full_cruise=False):
         use_name = DEFAULT_NAME_QUICK
 
     if not directory:
-        dir_ = getdesktoppath()
+        dir_ = get_desktop_path()
         title = join(dir_, use_name + '.xlsx')
     else:
         dir_ = directory
@@ -118,7 +116,7 @@ if __name__ == '__main__':
         else:
             print('\nPlease enter either "f" or "q"')
 
-    q2 = input(f'\nWould you like to specify a directory?\nElse {file_type} file will be created on desktop\n(y / n): ').upper()
+    q2 = input(f'\nWould you like to specify a directory?\nElse {file_type} file will be created on desktop\n(y / n) [n]\n').upper()
     if q2.upper() == 'Y':
         dir_ = input('\nDirectory path: ')
     else:

@@ -1,4 +1,8 @@
-from os import startfile
+from os import (
+    startfile,
+    getcwd
+)
+from os.path import join
 from csv import (
     writer,
     excel
@@ -6,10 +10,6 @@ from csv import (
 from openpyxl import (
     Workbook,
     load_workbook
-)
-from datetime import (
-    datetime,
-    date
 )
 from statistics import (
     mean,
@@ -25,33 +25,32 @@ from treetopper.log import Log
 from treetopper.thin import (
     ThinTPA,
     ThinBA,
-    ThinRD,
-    TargetDensityError
+    ThinRD
 )
+from treetopper._exceptions import TargetDensityError
 from treetopper.fvs import FVS
 from treetopper._constants import (
     math,
-    extension_check,
-    format_comma,
-    format_pct,
     ALL_SPECIES_NAMES,
     GRADE_SORT,
     LOG_LENGTHS,
     SORTED_HEADS
 )
-from treetopper._import_from_sheets import (
-    import_csv_quick,
-    import_csv_full,
-    import_excel_quick,
-    import_excel_full
+from treetopper._utils import (
+    format_comma,
+    format_pct,
+    extension_check,
+    reorder_dict,
+    check_date,
+    add_logs_to_table_heads
 )
-from treetopper._console_print import (
-    print_species,
-    print_logs,
-    print_species_stats
+from treetopper._import_from_sheets import import_from_sheet
+from treetopper._print_console import (
+    print_stand_species,
+    print_stand_logs,
+    print_stand_stats
 )
-from treetopper._pdf_print import PDF
-
+from treetopper._print_pdf import PDF
 
 
 class Stand(object):
@@ -62,80 +61,10 @@ class Stand(object):
        merchantabilty for three metrics: logs per acre, log board feet per acre, and log cubic feet per acre, based on log grades,
        log length ranges and species.
 
-       Tree and Plot data can be entered manually into the Stand Class. The manual entry work flow should look like...
-
-       If using the quick cruise functionality of the TimberQuick class, the flow should be:
-
-        instantiate Stand -->
-
-        instantiate Trees (w/ TimberQuick) -->
-
-        create a list of lists based on number of plots, the sub-lists will contain the trees -->
-
-        iterate through the trees list and instantiate a plot at the beginning of the iteration -->
-
-        iterate through the sub list and add the trees to the plot using plot.add_tree(tree) -->
-
-        after the trees have been added from the sub list, add the plot to the Stand using stand.add_plot(plot)
-
-       If using the full cruise functionality of the TimberFull class, the flow should be:
-
-        instantiate Stand -->
-
-        instantiate Trees (w/ TimberFull) -->
-
-        create a list of lists based on number of plots, the sub-lists will contain the trees and log arguments -->
-
-        iterate through the trees/logs list and instantiate a plot at the beginning of the iteration -->
-
-        iterate through the sub list and then iterate though the logs metric sub list and add the logs to the tree
-        using tree.add_log(stem_height, length, grade, defect) -->
-
-        after the logs have been added, add the tree to the plot using plot.add_tree(tree) -->
-
-        after the trees have been added from the sub list, add the plot to the Stand using stand.add_plot(plot)
-
-       Plots and Trees can also be read from CSV and Excel files
-
-       ** these files need to be formatted correctly **
-
-       To create a formatted blank CSV or Excel file, open the terminal and type "python -m treetopper.blank_sheet" and
-       run through the prompts
-
-       Once data has been added to the sheet, instantiate a Stand and call either:
-
-        stand.from_csv_quick(file_path)
-
-        stand.from_csv_full(file_path)
-
-        stand.from_excel_quick(file_path) OR
-
-        stand.from_excel_full(file_path)
-
-       depending on the file type you are using and the cruise method of the stand.
-
-       Once Plots and Trees have been added, two types of reports can be generated: a PDF report or a simple console report, these
-       reports will display the current stand conditions by species and total; the log merchantability by grade, log length range,
-       and species in three categories: logs per acre, board feet per acre and cubic feet per acre; and the stand condition statistics
-       by species and total. To generate these reports call:
-
-        stand.pdf_report() OR
-
-        stand.console_report()
-
-       Stands can also be thinned using the Thinning Classes, the three thinning classes are ThinTPA, ThinBA, and ThinRD, they will thin
-       the stand based on a target Trees per Acre, Basal Area per Acre or Relative Density per Acre, respectively. The user can also
-       choose certain species to cut, and minimum and maximum diameter limits.
-
-       See __name__ == '__main__' for example workflows.
-
-       HAPPY CRUISING!
-
-
        """
 
-    def __init__(self, name:str, plot_factor: float, acres:float = None, inventory_date:str = None):
-        self.name = name
+    def __init__(self, name: str, plot_factor: float, acres: float = None, inventory_date: str = None):
+        self.name = name.upper()
         self.plot_factor = plot_factor
         self.plots = []
         self.plot_count = 0
@@ -173,7 +102,7 @@ class Stand(object):
 
         self.acres = acres
         if inventory_date:
-            self.inv_date = self._check_date(inventory_date)
+            self.inv_date = check_date(inventory_date)
         else:
             self.inv_date = inventory_date
 
@@ -181,24 +110,28 @@ class Stand(object):
         return self.__dict__[attribute]
 
     def get_stand_table_text(self):
-        return print_species(self.summary_stand)
+        """Returns a console-formatted string of current stand conditions"""
+        return print_stand_species(self.summary_stand)
 
     def get_logs_table_text(self):
-        return print_logs(self.summary_logs)
+        """Returns a console-formatted string of stand logs data"""
+        return print_stand_logs(self.summary_logs)
 
     def get_stats_table_text(self):
-        return print_species_stats(self.summary_stats)
+        """Returns and console-formatted string of stand stand statistics"""
+        return print_stand_stats(self.summary_stats)
 
     def get_console_report_text(self):
-        """Returns a console-formatted string of the processed stand data, to be called by the standard print() function"""
+        """Returns a console-formatted string of the complete stand report"""
         return self._compile_report_text()
 
     def console_report(self):
-        """Prints a console-formatted string of the processed stand data, to be called by the standard print() function"""
+        """Prints a console-formatted string of the complete stand report"""
         print(self._compile_report_text())
 
-    def pdf_report(self, filename: str, directory: str = None):
-        """Exports a pdf of the stand report to a user specified directory or if directory is None, to the current working directory"""
+    def pdf_report(self, filename: str, directory: str = None, start_file_upon_creation: bool = False):
+        """Exports a pdf of the complete stand report to a user specified directory or if directory is None,
+        to the current working directory. Will open the created pdf report if start_file_upon_creation is True"""
         check = extension_check(filename, '.pdf')
         if directory:
             file = join(directory, check)
@@ -207,11 +140,11 @@ class Stand(object):
         pdf = PDF()
         pdf.alias_nb_pages()
         pdf.add_page()
-        pdf.compile_report(self)
+        pdf.compile_stand_report(self)
         pdf.output(file, 'F')
-        startfile(file)
+        if start_file_upon_creation:
+            startfile(file)
 
-    #@timer
     def add_plot(self, plot: Plot):
         """Adds a plot to the stand's plots list and re-runs the calculations and statistics of the stand.
            plot argument needs to be the a Plot Class"""
@@ -231,67 +164,26 @@ class Stand(object):
         self.summary_logs = self._update_summary_logs()
         self.summary_stats = self._update_summary_stats()
 
-    def from_csv_quick(self, file_path):
-        """Imports tree and plot data from a CSV file for a quick cruise and adds that data to the stand"""
-        plots, avg_hdr = import_csv_quick(file_path, self.name)
-        for pnum in plots:
+    def import_sheet_quick(self, file_path: str):
+        """Imports tree and plot data from a CSV or XLSX file for a quick cruise and adds that data to the stand"""
+        plots = import_from_sheet(file_path, self.name, 'q')
+        for plot_num in plots:
             plot = Plot()
-            for tree in plots[pnum]:
-                mets = plots[pnum][tree]
-                if mets['height'] == '':
-                    height = int((mets['dbh'] / 12) * avg_hdr)
-                else:
-                    height = mets['height']
-                plot.add_tree(TimberQuick(mets['species'], mets['dbh'], height, self.plot_factor,
-                                          preferred_log_length=mets['pref_log'], minimum_log_length=mets['min_log']))
+            for tree in plots[plot_num]:
+                plot.add_tree(TimberQuick(self.plot_factor, *tree))
             self.add_plot(plot)
 
-    def from_csv_full(self, file_path):
-        """Imports tree and plot data from a CSV file for a full cruise and adds that data to the stand"""
-        plots, avg_hdr = import_csv_full(file_path, self.name)
-        for pnum in plots:
+    def import_sheet_full(self, file_path: str):
+        """Imports tree and plot data from a CSV or XLSX file for a full cruise and adds that data to the stand"""
+        plots = import_from_sheet(file_path, self.name, 'f')
+        for plot_num in plots:
             plot = Plot()
-            for tnum in plots[pnum]:
-                mets = plots[pnum][tnum]
-                if not mets['height']:
-                    height = int((mets['dbh'] / 12) * avg_hdr)
-                else:
-                    height = mets['height']
-                tree = TimberFull(mets['species'], mets['dbh'], height, self.plot_factor)
-                for lnum in mets['logs']:
-                    tree.add_log(*mets['logs'][lnum])
-                plot.add_tree(tree)
-            self.add_plot(plot)
-
-    def from_excel_quick(self, file_path):
-        """Imports tree and plot data from an Excel file for a quick cruise and adds that data to the stand"""
-        plots, avg_hdr = import_excel_quick(file_path, self.name)
-        for pnum in plots:
-            plot = Plot()
-            for tree in plots[pnum]:
-                mets = plots[pnum][tree]
-                if not mets['height']:
-                    height = int((mets['dbh'] / 12) * avg_hdr)
-                else:
-                    height = mets['height']
-                plot.add_tree(TimberQuick(mets['species'], mets['dbh'], height, self.plot_factor,
-                                          preferred_log_length=mets['pref_log'], minimum_log_length=mets['min_log']))
-            self.add_plot(plot)
-
-    def from_excel_full(self, file_path):
-        """Imports tree and plot data from an Excel file for a full cruise and adds that data to the stand"""
-        plots, avg_hdr = import_excel_full(file_path, self.name)
-        for pnum in plots:
-            plot = Plot()
-            for tnum in plots[pnum]:
-                mets = plots[pnum][tnum]
-                if not mets['height']:
-                    height = int((mets['dbh'] / 12) * avg_hdr)
-                else:
-                    height = mets['height']
-                tree = TimberFull(mets['species'], mets['dbh'], height, self.plot_factor)
-                for lnum in mets['logs']:
-                    tree.add_log(*mets['logs'][lnum])
+            for tree_data in plots[plot_num]:
+                args = tree_data[: -1]
+                logs = tree_data[-1]
+                tree = TimberFull(self.plot_factor, *args)
+                for log in logs:
+                    tree.add_log(*log)
                 plot.add_tree(tree)
             self.add_plot(plot)
 
@@ -344,7 +236,7 @@ class Stand(object):
         setattr(self, f'{metric}_stats', stats)
 
     def _update_species(self, plot):
-        """Re-runs stand conditions calculations and statistics"""
+        """Re-runs stand conditions calculations and statistics, used internally"""
         update_after = ['qmd', 'vbar', 'avg_hgt', 'hdr']
         if self.plot_count == 0:
             return
@@ -382,7 +274,7 @@ class Stand(object):
                     self.species[species]['hdr'] = mean([t.hdr for t in trees if t.species == species])
 
     def _update_logs(self, plot):
-        """Re-runs stand logs calculations"""
+        """Re-runs stand logs calculations, used internally"""
         if self.plot_count == 0:
             return
         else:
@@ -408,6 +300,7 @@ class Stand(object):
                             self.logs[species][grade][rng][sub]['mean'] = mean(gross)
 
     def _update_table_data(self):
+        """Converts stand data to plot/tree inventory data table layout, used internally"""
         heads = ['Stand', 'Plot Number', 'Tree Number', 'Species', 'DBH', 'Height',
                  'Stump Height', 'Log 1 Length', 'Log 1 Grade', 'Log 1 Defect', 'Between Logs Feet']
         master = []
@@ -433,7 +326,7 @@ class Stand(object):
                             temp.append(between)
                 master.append(temp)
 
-        heads += self._add_logs_to_table_heads(max(max_logs))
+        heads += add_logs_to_table_heads(max(max_logs))
         len_heads = len(heads)
         for i in master:
             len_i = len(i)
@@ -443,6 +336,7 @@ class Stand(object):
         return master
 
     def _update_summary_stand(self):
+        """Updates the current stand conditions list of stand.summary_stand, used internally"""
         heads = ['SPECIES'] + [head[1] for head in SORTED_HEADS]
         body_data = []
         for key in self.species:
@@ -457,6 +351,8 @@ class Stand(object):
         return body_data
 
     def _update_summary_logs(self):
+        """Updates the stand logs summary dict, data-tables are broken down by metric type --> species, used internally.
+        Example: self.summary_logs['BOARD FEET PER ACRE']['DF'] --> data table"""
         table_data = {}
         tables = [['bf_ac', 'BOARD FEET PER ACRE'], ['cf_ac', 'CUBIC FEET PER ACRE'], ['lpa', 'LOGS PER ACRE']]
         for table in tables:
@@ -484,10 +380,12 @@ class Stand(object):
                 for g in grade_sort:
                     table_data[key][show].append(g)
 
-            table_data[key] = self._reorder_dict(table_data[key])
+            table_data[key] = reorder_dict(table_data[key])
         return table_data
 
     def _update_summary_stats(self):
+        """Updates the stand statistics dict, stats-tables are broken down by species, used internally.
+        Example: self.summary_stats['DF'] --> stats-table"""
         tables = {}
         for spp in self.species_stats:
             if spp == 'totals_all':
@@ -523,10 +421,10 @@ class Stand(object):
                             else:
                                 temp.append(format_comma(x))
                 tables[show].append(temp)
-        return self._reorder_dict(tables)
+        return reorder_dict(tables)
 
     def _get_stats(self, data):
-        """Runs the statistical calculations on a set of the stand conditions data, returns an updated sub dict"""
+        """Runs the statistical calculations on a set of the stand conditions data, returns an updated sub dict, used internally"""
         m = mean(data)
         if len(data) >= 2:
             std = stdev(data)
@@ -548,61 +446,12 @@ class Stand(object):
         return d
 
     def _compile_report_text(self):
+        """Compiles the console-formatted report of all stand data and stats, used internally"""
         n = '\n' * 4
-        console_text = f'{print_species(self.summary_stand)}{n}'
-        console_text += f'{print_logs(self.summary_logs)}{n}'
-        console_text += f'{print_species_stats(self.summary_stats)}'
+        console_text = f'{print_stand_species(self.summary_stand)}{n}'
+        console_text += f'{print_stand_logs(self.summary_logs)}{n}'
+        console_text += f'{print_stand_stats(self.summary_stats)}'
         return console_text
-
-    @staticmethod
-    def _check_date(value):
-        """Checks the value of the inventory_date class-argument and returns a date object"""
-        delimiters = [',', '.', '/', '-', '_', ':', ';', '?', '|', '~', '`']
-        if isinstance(value, str):
-            try:
-                month, day, year = value[:2], value[2:4], value[4:]
-                if len(year) < 4:
-                    year = f'20{year}'
-                month, day, year = int(month), int(day), int(year)
-                return date(year, month, day)
-            except:
-                for i in delimiters:
-                    try:
-                        month, day, year = value.split(i)
-                        if len(year) < 4:
-                            year = f'20{year}'
-                        month, day, year = int(month), int(day), int(year)
-                        return date(year, month, day)
-                    except:
-                        next
-                else:
-                    raise Exception('Invalid date separator -- try */* as in MM/DD/YYYY')
-        elif isinstance(value, datetime):
-            return date(value.year, value.month, value.day)
-        elif isinstance(value, date):
-            return value
-        else:
-            raise Exception('Invalid date')
-
-    @staticmethod
-    def _add_logs_to_table_heads(max_logs):
-        """Adds log headers to table data depending on the maximum number of logs from trees within the stand"""
-        master = []
-        for i in range(2, max_logs + 1):
-            for name in ['Length', 'Grade', 'Defect']:
-                master.append(f'Log {i} {name}')
-            if i < max_logs:
-                master.append('Between Logs Feet')
-        return master
-
-    @staticmethod
-    def _reorder_dict(unordered):
-        reorder = {}
-        unordered_list = list(unordered)
-        unordered_list.append(unordered_list.pop(0))
-        for i in unordered_list:
-            reorder[i] = unordered[i]
-        return reorder
 
 
 if __name__ == '__main__':
@@ -611,9 +460,7 @@ if __name__ == '__main__':
     import sys
     from os import mkdir, getcwd
     from os.path import join, isfile, isdir, expanduser
-
-    def get_desktop_path():
-        return join(expanduser("~"), "desktop")
+    from treetopper._utils import get_desktop_path
 
     def make_dir_and_subdir(workflow_num):
         desktop = get_desktop_path()
@@ -634,7 +481,8 @@ if __name__ == '__main__':
                 path = i
                 break
         tt_path = join(path, 'treetopper')
-        final = join(tt_path, filename)
+        sheet_path = join(tt_path, 'example_csv_and_xlsx')
+        final = join(sheet_path, filename)
         return final
 
 
@@ -655,15 +503,20 @@ if __name__ == '__main__':
     def workflow_1(workflow_number):
         stand = Stand('WF1', -20)
         plot_factor = stand.plot_factor
-        tree_data = [[TimberQuick('DF', 29.5, 119, plot_factor), TimberQuick('WH', 18.9, 102, plot_factor),
-                      TimberQuick('WH', 20.2, 101, plot_factor), TimberQuick('WH', 19.9, 100, plot_factor),
-                      TimberQuick('DF', 20.6, 112, plot_factor)],
-                     [TimberQuick('DF', 25.0, 117, plot_factor), TimberQuick('DF', 14.3, 105, plot_factor),
-                      TimberQuick('DF', 20.4, 119, plot_factor), TimberQuick('DF', 16.0, 108, plot_factor),
-                      TimberQuick('RC', 20.2, 124, plot_factor), TimberQuick('RC', 19.5, 116, plot_factor),
-                      TimberQuick('RC', 23.4, 121, plot_factor), TimberQuick('DF', 17.8, 116, plot_factor),
-                      TimberQuick('DF', 22.3, 125, plot_factor)]
+        tree_data = [
+                     # Plot 1
+                     [TimberQuick(plot_factor, 'DF', 29.5, 119), TimberQuick(plot_factor, 'WH', 18.9, 102),
+                      TimberQuick(plot_factor, 'WH', 20.2, 101), TimberQuick(plot_factor, 'WH', 19.9, 100),
+                      TimberQuick(plot_factor, 'DF', 20.6, 112)],
+
+                     # Plot 2
+                     [TimberQuick(plot_factor, 'DF', 25.0, 117), TimberQuick(plot_factor, 'DF', 14.3, 105),
+                      TimberQuick(plot_factor, 'DF', 20.4, 119), TimberQuick(plot_factor, 'DF', 16.0, 108),
+                      TimberQuick(plot_factor, 'RC', 20.2, 124), TimberQuick(plot_factor, 'RC', 19.5, 116),
+                      TimberQuick(plot_factor, 'RC', 23.4, 121), TimberQuick(plot_factor, 'DF', 17.8, 116),
+                      TimberQuick(plot_factor, 'DF', 22.3, 125)]
                      ]
+
         for trees in tree_data:
             plot = Plot()
             for tree in trees:
@@ -693,32 +546,35 @@ if __name__ == '__main__':
     def workflow_2(workflow_number):
         stand = Stand('WF2', 33.3)
         plot_factor = stand.plot_factor
-        tree_data = [[[TimberFull('DF', 29.5, 119, plot_factor), [[42, 40, 'S2', 5], [83, 40, 'S3', 0], [102, 18, 'S4', 10]]],
-                      [TimberFull('WH', 18.9, 102, plot_factor), [[42, 40, 'S2', 0], [79, 36, 'S4', 5]]],
-                      [TimberFull('WH', 20.2, 101, plot_factor), [[42, 40, 'S2', 5], [83, 40, 'S4', 0]]],
-                      [TimberFull('WH', 19.9, 100, plot_factor), [[42, 40, 'S2', 0], [83, 40, 'S4', 15]]],
-                      [TimberFull('DF', 20.6, 112, plot_factor), [[42, 40, 'S2', 0], [83, 40, 'S3', 5], [100, 16, 'UT', 10]]]],
-                     [[TimberFull('DF', 25.0, 117, plot_factor), [[42, 40, 'SM', 0], [83, 40, 'S3', 5], [100, 16, 'S4', 0]]],
-                      [TimberFull('DF', 14.3, 105, plot_factor), [[42, 40, 'S3', 0], [79, 36, 'S4', 0]]],
-                      [TimberFull('DF', 20.4, 119, plot_factor), [[42, 40, 'S2', 5], [83, 40, 'S3', 5], [100, 16, 'S4', 5]]],
-                      [TimberFull('DF', 16.0, 108, plot_factor), [[42, 40, 'S3', 5], [83, 40, 'S3', 10]]],
-                      [TimberFull('RC', 20.2, 124, plot_factor), [[42, 40, 'CR', 5], [83, 40, 'CR', 5], [104, 20, 'CR', 5]]],
-                      [TimberFull('RC', 19.5, 116, plot_factor), [[42, 40, 'CR', 10], [83, 40, 'CR', 5], [100, 16, 'CR', 0]]],
-                      [TimberFull('RC', 23.4, 121, plot_factor), [[42, 40, 'CR', 0], [83, 40, 'CR', 0], [106, 22, 'CR', 5]]],
-                      [TimberFull('DF', 17.8, 116, plot_factor), [[42, 40, 'S2', 0], [83, 40, 'S3', 0], [100, 16, 'S4', 10]]],
-                      [TimberFull('DF', 22.3, 125, plot_factor), [[42, 40, 'SM', 0], [83, 40, 'S3', 5], [108, 24, 'S4', 0]]]]
+        tree_data = [
+                     # Plot 1
+                     [[TimberFull(plot_factor, 'DF', 29.5, 119), [[42, 40, 'S2', 5], [83, 40, 'S3', 0], [102, 18, 'S4', 10]]],
+                      [TimberFull(plot_factor, 'WH', 18.9, 102), [[42, 40, 'S2', 0], [79, 36, 'S4', 5]]],
+                      [TimberFull(plot_factor, 'WH', 20.2, 101), [[42, 40, 'S2', 5], [83, 40, 'S4', 0]]],
+                      [TimberFull(plot_factor, 'WH', 19.9, 100), [[42, 40, 'S2', 0], [83, 40, 'S4', 15]]],
+                      [TimberFull(plot_factor, 'DF', 20.6, 112), [[42, 40, 'S2', 0], [83, 40, 'S3', 5], [100, 16, 'UT', 10]]]],
+                     # Plot 2
+                     [[TimberFull(plot_factor, 'DF', 25.0, 117), [[42, 40, 'SM', 0], [83, 40, 'S3', 5], [100, 16, 'S4', 0]]],
+                      [TimberFull(plot_factor, 'DF', 14.3, 105), [[42, 40, 'S3', 0], [79, 36, 'S4', 0]]],
+                      [TimberFull(plot_factor, 'DF', 20.4, 119), [[42, 40, 'S2', 5], [83, 40, 'S3', 5], [100, 16, 'S4', 5]]],
+                      [TimberFull(plot_factor, 'DF', 16.0, 108), [[42, 40, 'S3', 5], [83, 40, 'S3', 10]]],
+                      [TimberFull(plot_factor, 'RC', 20.2, 124), [[42, 40, 'CR', 5], [83, 40, 'CR', 5], [104, 20, 'CR', 5]]],
+                      [TimberFull(plot_factor, 'RC', 19.5, 116), [[42, 40, 'CR', 10], [83, 40, 'CR', 5], [100, 16, 'CR', 0]]],
+                      [TimberFull(plot_factor, 'RC', 23.4, 121), [[42, 40, 'CR', 0], [83, 40, 'CR', 0], [106, 22, 'CR', 5]]],
+                      [TimberFull(plot_factor, 'DF', 17.8, 116), [[42, 40, 'S2', 0], [83, 40, 'S3', 0], [100, 16, 'S4', 10]]],
+                      [TimberFull(plot_factor, 'DF', 22.3, 125), [[42, 40, 'SM', 0], [83, 40, 'S3', 5], [108, 24, 'S4', 0]]]]
                      ]
         for trees in tree_data:
             plot = Plot()
-            for tree in trees:
-                for log in tree[1]:
-                    tree[0].add_log(*log)
-                plot.add_tree(tree[0])
+            for tree, logs in trees:
+                for log in logs:
+                    tree.add_log(*log)
+                plot.add_tree(tree)
             stand.add_plot(plot)
 
         path = make_dir_and_subdir(workflow_number)
 
-        print(stand.console_report())
+        stand.console_report()
         stand.table_to_excel(join(path, 'example_xlsx_export.xlsx'))
 
         thin120ba = ThinBA(stand, 120, species_to_cut=['DF', 'WH'])
@@ -740,8 +596,8 @@ if __name__ == '__main__':
         path = make_dir_and_subdir(workflow_number)
 
         stand = Stand('EX4', -30)
-        stand.from_excel_quick(get_package_path('Example_Excel_quick.xlsx'))
-        print(stand.console_report())
+        stand.import_sheet_quick(get_package_path('Example_Excel_quick.xlsx'))
+        stand.console_report()
 
         stand.table_to_excel(join(path, 'example_xlsx_export.xlsx'))
 
@@ -767,8 +623,8 @@ if __name__ == '__main__':
         path = make_dir_and_subdir(workflow_number)
 
         stand = Stand('OK2', 46.94)
-        stand.from_csv_full(get_package_path('Example_CSV_full.csv'))
-        print(stand.console_report())
+        stand.import_sheet_full(get_package_path('Example_CSV_full.csv'))
+        stand.console_report()
         stand.table_to_excel(join(path, 'example_xlsx_export.xlsx'))
 
         try:
@@ -795,7 +651,8 @@ if __name__ == '__main__':
         path = make_dir_and_subdir(workflow_number)
 
         stand = Stand('EX3', 33.3)
-        stand.from_csv_quick(get_package_path('Example_CSV_quick.csv'))
+        stand.import_sheet_quick(get_package_path('Example_CSV_quick.csv'))
+
         stand.pdf_report(join(path, 'stand_report.pdf'))
         stand.table_to_excel(join(path, 'example_xlsx_export.xlsx'))
 
@@ -818,7 +675,8 @@ if __name__ == '__main__':
         path = make_dir_and_subdir(workflow_number)
 
         stand = Stand('OK1', -30)
-        stand.from_excel_full(get_package_path('Example_Excel_full.xlsx'))
+        stand.import_sheet_full(get_package_path('Example_Excel_full.xlsx'))
+
         stand.table_to_excel(join(path, 'example_xlsx_export.xlsx'))
 
         fvs = FVS()

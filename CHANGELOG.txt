@@ -67,3 +67,44 @@ you can now just import them from treetopper instead of from the modules
 -Completed the inclusion of data sheets for package installer, "python -m treetopper.stand [workflow number]" is stable now
 -Still need to update docs -- coming soon
 
+1.1.1 (10/25/2021)
+-LARGE amount of refactoring
+-Methods that have been replaced...
+--methods to import from sheets
+    stand.from_excel_quick()
+    stand.from_excel_full()
+    stand.from_csv_quick()
+    stand.from_csv_full()
+
+--have been REPLACED with
+    stand.import_sheet_quick()
+    stand.import_sheet_full()
+
+-stand.console_report() went back to printing the console report, DO NOT need to call print on the return value,
+to return the console report as a string, call the stand.get_console_report_text() method
+
+-the Thin Classes also added the option to get the stand report as text, for this call the thin.get_console_report_text() method
+
+-to get pieces of the console report as text, for example only the stand current conditions table, call either of these three methods:
+    stand.get_stand_table_text()
+    stand.get_logs_table_text()
+    stand.get_stats_table_text()
+--these tables are also available as lists or dict of lists, the attributes that contain them are
+    stand.summary_stand
+    stand.summary_logs
+    stand.summary_stats
+
+-the Thin Classes also added a summary dict attribute
+    thin.summary_thin
+
+-stand.pdf_report() method and thin.pdf_report() method added a "start_file_upon_creation" optional argument, default is False.
+If you wish to start the pdf file after it's created, set start_file_upon_creation to True
+
+-to export the processed stand data to an .xlsx or .csv file call either of these two methods:
+    stand.table_to_excel()
+    stand.table_to_csv()
+--these methods will export a sheet formatted like a full cruise sheet
+
+-added the ability to create a blank FVS database by calling the fvs module in the terminal "python -m treetopper.fvs"
+
+-documents have been updated

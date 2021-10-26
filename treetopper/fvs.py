@@ -1,6 +1,8 @@
 from os import getcwd
-from os.path import (isfile,
-                     join)
+from os.path import (
+    isfile,
+    join
+)
 from copy import deepcopy
 from datetime import date
 from openpyxl import load_workbook, Workbook
@@ -8,14 +10,16 @@ from openpyxl.styles import Alignment
 from win32com.client import Dispatch
 from pyodbc import connect as pycon
 from sqlite3 import connect as sqcon
-from treetopper._constants import (ACCESS_GROUPS_COLS,
-                                   ACCESS_STAND_COLS,
-                                   ACCESS_TREE_COLS,
-                                   SQL_GROUPS_COLS,
-                                   SQL_STAND_COLS,
-                                   SQL_TREE_COLS,
-                                   GROUPS_DEFAULTS,
-                                   extension_check)
+from treetopper._constants import (
+    ACCESS_GROUPS_COLS,
+    ACCESS_STAND_COLS,
+    ACCESS_TREE_COLS,
+    SQL_GROUPS_COLS,
+    SQL_STAND_COLS,
+    SQL_TREE_COLS,
+    GROUPS_DEFAULTS
+)
+from treetopper._utils import extension_check
 
 
 class FVS(object):
@@ -23,14 +27,9 @@ class FVS(object):
        run models, inventories and simulations on different forest stands. The three types of databases the FVS class creates
        are Microsoft Access, Microsoft Excel and SQLite
 
-       If you would like a blank database to manually input your data, you can simply instantiate the FVS class and call either
-
-       fvs.access_db(filename, directory=yourdirectory (optional), blank_db=True)
-       fvs.excel_db(filename, directory=yourdirectory (optional), blank_db=True) OR
-       fvs.sqlite_db(filename, directory=yourdirectory (optional), blank_db=True)
-
-       If the directory argument is omitted, the default directory is the current working directory.
-       The 'blank_db' argument has to be set to True for blank databases (its default is False)
+       If you would like a blank database to manually input your data, you can call the fvs module from the terminal and run through the prompts
+       ::
+            python -m treetopper.fvs
 
        If you would like to create the databases from a Stand Class, you can instantiate the FVS class and call the
        fvs.set_stand method. There are seven required arguments, these are data that the FVS software needs for its models, they include
@@ -180,48 +179,6 @@ class FVS(object):
 
         wb.save(db_path)
 
-    def _create_access_db(self, db_path:  str):
-        """If the file does not exist, this method is called to construct the Access database, used internally"""
-        access = Dispatch("Access.Application")
-        access_engine = access.DBEngine
-        access_workspace = access_engine.Workspaces(0)
-        access_language = ';LANGID=0x0409;CP=1252;COUNTRY=0'
-        access_db = access_workspace.CreateDatabase(db_path, access_language, 64)
-
-        for table in [ACCESS_GROUPS_COLS, ACCESS_STAND_COLS, ACCESS_TREE_COLS]:
-            sql = f"""CREATE TABLE {table[0]} ({', '.join([f'{i[0]} {i[1]}' for i in table[1]])});"""
-            access_db.Execute(sql)
-
-    def _create_sqlite_db(self, db_path: str, db_save: str):
-        """If the file does not exist, this method is called to construct the SQLite database, used internally"""
-        con = sqcon(db_path)
-        cur = con.cursor()
-        for i, table in enumerate([SQL_GROUPS_COLS, SQL_STAND_COLS, SQL_TREE_COLS]):
-            sql = f'CREATE TABLE {table[0]} (' + ', '.join([f'{i[0]} {i[1]}' for i in table[1]]) + ');'
-            cur.execute(sql)
-
-        sql = f"""INSERT INTO FVS_GroupAddFilesAndKeywords (Groups, FVSKeywords) VALUES (?, ?)"""
-        cur.execute(sql, [GROUPS_DEFAULTS[0], GROUPS_DEFAULTS[1].format(DB_NAME=db_save)])
-        con.commit()
-        return con, cur
-
-    def _create_excel_db(self, db_save: str):
-        """If the file does not exist, this method is called to construct the Excel database, used internally"""
-        wb = Workbook()
-        for i, table in enumerate([ACCESS_GROUPS_COLS, ACCESS_STAND_COLS, ACCESS_TREE_COLS]):
-            ws = wb.create_sheet(table[0])
-            for j, col in enumerate(table[1]):
-                ws.cell(1, j + 1).value = col[0]
-            if i == 0:
-                ws.cell(2, 1).value = GROUPS_DEFAULTS[0]
-                ws.cell(2, 3).value = GROUPS_DEFAULTS[1].format(DB_NAME=db_save)
-                ws.cell(2, 3).alignment = Alignment(wrapText=True)
-
-        for sheet in wb.sheetnames:
-            if sheet not in [ACCESS_GROUPS_COLS[0], ACCESS_STAND_COLS[0], ACCESS_TREE_COLS[0]]:
-                wb.remove(wb[sheet])
-        return wb
-
     def _insert_sql(self, connection, cursor):
         """Inserts the stand and tree FVS data into the Access or SQLite database"""
         stand_cols = [col for col in self.stand_fvs if self.stand_fvs[col]]
@@ -260,7 +217,53 @@ class FVS(object):
                 ws.cell(next_row, idx).value = val
             next_row += 1
 
-    def _create_loc_file(self, db_save, directory):
+    @staticmethod
+    def _create_access_db(db_path: str):
+        """If the file does not exist, this method is called to construct the Access database, used internally"""
+        access = Dispatch("Access.Application")
+        access_engine = access.DBEngine
+        access_workspace = access_engine.Workspaces(0)
+        access_language = ';LANGID=0x0409;CP=1252;COUNTRY=0'
+        access_db = access_workspace.CreateDatabase(db_path, access_language, 64)
+
+        for table in [ACCESS_GROUPS_COLS, ACCESS_STAND_COLS, ACCESS_TREE_COLS]:
+            sql = f"""CREATE TABLE {table[0]} ({', '.join([f'{i[0]} {i[1]}' for i in table[1]])});"""
+            access_db.Execute(sql)
+
+    @staticmethod
+    def _create_sqlite_db(db_path: str, db_save: str):
+        """If the file does not exist, this method is called to construct the SQLite database, used internally"""
+        con = sqcon(db_path)
+        cur = con.cursor()
+        for i, table in enumerate([SQL_GROUPS_COLS, SQL_STAND_COLS, SQL_TREE_COLS]):
+            sql = f'CREATE TABLE {table[0]} (' + ', '.join([f'{i[0]} {i[1]}' for i in table[1]]) + ');'
+            cur.execute(sql)
+
+        sql = f"""INSERT INTO FVS_GroupAddFilesAndKeywords (Groups, FVSKeywords) VALUES (?, ?)"""
+        cur.execute(sql, [GROUPS_DEFAULTS[0], GROUPS_DEFAULTS[1].format(DB_NAME=db_save)])
+        con.commit()
+        return con, cur
+
+    @staticmethod
+    def _create_excel_db(db_save: str):
+        """If the file does not exist, this method is called to construct the Excel database, used internally"""
+        wb = Workbook()
+        for i, table in enumerate([ACCESS_GROUPS_COLS, ACCESS_STAND_COLS, ACCESS_TREE_COLS]):
+            ws = wb.create_sheet(table[0])
+            for j, col in enumerate(table[1]):
+                ws.cell(1, j + 1).value = col[0]
+            if i == 0:
+                ws.cell(2, 1).value = GROUPS_DEFAULTS[0]
+                ws.cell(2, 3).value = GROUPS_DEFAULTS[1].format(DB_NAME=db_save)
+                ws.cell(2, 3).alignment = Alignment(wrapText=True)
+
+        for sheet in wb.sheetnames:
+            if sheet not in [ACCESS_GROUPS_COLS[0], ACCESS_STAND_COLS[0], ACCESS_TREE_COLS[0]]:
+                wb.remove(wb[sheet])
+        return wb
+
+    @staticmethod
+    def _create_loc_file(db_save, directory):
         """In the FVS software (legacy versions), a Suppose.loc file needs to be made or modified with the Access database,
            this file is created in the same directory as the database"""
         loc_path = join(directory, 'Suppose.loc')
@@ -281,18 +284,49 @@ class FVS(object):
                 f.write(fill_text)
 
 
-
-
-
-
-
 if __name__ == '__main__':
-    from treetopper.stand import Stand
+    from os.path import isdir
+    from treetopper._utils import get_desktop_path
 
-    stand = Stand('OK2', 46.94)
-    stand.from_csv_full('../example_csv_and_xlsx/Example_CSV_full.csv')
-    fvs = FVS()
-    fvs.show_stand_args()
-    fvs.set_stand(stand, 'PN', 612, 6, 50, 'DF', 120)
-    fvs.access_db('spam')
+    db = input('Which database type would you like to create?\nAccess: "a"\nExcel: "e"\nSQLite: "s"\n->').upper()
+
+    while True:
+        if db in ['A', 'E', 'S']:
+            break
+        else:
+            print('Please enter "a", "e", or "s" for the database choice')
+            db = input('Which database type would you like to create?\nAccess: "a"\nExcel: "e"\nSQLite: "s"\n').upper()
+
+    dir_ = input('Would you like to specify a directory? (y/n) [n]\nIf not the database will be placed on the desktop\n->').upper()
+    if dir_ == 'Y':
+        dir_name = input('Directory-> ')
+        while True:
+            if isdir(dir_name):
+                break
+            else:
+                print(f'Directory: "{dir_name}" does not exist')
+                dir_name = input('Directory-> ')
+    else:
+        dir_name = get_desktop_path()
+
+    filename = input('Please Enter a filename-> ')
+
+    f = FVS()
+
+    if db == 'A':
+        f.access_db(filename, dir_name, True)
+        path = extension_check(filename, '.accdb')
+        add = 'For Access Databases a Suppose.loc file is required too, this has been created in the same directory'
+
+    elif db == 'E':
+        f.excel_db(filename, dir_name, True)
+        path = extension_check(filename, '.xlsx')
+        add = ''
+
+    else:
+        f.sqlite_db(filename, dir_name, True)
+        path = extension_check(filename, '.db')
+        add = ''
+    success = f'[{join(dir_name, path)}] has successfully been created\n'
+    print(f'{success}{add}')
 

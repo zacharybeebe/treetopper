@@ -3,10 +3,15 @@ from os import startfile, getcwd
 from os.path import join
 from copy import deepcopy
 from statistics import mean
-from treetopper._console_print import print_thin_species
-from treetopper._pdf_print import PDF
-from treetopper._constants import extension_check
 
+from treetopper._exceptions import TargetDensityError
+from treetopper._constants import SORTED_HEADS
+from treetopper._print_console import print_thin
+from treetopper._print_pdf import PDF
+from treetopper._utils import (
+    extension_check,
+    format_comma
+)
 
 NOT_FULL_THIN_MESSAGE = """
 ** COULD NOT ACHIEVE TARGET DENSITY OF {target} {thin_param} **
@@ -49,14 +54,14 @@ class Thin(object):
 
         self.species_data = None
         self.target_metric = None
+        self.summary_thin = None
+        self.report_message = None
 
         self.full_thin = [True, None, None]
 
         self.keys = ['tpa', 'ba_ac', 'rd_ac', 'bf_ac', 'cf_ac']
         self.adds = [['ba_ac', 'ba_tree'], ['rd_ac', 'rd_tree'], ['bf_ac', 'bf_tree'], ['cf_ac', 'cf_tree']]
         self.conditions = ['current_', 'residual_', 'removal_']
-
-        self.report_message = None
 
         for key in self.keys:
             setattr(self, f'{self.conditions[0]}{key}', 0)
@@ -66,37 +71,16 @@ class Thin(object):
     def __getitem__(self, attribute: str):
         return self.__dict__[attribute]
 
+    def get_console_report_text(self):
+        """Returns a console-formatted string of the thinning report"""
+        return self._compile_console_report_text()
+
     def console_report(self):
-        """Returns a console-formatted string of the stands conditions: current, removals, and residual shown by species and totals,
-        to be called by the standard print() function"""
-        species, min_dbh, max_dbh = self._get_message_params_report()
-        thin_param = self.full_thin[2].replace('_', '/').upper()
-        console_text = '\nTHINNING RESULTS\n'
-        if not self.full_thin[0]:
-            needed = round(self[f'current_{self.full_thin[2]}'] - self.target, 1)
-            self.report_message = NOT_FULL_THIN_MESSAGE.format(target=self.target, thin_param=thin_param,
-                                                               actual=round(self.full_thin[1], 1), needed=needed,
-                                                               species=', '.join(species), min_dbh=min_dbh, max_dbh=max_dbh)
-            console_text += self.report_message
-            console_text += print_thin_species(self.species_data)
-        else:
-            self.report_message = SUCCESS_MESSAGE.format(target=self.target, thin_param=thin_param, species=', '.join(species),
-                                                         min_dbh=min_dbh, max_dbh=max_dbh)
-            console_text += self.report_message
-            console_text += print_thin_species(self.species_data)
-        # print(console_text)
-        return console_text
+        """Prints a console-formatted string of the thinning report"""
+        print(self._compile_console_report_text())
 
-    def pdf_report(self, filename: str, directory: str = None):
+    def pdf_report(self, filename: str, directory: str = None, start_file_upon_creation: bool = False):
         """Exports a pdf of the thinning report to a user specified directory or if directory is None, to the current working directory"""
-        if not self.full_thin[0]:
-            needed = round(self[f'current_{self.full_thin[2]}'] - self.target)
-            l1 = f"""** COULD NOT ACHIEVE TARGET DENSITY OF {self.target} {self.full_thin[2].replace('_', ' ').upper()} **"""
-            l2 = f"""** THINNING PARAMETERS ONLY ALLOWED {round(self.full_thin[1], 1)} {self.full_thin[2].replace('_', '/').upper()} OF THE {needed} NEEDED TO BE HARVESTED **"""
-            message = [l1, l2]
-        else:
-            message = None
-
         check = extension_check(filename, '.pdf')
         if directory:
             file = join(directory, check)
@@ -105,9 +89,11 @@ class Thin(object):
         pdf = PDF()
         pdf.alias_nb_pages()
         pdf.add_page()
-        pdf.compile_thin_report(self, message=message)
+        pdf.compile_thin_report(self)
         pdf.output(file, 'F')
-        startfile(file)
+
+        if start_file_upon_creation:
+            startfile(file)
 
     def _aggregate_trees(self):
         """Returns the compiled whole-number diameters dictionary separated by species"""
@@ -218,12 +204,25 @@ class Thin(object):
             self._update_species_conditions_dict(master[condition]['totals_all'], total_trees)
         return master
 
-    def _update_species_conditions_dict(self, master_condition_species, trees):
-        """Updates the species data dictionary being compiled in self._get_species_conditions(), used internally"""
-        master_condition_species.update({'qmd': math.sqrt((master_condition_species['ba_ac'] / master_condition_species['tpa']) / 0.005454)})
-        master_condition_species.update({'vbar': master_condition_species['bf_ac'] / master_condition_species['ba_ac']})
-        master_condition_species.update({'avg_hgt': mean([tree.height for tree in trees])})
-        master_condition_species.update({'hdr': mean([tree.hdr for tree in trees])})
+    def _get_summary_tables(self):
+        """Return a dict of data tables based on thinning conditions (Current Conditions, Removals, Residual Conditions)"""
+        tables = {
+            'current_': 'CURRENT CONDITIONS',
+            'removal_': 'REMOVALS',
+            'residual_': 'RESIDUAL CONDITIONS'
+        }
+        master = {}
+        heads = ['SPECIES'] + [i[1] for i in SORTED_HEADS]
+        for condition in tables:
+            master[tables[condition]] = []
+            for species in self.species_data[condition]:
+                temp = ['TOTALS' if species == 'totals_all' else species]
+                for sub, _ in SORTED_HEADS:
+                    temp.append(format_comma(self.species_data[condition][species][sub]))
+                master[tables[condition]].append(temp)
+            master[tables[condition]].append(master[tables[condition]].pop(0))
+            master[tables[condition]].insert(0, heads)
+        return master
 
     def _get_message_params_report(self):
         """Returns the thinning parameters, formatted to be displayed in the console report or print report"""
@@ -251,6 +250,35 @@ class Thin(object):
         if current_density < self.target:
             raise TargetDensityError(self.target, current_density, met)
 
+    def _compile_console_report_text(self):
+        """Returns a console-formatted string of the stands conditions: current, removals, and residual shown by species and totals,
+        to be called by the standard print() function"""
+        console_text = '\nTHINNING RESULTS\n'
+        console_text += f'{self.report_message}\n'
+        console_text += print_thin(self.summary_thin)
+        return console_text
+
+    def _get_report_message(self):
+        species, min_dbh, max_dbh = self._get_message_params_report()
+        thin_param = self.full_thin[2].replace('_', '/').upper()
+        if not self.full_thin[0]:
+            needed = round(self[f'current_{self.full_thin[2]}'] - self.target, 1)
+            report_message = NOT_FULL_THIN_MESSAGE.format(target=self.target, thin_param=thin_param,
+                                                          actual=round(self.full_thin[1], 1), needed=needed,
+                                                          species=', '.join(species), min_dbh=min_dbh, max_dbh=max_dbh)
+        else:
+            report_message = SUCCESS_MESSAGE.format(target=self.target, thin_param=thin_param, species=', '.join(species),
+                                                    min_dbh=min_dbh, max_dbh=max_dbh)
+        return report_message
+
+    @staticmethod
+    def _update_species_conditions_dict(master_condition_species, trees):
+        """Updates the species data dictionary being compiled in self._get_species_conditions(), used internally"""
+        master_condition_species.update({'qmd': math.sqrt((master_condition_species['ba_ac'] / master_condition_species['tpa']) / 0.005454)})
+        master_condition_species.update({'vbar': master_condition_species['bf_ac'] / master_condition_species['ba_ac']})
+        master_condition_species.update({'avg_hgt': mean([tree.height for tree in trees])})
+        master_condition_species.update({'hdr': mean([tree.hdr for tree in trees])})
+
 
 class ThinTPA(Thin):
     """Thin by Trees per Acre"""
@@ -261,6 +289,8 @@ class ThinTPA(Thin):
         self._check_density()
         self._thin_to_target(self.target_metric)
         self.species_data = self._get_species_conditions()
+        self.summary_thin = self._get_summary_tables()
+        self.report_message = self._get_report_message()
 
 
 class ThinBA(Thin):
@@ -272,6 +302,8 @@ class ThinBA(Thin):
         self._check_density()
         self._thin_to_target(self.target_metric)
         self.species_data = self._get_species_conditions()
+        self.summary_thin = self._get_summary_tables()
+        self.report_message = self._get_report_message()
 
 
 class ThinRD(Thin):
@@ -283,26 +315,20 @@ class ThinRD(Thin):
         self._check_density()
         self._thin_to_target(self.target_metric)
         self.species_data = self._get_species_conditions()
-
-
-class TargetDensityError(Exception):
-    def __init__(self, target_density, current_density, target_metric):
-        p1 = f"""Target Density of {target_density} {target_metric} """
-        p2 = f"""is greater than Stand Total of {round(current_density, 1)} {target_metric}. """
-        p3 = f"""Please lower Target Density"""
-        self.message = p1 + p2 + p3
-        super(TargetDensityError, self).__init__(self.message)
-
+        self.summary_thin = self._get_summary_tables()
+        self.report_message = self._get_report_message()
 
 
 if __name__ == '__main__':
     from treetopper.stand import Stand
 
     stand = Stand('OK2', 46.94)
-    stand.from_csv_full('../example_csv_and_xlsx/Example_CSV_full.csv')
+    stand.import_sheet_full('./example_csv_and_xlsx/Example_CSV_full.csv')
 
     thin = ThinBA(stand, 160)
+
     thin.console_report()
+    thin.pdf_report('thin_test', start_file_upon_creation=True)
 
 
 

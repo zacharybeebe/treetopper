@@ -34,12 +34,13 @@ class TimberQuick(object):
 
        For inventories, this class is meant to be added to the Plot Class using the Plot Class method of add_tree"""
 
-    def __init__(self, species: str, dbh: float, total_height: int, plot_factor: float,
+    def __init__(self, plot_factor: float, species: str, dbh: float, total_height: int,
                  preferred_log_length: int = 40, minimum_log_length: int = 16):
+        self.plot_factor = float(plot_factor)
         self.species = str(species).upper()
         self.dbh = float(dbh)
         self.height = int(total_height)
-        self.plot_factor = float(plot_factor)
+
         self.pref_log = int(preferred_log_length)
         self.min_log = int(minimum_log_length)
 
@@ -190,11 +191,11 @@ class TimberFull(object):
 
        For inventories, this class is meant to be added to the Plot Class using the Plot Class method of add_tree"""
 
-    def __init__(self, species: str, dbh: float, total_height: int, plot_factor: float):
+    def __init__(self, plot_factor: float, species: str, dbh: float, total_height: int):
+        self.plot_factor = float(plot_factor)
         self.species = str(species).upper()
         self.dbh = float(dbh)
         self.height = int(total_height)
-        self.plot_factor = float(plot_factor)
 
         self.hdr = self.height / (self.dbh / 12)
         self.ba = self.dbh ** 2 * 0.005454
@@ -218,10 +219,10 @@ class TimberFull(object):
         """Adds Log Class to the logs dictionary of TimberFull and recalculates the tree's volumes and
            volume-related metrics"""
         if not self.logs:
-            self.logs[1] = Log(self, stem_height, length, defect_pct=defect, grade=grade.upper())
+            self.logs[1] = Log(self, stem_height, length, grade=grade.upper(), defect_pct=defect)
         else:
             num = max(self.logs) + 1
-            self.logs[num] = Log(self, stem_height, length, defect_pct=defect, grade=grade.upper())
+            self.logs[num] = Log(self, stem_height, length, grade=grade.upper(), defect_pct=defect)
         self._calc_volume_and_logs()
 
     def get_any_dib(self, stem_height):
@@ -267,7 +268,7 @@ class TimberFull(object):
 """EXAMPLE OF TIMBER CLASSES"""
 
 if __name__ == ('__main__'):
-    # tree_data_list -> [Species, DBH, Total Height, Plot Factor]
+    # tree_data_list -> [Plot Factor, Species, DBH, Total Height]
 
     def display_tree_attrs(tree):
         print('Tree Attributes')
@@ -282,14 +283,14 @@ if __name__ == ('__main__'):
             print()
 
 
-    tree_data_list = ['PP', 32.2, 145, 33.3]
+    tree_data_list = [33.3, 'PP', 32.2, 145]
     tree = TimberQuick(*tree_data_list)
     print('TREE EXAMPLE 1 - FROM TimberQuick')
     display_tree_attrs(tree)
 
     print('\n\n')
 
-    tree_data_list = ['DF', 25.5, 125, 40]
+    tree_data_list = [40, 'DF', 25.5, 125]
     tree = TimberFull(*tree_data_list)
     tree.add_log(42, 40, 'SM', 5)
     tree.add_log(83, 40, 'S2', 0)

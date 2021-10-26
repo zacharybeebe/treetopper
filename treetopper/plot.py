@@ -1,8 +1,9 @@
 from statistics import mean
-from treetopper._constants import (math,
-                                   GRADE_NAMES,
-                                   LOG_LENGTHS)
-from treetopper._console_print import print_plot_logs
+from treetopper._constants import (
+    math,
+    GRADE_NAMES,
+    LOG_LENGTHS
+)
 
 
 class Plot(object):
@@ -115,41 +116,6 @@ class Plot(object):
         master['totals_by_length'].update({'display': False})
         return master
 
-
-
-
-
-"""EXAMPLE OF AN INDIVIDUAL PLOT WITH RANDOMLY GENERATED TREES (TIMBERQUICK CLASS)"""
-
-if __name__ == '__main__':
-    from random import randrange
-    from treetopper._testing import generate_random_trees_quick
-
-    trees, tree_count = generate_random_trees_quick(randrange(4, 9))
-
-    plot = Plot()
-    for tree in trees:
-        plot.add_tree(tree)
-
-    print(f'Plot TreeCount: {len(trees)}')
-    print(f'Plot TPA: {plot.tpa}')
-    print(f'Plot BA_AC: {plot.ba_ac}')
-    print(f'Plot BF_AC: {plot.bf_ac}')
-    print(f'Plot AVG_HGT: {plot.avg_hgt}')
-    print(f'Plot HDR: {plot.hdr}')
-    print()
-
-    for i, tree in enumerate(plot.trees):
-        print(f'Tree #{i+1}')
-        print(f'\tSpecies: {tree.species}')
-        print(f'\tDBH: {tree.dbh}')
-        print(f'\tHeight: {tree.height}')
-        print(f'\tHDR: {tree.hdr}')
-        print(f'\tBF_AC: {tree.bf_ac}')
-        print(f'\tLOGS: {tree.logs}')
-    print()
-
-    print_plot_logs(plot)
 
 
 

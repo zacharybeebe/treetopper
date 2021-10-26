@@ -525,11 +525,11 @@ if __name__ == '__main__':
 
         path = make_dir_and_subdir(workflow_number)
 
-        print(stand.console_report())
+        stand.console_report()
         stand.table_to_csv(join(path, 'example_csv_export.csv'))
 
         thin80tpa = ThinTPA(stand, 80)
-        print(thin80tpa.console_report())
+        thin80tpa.console_report()
 
         end_message = """**WORKFLOW 1 created a QUICK CRUISE stand from manually entered tree data.
 
@@ -578,7 +578,7 @@ if __name__ == '__main__':
         stand.table_to_excel(join(path, 'example_xlsx_export.xlsx'))
 
         thin120ba = ThinBA(stand, 120, species_to_cut=['DF', 'WH'])
-        print(thin120ba.console_report())
+        thin120ba.console_report()
 
         end_message = """**WORKFLOW 2 created a FULL CRUISE stand from manually entered tree data.
 
@@ -602,7 +602,7 @@ if __name__ == '__main__':
         stand.table_to_excel(join(path, 'example_xlsx_export.xlsx'))
 
         thin25rd = ThinRD(stand, 25, species_to_cut=['DF', 'WH'], min_dbh_to_cut=10, max_dbh_to_cut=18)
-        print(thin25rd.console_report())
+        thin25rd.console_report()
 
         end_message = """**WORKFLOW 3 created a QUICK CRUISE stand from importing plot data from an excel sheet.
 
@@ -629,7 +629,7 @@ if __name__ == '__main__':
 
         try:
             thin100tpa = ThinTPA(stand, 100)
-            print(thin100tpa.console_report())
+            thin100tpa.console_report()
         except TargetDensityError as e:
             print(traceback.format_exc())
 
@@ -712,8 +712,9 @@ if __name__ == '__main__':
 
         opts[workflow_number](workflow_number)
 
-
+    print(f"\n\n{'-' * 200}\n\n")
     main(wf)
+    print(f"\n\n{'-' * 200}\n\n")
 
 
 

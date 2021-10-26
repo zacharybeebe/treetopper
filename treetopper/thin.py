@@ -3,6 +3,7 @@ from os import startfile, getcwd
 from os.path import join
 from copy import deepcopy
 from statistics import mean
+from io import BytesIO
 
 from treetopper._exceptions import TargetDensityError
 from treetopper._constants import SORTED_HEADS
@@ -79,6 +80,10 @@ class Thin(object):
         """Prints a console-formatted string of the thinning report"""
         print(self._compile_console_report_text())
 
+    def get_pdf_report_bytes_io(self):
+        pdf = self._compile_pdf_report()
+        return BytesIO(pdf.output(dest='S').encode('latin-1'))
+
     def pdf_report(self, filename: str, directory: str = None, start_file_upon_creation: bool = False):
         """Exports a pdf of the thinning report to a user specified directory or if directory is None, to the current working directory"""
         check = extension_check(filename, '.pdf')
@@ -86,10 +91,7 @@ class Thin(object):
             file = join(directory, check)
         else:
             file = join(getcwd(), check)
-        pdf = PDF()
-        pdf.alias_nb_pages()
-        pdf.add_page()
-        pdf.compile_thin_report(self)
+        pdf = self._compile_pdf_report()
         pdf.output(file, 'F')
 
         if start_file_upon_creation:
@@ -258,6 +260,13 @@ class Thin(object):
         console_text += print_thin(self.summary_thin)
         return console_text
 
+    def _compile_pdf_report(self):
+        pdf = PDF()
+        pdf.alias_nb_pages()
+        pdf.add_page()
+        pdf.compile_thin_report(self)
+        return pdf
+
     def _get_report_message(self):
         species, min_dbh, max_dbh = self._get_message_params_report()
         thin_param = self.full_thin[2].replace('_', '/').upper()
@@ -328,7 +337,9 @@ if __name__ == '__main__':
     thin = ThinBA(stand, 160)
 
     thin.console_report()
-    thin.pdf_report('thin_test', start_file_upon_creation=True)
+    #x = thin.get_pdf_report_bytes_io()
+
+    #thin.pdf_report('thin_test', start_file_upon_creation=True)
 
 
 

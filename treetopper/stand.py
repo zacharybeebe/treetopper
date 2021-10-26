@@ -3,6 +3,7 @@ from os import (
     getcwd
 )
 from os.path import join
+from io import BytesIO
 from csv import (
     writer,
     excel
@@ -129,6 +130,10 @@ class Stand(object):
         """Prints a console-formatted string of the complete stand report"""
         print(self._compile_report_text())
 
+    def get_pdf_report_bytes_io(self):
+        pdf = self._compile_pdf_report()
+        return BytesIO(pdf.output(dest='S').encode('latin-1'))
+
     def pdf_report(self, filename: str, directory: str = None, start_file_upon_creation: bool = False):
         """Exports a pdf of the complete stand report to a user specified directory or if directory is None,
         to the current working directory. Will open the created pdf report if start_file_upon_creation is True"""
@@ -137,10 +142,8 @@ class Stand(object):
             file = join(directory, check)
         else:
             file = join(getcwd(), check)
-        pdf = PDF()
-        pdf.alias_nb_pages()
-        pdf.add_page()
-        pdf.compile_stand_report(self)
+
+        pdf = self._compile_pdf_report()
         pdf.output(file, 'F')
         if start_file_upon_creation:
             startfile(file)
@@ -452,6 +455,13 @@ class Stand(object):
         console_text += f'{print_stand_logs(self.summary_logs)}{n}'
         console_text += f'{print_stand_stats(self.summary_stats)}'
         return console_text
+
+    def _compile_pdf_report(self):
+        pdf = PDF()
+        pdf.alias_nb_pages()
+        pdf.add_page()
+        pdf.compile_stand_report(self)
+        return pdf
 
 
 if __name__ == '__main__':

@@ -108,3 +108,8 @@ If you wish to start the pdf file after it's created, set start_file_upon_creati
 -added the ability to create a blank FVS database by calling the fvs module in the terminal "python -m treetopper.fvs"
 
 -documents have been updated
+
+
+1.1.2 (10/25/2021)
+-fixed small typo in the stand module workflows
+

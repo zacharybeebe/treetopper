@@ -258,22 +258,27 @@ SORTED_HEADS = [['tpa', 'TPA'], ['ba_ac', 'BASAL AREA'], ['rd_ac', 'RD'], ['qmd'
 # EndSQL\r
 # END"""
 
-FVS_KEYWORDS = """Database\r
-DSNIn\r
-{DB_NAME}\r
-StandSQL\r
-SELECT *\r 
-FROM FVS_StandInit\r 
-WHERE Stand_ID = '%Stand_ID%'\r
-EndSQL\r
-TreeSQL\r
-SELECT *\r 
-FROM FVS_TreeInit\r 
-WHERE Stand_ID = '%Stand_ID%'\r
-EndSQL\r
-END"""
+# FVS_KEYWORDS = """Database\r
+# DSNIn\r
+# {DB_NAME}\r
+# StandSQL\r
+# SELECT *\r
+# FROM FVS_StandInit\r
+# WHERE Stand_ID = '%Stand_ID%'\r
+# EndSQL\r
+# TreeSQL\r
+# SELECT *\r
+# FROM FVS_TreeInit\r
+# WHERE Stand_ID = '%Stand_ID%'\r
+# EndSQL\r
+# END"""
 
-GROUPS_DEFAULTS = ['All_Stands', FVS_KEYWORDS]
+SQL_KEYWORDS = "Database\r\nDSNIn\r\n{DB_NAME}\r\nStandSQL\r\nSELECT *\r\nFROM FVS_StandInit\r\nWHERE Stand_ID = '%StandID%'\r\nEndSQL\r\nTreeSQL\r\nSELECT *\r\nFROM FVS_TreeInit\r\nWHERE Stand_ID = '%StandID%'\r\nEndSQL\r\nEND"
+EXCEL_KEYWORDS = "Database\nDSNIn\n{DB_NAME}\nStandSQL\nSELECT * FROM FVS_StandInit WHERE Stand_ID =\n'%StandID%'\nEndSQL\nTreeSQL\nSELECT * FROM FVS_TreeInit WHERE Stand_ID =\n'%StandID%'\nEndSQL\nEND"
+
+SQL_DEFAULTS = ['All_Stands', SQL_KEYWORDS]
+EXCEL_DEFAULTS = ['All_Stands', EXCEL_KEYWORDS]
+
 
 ACCESS_GROUPS_COLS = ['FVS_GroupAddFilesAndKeywords', [['Groups', 'VARCHAR'], ['Addfiles', 'LONGCHAR'], ['FVSKeywords', 'LONGCHAR']]]
 

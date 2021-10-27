@@ -131,3 +131,6 @@ data to a list, this was changed to "if data is not None" to include values that
 1.1.5 (10/27/2021)
 -edited the SQL statement for FVS database table 'FVS_GroupAddFilesAndKeywords'
 
+1.1.6 (10/27/2021)
+-edited the SQL statement for FVS database table 'FVS_GroupAddFilesAndKeywords' - last version did not work when running in FVS
+

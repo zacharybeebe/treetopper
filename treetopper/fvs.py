@@ -18,7 +18,8 @@ from treetopper._constants import (
     SQL_GROUPS_COLS,
     SQL_STAND_COLS,
     SQL_TREE_COLS,
-    GROUPS_DEFAULTS
+    SQL_DEFAULTS,
+    EXCEL_DEFAULTS
 )
 from treetopper._utils import extension_check
 
@@ -133,7 +134,7 @@ class FVS(object):
 
         if not db_exists:
             sql = f"""INSERT INTO FVS_GroupAddFilesAndKeywords (Groups, FVSKeywords) VALUES (?, ?)"""
-            cur.execute(sql, [GROUPS_DEFAULTS[0], GROUPS_DEFAULTS[1].format(DB_NAME=db_save)])
+            cur.execute(sql, [SQL_DEFAULTS[0], SQL_DEFAULTS[1].format(DB_NAME=db_save)])
             con.commit()
 
         if not blank_db:
@@ -242,7 +243,7 @@ class FVS(object):
             cur.execute(sql)
 
         sql = f"""INSERT INTO FVS_GroupAddFilesAndKeywords (Groups, FVSKeywords) VALUES (?, ?)"""
-        cur.execute(sql, [GROUPS_DEFAULTS[0], GROUPS_DEFAULTS[1].format(DB_NAME=db_save)])
+        cur.execute(sql, [SQL_DEFAULTS[0], SQL_DEFAULTS[1].format(DB_NAME=db_save)])
         con.commit()
         return con, cur
 
@@ -255,8 +256,8 @@ class FVS(object):
             for j, col in enumerate(table[1]):
                 ws.cell(1, j + 1).value = col[0]
             if i == 0:
-                ws.cell(2, 1).value = GROUPS_DEFAULTS[0]
-                ws.cell(2, 3).value = GROUPS_DEFAULTS[1].format(DB_NAME=db_save)
+                ws.cell(2, 1).value = EXCEL_DEFAULTS[0]
+                ws.cell(2, 3).value = EXCEL_DEFAULTS[1].format(DB_NAME=db_save)
                 ws.cell(2, 3).alignment = Alignment(wrapText=True)
 
         for sheet in wb.sheetnames:

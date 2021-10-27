@@ -98,6 +98,7 @@ class FVS(object):
                 self.tree_fvs[row]['StandPlot_ID'] = std_plt
                 self.tree_fvs[row]['Plot_ID'] = pnum
                 self.tree_fvs[row]['Tree_ID'] = j + 1
+                self.tree_fvs[row]['Tree_Count'] = 1
                 self.tree_fvs[row]['History'] = 1
                 self.tree_fvs[row]['Species'] = tree.species
                 self.tree_fvs[row]['DBH'] = tree.dbh
@@ -182,14 +183,14 @@ class FVS(object):
 
     def _insert_sql(self, connection, cursor):
         """Inserts the stand and tree FVS data into the Access or SQLite database"""
-        stand_cols = [col for col in self.stand_fvs if self.stand_fvs[col]]
-        stand_vals = [self.stand_fvs[col] for col in self.stand_fvs if self.stand_fvs[col]]
+        stand_cols = [col for col in self.stand_fvs if self.stand_fvs[col] is not None]
+        stand_vals = [self.stand_fvs[col] for col in self.stand_fvs if self.stand_fvs[col] is not None]
         stand_sql = f"""INSERT INTO FVS_StandInit ({', '.join(stand_cols)}) VALUES ({', '.join(['?' for _ in stand_cols])})"""
         cursor.execute(stand_sql, stand_vals)
 
         for row in self.tree_fvs:
-            tree_cols = [col for col in self.tree_fvs[row] if self.tree_fvs[row][col]]
-            tree_vals = [self.tree_fvs[row][col] for col in self.tree_fvs[row] if self.tree_fvs[row][col]]
+            tree_cols = [col for col in self.tree_fvs[row] if self.tree_fvs[row][col] is not None]
+            tree_vals = [self.tree_fvs[row][col] for col in self.tree_fvs[row] if self.tree_fvs[row][col] is not None]
             tree_sql = f"""INSERT INTO FVS_TreeInit ({', '.join(tree_cols)}) VALUES ({', '.join(['?' for _ in tree_cols])})"""
 
             cursor.execute(tree_sql, tree_vals)
@@ -198,9 +199,9 @@ class FVS(object):
     def _insert_excel(self, workbook):
         """Inserts the stand and tree FVS data into the Excel database"""
         stand_keys = list(self.stand_fvs)
-        stand_cols = [col for col in self.stand_fvs if self.stand_fvs[col]]
+        stand_cols = [col for col in self.stand_fvs if self.stand_fvs[col] is not None]
         stand_idxs = [stand_keys.index(col) + 1 for col in stand_cols]
-        stand_vals = [self.stand_fvs[col] for col in self.stand_fvs if self.stand_fvs[col]]
+        stand_vals = [self.stand_fvs[col] for col in self.stand_fvs if self.stand_fvs[col] is not None]
 
         ws = workbook['FVS_StandInit']
         next_row = ws.max_row + 1
@@ -211,9 +212,9 @@ class FVS(object):
         next_row = ws.max_row + 1
         tree_keys = list(self.tree_fvs[1])
         for row in self.tree_fvs:
-            tree_cols = [col for col in self.tree_fvs[row] if self.tree_fvs[row][col]]
+            tree_cols = [col for col in self.tree_fvs[row] if self.tree_fvs[row][col] is not None]
             tree_idxs = [tree_keys.index(col) + 1 for col in tree_cols]
-            tree_vals = [self.tree_fvs[row][col] for col in self.tree_fvs[row] if self.tree_fvs[row][col]]
+            tree_vals = [self.tree_fvs[row][col] for col in self.tree_fvs[row] if self.tree_fvs[row][col] is not None]
             for idx, val in zip(tree_idxs, tree_vals):
                 ws.cell(next_row, idx).value = val
             next_row += 1
@@ -286,6 +287,7 @@ class FVS(object):
 
 
 if __name__ == '__main__':
+
     from os.path import isdir
     from treetopper._utils import get_desktop_path
 

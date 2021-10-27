@@ -8,6 +8,7 @@ from datetime import date
 from openpyxl import load_workbook, Workbook
 from openpyxl.styles import Alignment
 from win32com.client import Dispatch
+import pythoncom
 from pyodbc import connect as pycon
 from sqlite3 import connect as sqcon
 from treetopper._constants import (
@@ -220,7 +221,7 @@ class FVS(object):
     @staticmethod
     def _create_access_db(db_path: str):
         """If the file does not exist, this method is called to construct the Access database, used internally"""
-        access = Dispatch("Access.Application")
+        access = Dispatch("Access.Application", pythoncom.CoInitialize())
         access_engine = access.DBEngine
         access_workspace = access_engine.Workspaces(0)
         access_language = ';LANGID=0x0409;CP=1252;COUNTRY=0'

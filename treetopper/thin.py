@@ -328,6 +328,7 @@ class ThinRD(Thin):
         self.report_message = self._get_report_message()
 
 
+
 if __name__ == '__main__':
     from treetopper.stand import Stand
 

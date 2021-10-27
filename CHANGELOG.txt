@@ -128,3 +128,6 @@ running Flask (and possibly other similar frameworks).
 -fixed a small error in the data been sent to the FVS databases: getting the data uses a conditional "if data" to add
 data to a list, this was changed to "if data is not None" to include values that were zero
 
+1.1.5 (10/27/2021)
+-edited the SQL statement for FVS database table 'FVS_GroupAddFilesAndKeywords'
+

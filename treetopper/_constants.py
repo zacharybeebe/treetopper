@@ -247,14 +247,29 @@ SORTED_HEADS = [['tpa', 'TPA'], ['ba_ac', 'BASAL AREA'], ['rd_ac', 'RD'], ['qmd'
                 ['avg_hgt', 'AVG HEIGHT'], ['hdr', 'HDR'], ['bf_ac', 'BOARD FEET'], ['cf_ac', 'CUBIC FEET']]
 
 # FVS INITIAL DATA
+# FVS_KEYWORDS = """Database\r
+# DSNin\r
+# {DB_NAME}\r
+# StandSQL\r
+# SELECT * FROM FVS_StandInit WHERE Stand_ID = '%Stand_ID%'\r
+# EndSQL\r
+# TreeSQL\r
+# SELECT * FROM FVS_TreeInit WHERE Stand_ID = '%Stand_ID%'\r
+# EndSQL\r
+# END"""
+
 FVS_KEYWORDS = """Database\r
-DSNin\r
+DSNIn\r
 {DB_NAME}\r
 StandSQL\r
-SELECT * FROM FVS_StandInit WHERE Stand_ID = '%Stand_ID%'\r
+SELECT *\r 
+FROM FVS_StandInit\r 
+WHERE Stand_ID = '%Stand_ID%'\r
 EndSQL\r
 TreeSQL\r
-SELECT * FROM FVS_TreeInit WHERE Stand_ID = '%Stand_ID%'\r
+SELECT *\r 
+FROM FVS_TreeInit\r 
+WHERE Stand_ID = '%Stand_ID%'\r
 EndSQL\r
 END"""
 

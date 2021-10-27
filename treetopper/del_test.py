@@ -7,4 +7,4 @@ stand.console_report()
 
 fvs = FVS()
 fvs.set_stand(stand, 'PN', 612, 6, 45, 'DF', 120)
-fvs.sqlite_db('testWIN3')
+fvs.sqlite_db('testWIN4')
